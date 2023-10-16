@@ -12,7 +12,12 @@ public class NumWiz {
      */
     public static double addAngles( double angle1, double angle2 )
     {
-        return (angle1 + angle2 + 180.0) % 360.0 - 180.0;
+        double sum = angle1 + angle2;
+        while( sum >= 180.0 )
+            sum -= 360.0;
+        while( sum < -180 )
+            sum += 360.0;
+        return sum;
     }
 
     /**
