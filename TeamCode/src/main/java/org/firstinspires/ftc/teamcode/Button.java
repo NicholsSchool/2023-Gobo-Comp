@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import androidx.annotation.NonNull;
+
 /**
  * The class defining Buttons on a Controller
  */
@@ -40,24 +42,19 @@ public class Button {
     }
 
     /**
-     * Set the button's previous state to its current state
+     * Updates the button's current and previous states
+     * @param newState the state to set the current state to
      */
-    public void setPreviousState() {
-        previousState = state;
-    }
-
-    /**
-     * Set the button's current state
-     * @param state the state to set it to
-     */
-    public void setCurrentState( boolean state ) {
-        this.state = state;
+    public void updateStates(boolean newState ) {
+        this.previousState = this.state;
+        this.state = newState;
     }
 
     /**
      * Return the current state, for telemetry
      * @return the button's value as String
      */
+    @NonNull
     public String toString()
     {
         return String.valueOf( get() );

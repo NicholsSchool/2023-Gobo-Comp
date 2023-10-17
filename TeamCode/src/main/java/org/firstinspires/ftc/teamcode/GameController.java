@@ -77,35 +77,20 @@ public class GameController {
      * updates the GameController fields, call at the start of each loop()
      */
     public void updateValues() {
-        y.setPreviousState();
-        x.setPreviousState();
-        b.setPreviousState();
-        a.setPreviousState();
-        dpad_up.setPreviousState();
-        dpad_down.setPreviousState();
-        dpad_left.setPreviousState();
-        dpad_right.setPreviousState();
-        left_bumper.setPreviousState();
-        right_bumper.setPreviousState();
-        start.setPreviousState();
-        back.setPreviousState();
-        right_stick_button.setPreviousState();
-        left_stick_button.setPreviousState();
-
-        y.setCurrentState(gamepad.y);
-        x.setCurrentState(gamepad.x);
-        b.setCurrentState(gamepad.b);
-        a.setCurrentState(gamepad.a);
-        dpad_up.setCurrentState(gamepad.dpad_up);
-        dpad_down.setCurrentState(gamepad.dpad_down);
-        dpad_left.setCurrentState(gamepad.dpad_left);
-        dpad_right.setCurrentState(gamepad.dpad_right);
-        left_bumper.setCurrentState(gamepad.left_bumper);
-        right_bumper.setCurrentState(gamepad.right_bumper);
-        start.setCurrentState(gamepad.start);
-        back.setCurrentState(gamepad.back);
-        right_stick_button.setCurrentState(gamepad.right_stick_button);
-        left_stick_button.setCurrentState(gamepad.left_stick_button);
+        y.updateStates(gamepad.y);
+        x.updateStates(gamepad.x);
+        b.updateStates(gamepad.b);
+        a.updateStates(gamepad.a);
+        dpad_up.updateStates(gamepad.dpad_up);
+        dpad_down.updateStates(gamepad.dpad_down);
+        dpad_left.updateStates(gamepad.dpad_left);
+        dpad_right.updateStates(gamepad.dpad_right);
+        left_bumper.updateStates(gamepad.left_bumper);
+        right_bumper.updateStates(gamepad.right_bumper);
+        start.updateStates(gamepad.start);
+        back.updateStates(gamepad.back);
+        right_stick_button.updateStates(gamepad.right_stick_button);
+        left_stick_button.updateStates(gamepad.left_stick_button);
         left_stick_x = gamepad.left_stick_x;
         left_stick_y = -gamepad.left_stick_y;
         right_stick_x = gamepad.right_stick_x;
