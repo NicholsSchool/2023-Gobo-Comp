@@ -52,7 +52,7 @@ public class GameController {
     }
 
     /**
-     * The R from the (R, theta) of the Joystick
+     * The R from the (R, theta) of the Left Joystick
      * @return the power in the range [-1, 1]
      */
     public double leftJSPower()
@@ -61,7 +61,7 @@ public class GameController {
     }
 
     /**
-     * The theta from the (R, theta) of the Joystick
+     * The theta from the (R, theta) of the Left Joystick
      * @param isBlue whether we are on Blue Alliance
      * @return the theta in the range [-180, 180]
      */
@@ -74,7 +74,7 @@ public class GameController {
     }
 
     /**
-     * updates the gamepad fields, call at the start of each loop()
+     * updates the GameController fields, call at the start of each loop()
      */
     public void updateValues() {
         y.setPreviousState();

@@ -9,7 +9,7 @@ public class Button {
 
     /**
      * Whether the button is pressed
-     * @return if the button is pressed, false otherwise
+     * @return true if the button is pressed, false otherwise
      */
     public boolean get() {
         return state;
@@ -17,7 +17,7 @@ public class Button {
 
     /**
      * Whether the button's state just changed
-     * @return if the button's state just changed, false otherwise
+     * @return true if the button's state just changed, false otherwise
      */
     public boolean stateJustChanged() {
         return state != previousState;
@@ -25,7 +25,7 @@ public class Button {
 
     /**
      * Whether the button was just pressed
-     * @return if the button was just pressed, false otherwise
+     * @return true if the button was just pressed, false otherwise
      */
     public boolean wasJustPressed() {
         return state && !previousState;
@@ -33,7 +33,7 @@ public class Button {
 
     /**
      * Whether the button was just released
-     * @return if the button was just released, false otherwise
+     * @return true if the button was just released, false otherwise
      */
     public boolean wasJustReleased() {
         return !state && previousState;
@@ -56,7 +56,7 @@ public class Button {
 
     /**
      * Return the current state, for telemetry
-     * @return the value of the button as String
+     * @return the button's value as String
      */
     public String toString()
     {

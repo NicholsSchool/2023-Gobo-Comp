@@ -5,7 +5,7 @@ package org.firstinspires.ftc.teamcode;
  */
 public class NumWiz {
     /**
-     * Adds two angles measured in degrees
+     * Adds two angles that are measured in degrees
      * @param angle1 the first angle
      * @param angle2 the second angle
      * @return the sum in the range [-180, 180)
@@ -22,6 +22,7 @@ public class NumWiz {
 
     /**
      * Calculates the drive angle of the robot in order to arrive at the waypoint (wx, wy)
+     * with the angle of the robot's vector approaching the horizontal
      * @param rx the robot's x coordinate
      * @param ry the robot's y coordinate
      * @param wx the waypoint x coordinate
@@ -30,11 +31,12 @@ public class NumWiz {
      */
     public static double driveToVertex( double rx, double ry, double wx, double wy )
     {
-        return Math.toDegrees( Math.atan2( 2.0 * ( ry - wy ), rx - wx ) );
+        return NumWiz.addAngles( Math.toDegrees( Math.atan2( 2.0 * ( ry - wy ), rx - wx ) ), 180.0 );
     }
 
     /**
      * Calculates the drive angle of the robot in order to arrive at the waypoint (wx, wy)
+     * with the angle of the robot's vector leaving the horizontal
      * @param rx the robot's x coordinate
      * @param ry the robot's y coordinate
      * @param wx the waypoint x coordinate
@@ -44,7 +46,6 @@ public class NumWiz {
      */
     public static double driveFromVertex( double rx, double ry, double wx, double wy, double h )
     {
-
         double robotDiff = Math.pow( rx - h, 2 );
         double waypointDiff = Math.pow( wx - h, 2 );
         if( rx == wx ) {
@@ -54,6 +55,10 @@ public class NumWiz {
                 return 90.0;
         }
         double k = ( wy * robotDiff - ry * waypointDiff ) / ( robotDiff - waypointDiff );
-        return Math.toDegrees( Math.atan2( 2.0 * ( ry - k ), rx - h ) );
+        double angle = Math.toDegrees( Math.atan2( 2.0 * ( ry - k ), rx - h ) );
+        double offset = 0;
+        if( wx > h && rx > wx || wx < h && rx < wx )
+            offset = 180.0;
+        return NumWiz.addAngles( angle, offset );
     }
 }
