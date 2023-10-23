@@ -4,9 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="Teleop: Robot Genesis")
-public class GenesisTeleop extends OpMode
-{
+@TeleOp(name = "Teleop: Robot Genesis")
+public class GenesisTeleop extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private GameController driverOI;
@@ -48,12 +47,12 @@ public class GenesisTeleop extends OpMode
         operatorOI.updateValues();
 
         double power = driverOI.leftJSPower();
-        double angle = driverOI.leftJSAngle( driverOI.a.get() );
+        double angle = driverOI.leftJSAngle(driverOI.a.get());
         double turn = driverOI.right_stick_x;
 
         // Show Telemetry
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Drive Power", power );
+        telemetry.addData("Drive Power", power);
         telemetry.addData("angle", angle);
         telemetry.addData("turn power", turn);
     }

@@ -31,6 +31,7 @@ public class GameController {
 
     /**
      * Constucts the GameController with a Gamepad
+     *
      * @param gamepad the gamepad to monitor
      */
     public GameController(Gamepad gamepad) {
@@ -53,24 +54,24 @@ public class GameController {
 
     /**
      * The R from the (R, theta) of the Left Joystick
+     *
      * @return the power in the range [-1, 1]
      */
-    public double leftJSPower()
-    {
-        return Range.clip( Math.sqrt(left_stick_x * left_stick_x + left_stick_y * left_stick_y), -1.0, 1.0 );
+    public double leftJSPower() {
+        return Range.clip(Math.sqrt(left_stick_x * left_stick_x + left_stick_y * left_stick_y), -1.0, 1.0);
     }
 
     /**
      * The theta from the (R, theta) of the Left Joystick
+     *
      * @param isBlue whether we are on Blue Alliance
      * @return the theta in the range [-180, 180]
      */
-    public double leftJSAngle( boolean isBlue )
-    {
-        if( isBlue )
-            return Math.toDegrees( Math.atan2(left_stick_y, left_stick_x) );
+    public double leftJSAngle(boolean isBlue) {
+        if (isBlue)
+            return NumWiz.addAngles(Math.toDegrees(Math.atan2(left_stick_y, left_stick_x)), 0.0);
         else
-            return NumWiz.addAngles( Math.toDegrees( Math.atan2(left_stick_y, left_stick_x) ), 180.0 );
+            return NumWiz.addAngles(Math.toDegrees(Math.atan2(left_stick_y, left_stick_x)), 180.0);
     }
 
     /**

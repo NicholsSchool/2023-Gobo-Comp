@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 /**
- * Contains Constants for the Robot
+ * Contains Robot Constants
  */
 interface Constants {
-
 }

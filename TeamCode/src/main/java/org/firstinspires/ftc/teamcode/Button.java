@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import androidx.annotation.NonNull;
 
 /**
- * The class defining Buttons on a Controller
+ * The class defining Buttons on a GameController
  */
 public class Button {
     private boolean state;
@@ -11,6 +11,7 @@ public class Button {
 
     /**
      * Whether the button is pressed
+     *
      * @return true if the button is pressed, false otherwise
      */
     public boolean get() {
@@ -19,6 +20,7 @@ public class Button {
 
     /**
      * Whether the button's state just changed
+     *
      * @return true if the button's state just changed, false otherwise
      */
     public boolean stateJustChanged() {
@@ -27,6 +29,7 @@ public class Button {
 
     /**
      * Whether the button was just pressed
+     *
      * @return true if the button was just pressed, false otherwise
      */
     public boolean wasJustPressed() {
@@ -35,6 +38,7 @@ public class Button {
 
     /**
      * Whether the button was just released
+     *
      * @return true if the button was just released, false otherwise
      */
     public boolean wasJustReleased() {
@@ -43,20 +47,21 @@ public class Button {
 
     /**
      * Updates the button's current and previous states
+     *
      * @param newState the state to set the current state to
      */
-    public void updateStates(boolean newState ) {
-        this.previousState = this.state;
-        this.state = newState;
+    public void updateStates(boolean newState) {
+        previousState = state;
+        state = newState;
     }
 
     /**
      * Return the current state, for telemetry
+     *
      * @return the button's value as String
      */
     @NonNull
-    public String toString()
-    {
-        return String.valueOf( get() );
+    public String toString() {
+        return String.valueOf(get());
     }
 }
