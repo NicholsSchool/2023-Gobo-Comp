@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.controller.GameController;
 @TeleOp(name = "Teleop: Robot Genesis")
 public class GenesisTeleop extends OpMode {
     // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
     private GameController driverOI;
     private GameController operatorOI;
 
@@ -48,12 +48,12 @@ public class GenesisTeleop extends OpMode {
         driverOI.updateValues();
         operatorOI.updateValues();
 
-        double power = driverOI.leftJSPower();
-        double angle = driverOI.leftJSAngle(driverOI.a.get());
-        double turn = driverOI.right_stick_x;
+        double power = driverOI.leftStickRadius();
+        double angle = driverOI.leftStickTheta(driverOI.a.get());
+        double turn = driverOI.right_stick_x.get();
 
         // Show Telemetry
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
+        telemetry.addData("Status", "Run Time: " + runtime);
         telemetry.addData("Drive Power", power);
         telemetry.addData("angle", angle);
         telemetry.addData("turn power", turn);

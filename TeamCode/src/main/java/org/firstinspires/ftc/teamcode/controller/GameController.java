@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.controller;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.utils.NumWiz;
+import org.firstinspires.ftc.teamcode.utils.Calculator;
 
 /**
  * The Class defining a GameController
@@ -24,20 +24,21 @@ public class GameController {
     public Button back;
     public Button right_stick_button;
     public Button left_stick_button;
-    public double left_stick_x;
-    public double left_stick_y;
-    public double right_stick_x;
-    public double right_stick_y;
-    public double right_trigger;
-    public double left_trigger;
+    public Axis left_stick_x;
+    public Axis left_stick_y;
+    public Axis right_stick_x;
+    public Axis right_stick_y;
+    public Axis right_trigger;
+    public Axis left_trigger;
 
     /**
-     * Constucts the GameController with a Gamepad
+     * Constructs the GameController with a Gamepad
      *
      * @param gamepad the gamepad to monitor
      */
     public GameController(Gamepad gamepad) {
         this.gamepad = gamepad;
+
         y = new Button();
         x = new Button();
         b = new Button();
@@ -52,28 +53,37 @@ public class GameController {
         back = new Button();
         right_stick_button = new Button();
         left_stick_button = new Button();
+
+        left_stick_x = new Axis();
+        left_stick_y = new Axis();
+        right_stick_x = new Axis();
+        right_stick_y = new Axis();
+        right_trigger = new Axis();
+        left_trigger = new Axis();
     }
 
     /**
      * The R from the (R, theta) of the Left Joystick
      *
-     * @return the power in the range [-1, 1]
+     * @return the radius in the range [-1, 1]
      */
-    public double leftJSPower() {
-        return Range.clip(Math.sqrt(left_stick_x * left_stick_x + left_stick_y * left_stick_y), -1.0, 1.0);
+    public double leftStickRadius() {
+        double x = left_stick_x.get();
+        double y = left_stick_y.get();
+        return Range.clip(Math.sqrt(x * x + y * y), -1.0, 1.0);
     }
 
     /**
      * The theta from the (R, theta) of the Left Joystick
      *
      * @param isBlue whether we are on Blue Alliance
-     * @return the theta in the range [-180, 180]
+     * @return the theta in the range [-180, 180)
      */
-    public double leftJSAngle(boolean isBlue) {
+    public double leftStickTheta(boolean isBlue) {
         if (isBlue)
-            return NumWiz.addAngles(Math.toDegrees(Math.atan2(left_stick_y, left_stick_x)), 0.0);
+            return Calculator.addAngles(Math.toDegrees(Math.atan2(-left_stick_y.get(), left_stick_x.get())), 0.0);
         else
-            return NumWiz.addAngles(Math.toDegrees(Math.atan2(left_stick_y, left_stick_x)), 180.0);
+            return Calculator.addAngles(Math.toDegrees(Math.atan2(-left_stick_y.get(), left_stick_x.get())), 180.0);
     }
 
     /**
@@ -94,11 +104,12 @@ public class GameController {
         back.updateStates(gamepad.back);
         right_stick_button.updateStates(gamepad.right_stick_button);
         left_stick_button.updateStates(gamepad.left_stick_button);
-        left_stick_x = gamepad.left_stick_x;
-        left_stick_y = -gamepad.left_stick_y;
-        right_stick_x = gamepad.right_stick_x;
-        right_stick_y = -gamepad.right_stick_y;
-        right_trigger = gamepad.right_trigger;
-        left_trigger = gamepad.left_trigger;
+
+        left_stick_x.updateStates(gamepad.left_stick_x);
+        left_stick_y.updateStates(gamepad.left_stick_y);
+        right_stick_x.updateStates(gamepad.right_stick_x);
+        right_stick_y.updateStates(gamepad.right_stick_y);
+        right_trigger.updateStates(gamepad.right_trigger);
+        left_trigger.updateStates(gamepad.left_trigger);
     }
 }

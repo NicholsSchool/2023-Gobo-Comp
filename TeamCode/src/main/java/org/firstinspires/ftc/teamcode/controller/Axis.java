@@ -1,15 +1,16 @@
 package org.firstinspires.ftc.teamcode.controller;
 
 import androidx.annotation.NonNull;
+
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
 /**
  * The class defining Axes on a GameController
  */
 public class Axis implements Constants {
+    private final double deadBand;
     private double value;
     private double previousValue;
-    private final double deadBand;
 
     /**
      * Creates an Axis Object with the default deadBand
@@ -20,6 +21,7 @@ public class Axis implements Constants {
 
     /**
      * Creates an Axis Object with a specified deadBand
+     *
      * @param deadBand the desired deadBand
      */
     public Axis(double deadBand) {
