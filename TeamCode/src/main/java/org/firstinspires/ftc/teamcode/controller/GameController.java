@@ -1,33 +1,35 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.controller;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.utils.NumWiz;
 
 /**
  * The Class defining a GameController
  */
 public class GameController {
-    private Gamepad gamepad;
-    Button y;
-    Button x;
-    Button b;
-    Button a;
-    Button dpad_up;
-    Button dpad_down;
-    Button dpad_left;
-    Button dpad_right;
-    Button left_bumper;
-    Button right_bumper;
-    Button start;
-    Button back;
-    Button right_stick_button;
-    Button left_stick_button;
-    double left_stick_x;
-    double left_stick_y;
-    double right_stick_x;
-    double right_stick_y;
-    double right_trigger;
-    double left_trigger;
+    private final Gamepad gamepad;
+    public Button y;
+    public Button x;
+    public Button b;
+    public Button a;
+    public Button dpad_up;
+    public Button dpad_down;
+    public Button dpad_left;
+    public Button dpad_right;
+    public Button left_bumper;
+    public Button right_bumper;
+    public Button start;
+    public Button back;
+    public Button right_stick_button;
+    public Button left_stick_button;
+    public double left_stick_x;
+    public double left_stick_y;
+    public double right_stick_x;
+    public double right_stick_y;
+    public double right_trigger;
+    public double left_trigger;
 
     /**
      * Constucts the GameController with a Gamepad
@@ -75,7 +77,7 @@ public class GameController {
     }
 
     /**
-     * updates the GameController fields, call at the start of each loop()
+     * updates the GameController fields, call at the start of each loop() cycle
      */
     public void updateValues() {
         y.updateStates(gamepad.y);

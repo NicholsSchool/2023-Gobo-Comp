@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.utils;
 
 /**
  * Performs Calculations Necessary for the Robot
@@ -30,7 +30,7 @@ public class NumWiz {
      * @param wy the waypoint y coordinate
      * @return the drive angle in degrees [-180, 180)
      */
-    public static double driveToVertex(double rx, double ry, double wx, double wy) {
+    public static double angleToVertex(double rx, double ry, double wx, double wy) {
         if (rx == wx && ry == wy)
             return 0.0;
         double angle = Math.toDegrees(Math.atan2(2.0 * (ry - wy), rx - wx));
@@ -50,7 +50,7 @@ public class NumWiz {
      * @param h  the x value of the previous waypoint
      * @return the drive angle in degrees [-180, 180)
      */
-    public static double driveFromVertex(double rx, double ry, double wx, double wy, double h) {
+    public static double angleFromVertex(double rx, double ry, double wx, double wy, double h) {
         if (rx == h || rx == wx)
             return 0.0;
         double robotDiff = Math.pow(rx - h, 2);

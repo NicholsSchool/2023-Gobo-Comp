@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.controller;
 
 import androidx.annotation.NonNull;
 
@@ -8,6 +8,14 @@ import androidx.annotation.NonNull;
 public class Button {
     private boolean state;
     private boolean previousState;
+
+    /**
+     * Creates a Button Object
+     */
+    public Button() {
+        this.state = false;
+        this.previousState = false;
+    }
 
     /**
      * Whether the button is pressed
