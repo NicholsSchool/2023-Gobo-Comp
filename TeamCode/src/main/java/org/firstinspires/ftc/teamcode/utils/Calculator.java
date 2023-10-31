@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.Range;
  * Also contains methods for advanced autonomous pathing.
  * The premise of these methods is to define piecewise
  * parabolas to waypoints and have the robot follow
- * those curves.
+ * those curves using the arc-tangent of the derivative.
  */
 public class Calculator implements Constants {
     /**
@@ -19,8 +19,10 @@ public class Calculator implements Constants {
      */
     public static double addAngles(double angle1, double angle2) {
         double sum = angle1 + angle2;
-        while (sum >= 180.0) sum -= 360.0;
-        while (sum < -180) sum += 360.0;
+        while(sum >= 180.0)
+            sum -= 360.0;
+        while(sum < -180)
+            sum += 360.0;
         return sum;
     }
 
@@ -45,12 +47,15 @@ public class Calculator implements Constants {
      * @param ry the robot's y coordinate
      * @param wx the waypoint x coordinate
      * @param wy the waypoint y coordinate
+     * @param toIntake whether the robot is going to the intake
      * @return the drive angle in degrees [-180, 180)
      */
-    public static double angleToVertex(double rx, double ry, double wx, double wy) {
-        if (rx == wx && ry == wy) return 0.0;
+    public static double angleToVertex(double rx, double ry, double wx, double wy, boolean toIntake) {
+        if(rx == wx && ry == wy)
+            return toIntake ? 0.0 : -180.0;
         double angle = Math.toDegrees(Math.atan2(2.0 * (ry - wy), rx - wx));
-        if (rx > wx) return addAngles(angle, 180.0);
+        if(toIntake)
+            return addAngles(angle, -180.0);
         return addAngles(angle, 0.0);
     }
 
@@ -64,15 +69,18 @@ public class Calculator implements Constants {
      * @param wx the waypoint x coordinate
      * @param wy the waypoint y coordinate
      * @param h  the x value of the previous waypoint
+     * @param toIntake whether the robot is going to the intake
      * @return the drive angle in degrees [-180, 180)
      */
-    public static double angleFromVertex(double rx, double ry, double wx, double wy, double h) {
-        if (rx == h || Math.abs(rx - h) == Math.abs(wx - h)) return 0.0;
+    public static double angleFromVertex(double rx, double ry, double wx, double wy, double h, boolean toIntake) {
         double robotDiff = Math.pow(rx - h, 2);
         double waypointDiff = Math.pow(wx - h, 2);
+        if(rx == h || robotDiff == waypointDiff)
+            return toIntake ? 0.0 : -180.0;
         double k = (wy * robotDiff - ry * waypointDiff) / (robotDiff - waypointDiff);
         double angle = Math.toDegrees(Math.atan2(2.0 * (ry - k), rx - h));
-        if (rx > wx) return addAngles(angle, 180.0);
+        if(toIntake)
+            return addAngles(angle, -180.0);
         return addAngles(angle, 0.0);
     }
 }

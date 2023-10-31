@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 /**
- * Defines the entire robot and complicated
- * actions that involve several subsystems
+ * I KNOW I DIDN'T JAVADOC YET GIVE ME A BREAK
  */
 public class RobotSystem {
 }
