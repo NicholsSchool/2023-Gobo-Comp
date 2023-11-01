@@ -5,7 +5,6 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
@@ -15,9 +14,8 @@ import org.firstinspires.ftc.teamcode.utils.Constants;
 
 /**
  * The robot drivetrain
- * TODO: reset imu method, for field oriented
  * TODO: check directions of motors and dead wheels
- * TODO: change drive and drivetest to do setVelocity()
+ * TODO: test all methods completely
  * TODO: feedforward tuning
  * TODO: odometry tuning
  */
@@ -104,16 +102,16 @@ public class Drivetrain implements Constants {
     }
 
     /**
-     * A method used to tune FeedForward Values, spins motors at equal power
+     * A testing and tuning method, spins motors at equal power
      *
-     * @param power the power to spin motors at
+     * @param power the power proportion to spin motors at
      */
-    public void driveTest(double power) //TODO: change this
+    public void driveTest(double power)
     {
-        backLeft.setPower(power);
-        backRight.setPower(power);
-        frontLeft.setPower(power);
-        frontRight.setPower(power);
+        backLeft.setVelocity(power * MAX_SPIN_SPEED);
+        backRight.setVelocity(power * MAX_SPIN_SPEED);
+        frontLeft.setVelocity(power * MAX_SPIN_SPEED);
+        frontRight.setVelocity(power * MAX_SPIN_SPEED);
     }
 
     /**
@@ -122,25 +120,26 @@ public class Drivetrain implements Constants {
      * @param power the driving power
      * @param angle the angle to drive at in degrees
      * @param turn the turning power
+     * @param autoAlign whether to autoAlign
+     * @param desiredAngle the angle to align to
      */
-//    public void drive(double power, double angle, double turn, boolean autoAlign, double desiredAngle)
-//    { //TODO: change this, lots of changes
-//        turn = Range.clip(turn, -TURN_LIMIT, TURN_LIMIT);
-//
-//        double heading = this.getFieldHeading();
-//        if(autoAlign)
-//            turn = this.autoAlign(desiredAngle, heading);
-//
-//        power = Range.clip(power, -MAX_LIMIT + Math.abs(turn), MAX_LIMIT - Math.abs(turn));
-//
-//        double corner1 = power * Math.sin(Math.toRadians(angle - 45.0 + 90 - heading));
-//        double corner2 = power * Math.sin(Math.toRadians(angle + 45.0 + 90 - heading));
-//
-//        backLeft.setPower(corner1 + turn);
-//        backRight.setPower(corner2 - turn);
-//        frontLeft.setPower(corner2 + turn);
-//        frontRight.setPower(corner1 - turn);
-//    }
+    public void drive(double power, double angle, double turn, boolean autoAlign, double desiredAngle)
+    {
+        double heading = getFieldHeading();
+
+        if(autoAlign)
+            turn = Calculator.turnToAngle(heading, desiredAngle);
+        else
+            turn = Range.clip(turn, -TURNING_GOVERNOR, TURNING_GOVERNOR);
+
+        double corner1 = power * Math.sin(Math.toRadians(angle - 45.0 + 90.0 - heading));
+        double corner2 = power * Math.sin(Math.toRadians(angle + 45.0 + 90.0 - heading));
+
+        backLeft.setVelocity((corner1 + turn) * MAX_SPIN_SPEED);
+        backRight.setVelocity((corner2 - turn) * MAX_SPIN_SPEED);
+        frontLeft.setVelocity((corner2 + turn) * MAX_SPIN_SPEED);
+        frontRight.setVelocity((corner1 - turn) * MAX_SPIN_SPEED);
+    }
 
     /**
      * Gets the heading of the robot on the field coordinate system
@@ -156,27 +155,47 @@ public class Drivetrain implements Constants {
             return Calculator.addAngles(angle, -180.0);
     }
 
-    /** //TODO: can this be called at the start of each loop?
-     * Update the robot's odometry, call at the end of each loop() before updateEncoderPositions()
+    /**
+     * Set Current Robot Direction to Field Oriented
+     * by resetting IMU yaw
      */
-//    public void updateCoordinates() {
-//        double heading = Math.toRadians(this.getFieldHeading());
-//        double deltaX = (centerDead.getCurrentPosition() - strafeTicks) * INCHES_PER_TICK * STRAFE_ODOMETRY_CORRECTION;
-//        double deltaY = ( (leftDead.getCurrentPosition() - leftTicks ) +
-//                ( rightDead.getCurrentPosition() - rightTicks ) ) * .5 * INCHES_PER_TICK * FORWARD_ODOMETRY_CORRECTION;
-//
-//        y += -deltaX * Math.cos(heading) + deltaY * Math.sin(heading);
-//        x += deltaX * Math.sin(heading) + deltaY * Math.cos(heading);
-//    }
+    public void resetIMU() {
+        imu.resetYaw();
+    }
 
     /**
-     * Updates encoder positions, call at the end of every loop
+     * Update the robot's odometry, call at the start of each loop() cycle
      */
-    public void updateEncoderPositions() {
+    public void updateOdometry() {
+        int currentLeft = leftDead.getCurrentPosition();
+        int currentRight = rightDead.getCurrentPosition();
+        int currentCenter = centerDead.getCurrentPosition();
+        double heading = Math.toRadians(getFieldHeading());
 
-        leftTicks = leftDead.getCurrentPosition();
-        rightTicks = rightDead.getCurrentPosition();
-        strafeTicks = centerDead.getCurrentPosition();
+        double deltaX = (currentCenter - strafeTicks) * INCHES_PER_TICK * STRAFE_ODOMETRY_CORRECTION;
+        double deltaY = ( (currentLeft - leftTicks ) +
+                ( currentRight - rightTicks ) ) * .5 * INCHES_PER_TICK * FORWARD_ODOMETRY_CORRECTION;
+
+        y += -deltaX * Math.cos(heading) + deltaY * Math.sin(heading);
+        x += deltaX * Math.sin(heading) + deltaY * Math.cos(heading);
+        leftTicks = currentLeft;
+        rightTicks = currentRight;
+        strafeTicks = currentCenter;
+    }
+
+    /**
+     * Get Motor Positions for telemetry
+     *
+     * @return in order: backLeft, backRight, frontLeft, frontRight positions
+     */
+    public double[] getMotorPositions()
+    {
+        return new double[]{
+                backLeft.getCurrentPosition(),
+                backRight.getCurrentPosition(),
+                frontLeft.getCurrentPosition(),
+                frontRight.getCurrentPosition()
+        };
     }
 
     /**
@@ -197,9 +216,10 @@ public class Drivetrain implements Constants {
     /**
      * Get the dead wheel position values for telemetry
      *
-     * @return the dead wheel encoder values
+     * @return the dead wheel encoder values in the order:
+     * left, right, center
      */
-    public double[] getPositions()
+    public double[] getOdometryPositions()
     {
         return new double[]{
                 leftDead.getCurrentPosition(),
@@ -214,6 +234,6 @@ public class Drivetrain implements Constants {
      * @return the x and y value of the center of the bot
      */
     public double[] getXY() {
-        return new double[]{this.x, this.y};
+        return new double[]{x, y};
     }
 }
