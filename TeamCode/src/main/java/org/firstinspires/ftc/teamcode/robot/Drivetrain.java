@@ -14,15 +14,13 @@ import org.firstinspires.ftc.teamcode.utils.Constants;
 
 /**
  * The robot drivetrain
- * TODO: check directions of motors and dead wheels
- * TODO: test all methods completely
  * TODO: feedforward tuning
  * TODO: odometry tuning
  */
 public class Drivetrain implements Constants {
     private BHI260IMU imu;
     private DcMotorEx frontLeft, frontRight, backLeft, backRight, leftDead, rightDead, centerDead;
-    private int leftTicks, rightTicks, strafeTicks;
+    private int previousLeft, previousRight, previousCenter;
     private double x, y;
     private boolean isBlueAlliance;
 
@@ -30,9 +28,9 @@ public class Drivetrain implements Constants {
     {
         // Initialize Variables
         this.isBlueAlliance = isBlueAlliance;
-        this.leftTicks = 0;
-        this.rightTicks = 0;
-        this.strafeTicks = 0;
+        this.previousLeft = 0;
+        this.previousRight = 0;
+        this.previousCenter = 0;
         this.x = x;
         this.y = y;
 
@@ -50,10 +48,10 @@ public class Drivetrain implements Constants {
         imu.resetYaw(); //Don't do this for actual matches
 
         // Initialize Motors
-        backLeft = hwMap.get(DcMotorEx.class, "backLeft");
-        backRight = hwMap.get(DcMotorEx.class, "backRight");
-        frontLeft = hwMap.get(DcMotorEx.class, "frontLeft");
-        frontRight = hwMap.get(DcMotorEx.class, "frontRight");
+        backLeft = hwMap.get(DcMotorEx.class, "backLeftDrive");
+        backRight = hwMap.get(DcMotorEx.class, "backRightDrive");
+        frontLeft = hwMap.get(DcMotorEx.class, "frontLeftDrive");
+        frontRight = hwMap.get(DcMotorEx.class, "frontRightDrive");
         leftDead = hwMap.get(DcMotorEx.class, "leftDead");
         rightDead = hwMap.get(DcMotorEx.class, "rightDead");
         centerDead = hwMap.get(DcMotorEx.class, "centerDead");
@@ -65,7 +63,7 @@ public class Drivetrain implements Constants {
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
         leftDead.setDirection(DcMotorSimple.Direction.FORWARD);
         rightDead.setDirection(DcMotorSimple.Direction.REVERSE);
-        centerDead.setDirection(DcMotorSimple.Direction.FORWARD);
+        centerDead.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Set Zero Power Behavior
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -121,10 +119,10 @@ public class Drivetrain implements Constants {
      * @param angle the angle to drive at in degrees
      * @param turn the turning power
      * @param autoAlign whether to autoAlign
-     * @param desiredAngle the angle to align to
      */
-    public void drive(double power, double angle, double turn, boolean autoAlign, double desiredAngle)
+    public void drive(double power, double angle, double turn, boolean autoAlign)
     {
+        double desiredAngle = 0.0; //TODO: desiredAngle calculations in this class, not in the teleop
         double heading = getFieldHeading();
 
         if(autoAlign)
@@ -150,9 +148,9 @@ public class Drivetrain implements Constants {
     {
         double angle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
         if (isBlueAlliance)
-            return Calculator.addAngles(angle, 0.0);
+            return Calculator.addAngles(angle, 90.0);
         else
-            return Calculator.addAngles(angle, -180.0);
+            return Calculator.addAngles(angle, -90.0);
     }
 
     /**
@@ -161,7 +159,7 @@ public class Drivetrain implements Constants {
      */
     public void resetIMU() {
         imu.resetYaw();
-    }
+    } //TODO: change to an offset, not reset bc messes up auto-align and telemetry
 
     /**
      * Update the robot's odometry, call at the start of each loop() cycle
@@ -172,15 +170,15 @@ public class Drivetrain implements Constants {
         int currentCenter = centerDead.getCurrentPosition();
         double heading = Math.toRadians(getFieldHeading());
 
-        double deltaX = (currentCenter - strafeTicks) * INCHES_PER_TICK * STRAFE_ODOMETRY_CORRECTION;
-        double deltaY = ( (currentLeft - leftTicks ) +
-                ( currentRight - rightTicks ) ) * .5 * INCHES_PER_TICK * FORWARD_ODOMETRY_CORRECTION;
+        double deltaX = (currentCenter - previousCenter) * INCHES_PER_TICK * STRAFE_ODOMETRY_CORRECTION;
+        double deltaY = ( (currentLeft - previousLeft ) +
+                ( currentRight - previousRight ) ) * .5 * INCHES_PER_TICK * FORWARD_ODOMETRY_CORRECTION;
 
         y += -deltaX * Math.cos(heading) + deltaY * Math.sin(heading);
         x += deltaX * Math.sin(heading) + deltaY * Math.cos(heading);
-        leftTicks = currentLeft;
-        rightTicks = currentRight;
-        strafeTicks = currentCenter;
+        previousLeft = currentLeft;
+        previousRight = currentRight;
+        previousCenter = currentCenter;
     }
 
     /**
