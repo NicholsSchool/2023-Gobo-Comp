@@ -21,7 +21,7 @@ public class Drivetrain implements Constants {
     private BHI260IMU imu;
     private DcMotorEx frontLeft, frontRight, backLeft, backRight, leftDead, rightDead, centerDead;
     private int previousLeft, previousRight, previousCenter;
-    private double x, y;
+    private double x, y, headingOffset;
     private boolean isBlueAlliance;
 
     public void init(HardwareMap hwMap, boolean isBlueAlliance, double x, double y)
@@ -33,6 +33,7 @@ public class Drivetrain implements Constants {
         this.previousCenter = 0;
         this.x = x;
         this.y = y;
+        this.headingOffset = 0.0;
 
         // Instantiating IMU Parameters, setting angleUnit...
         BHI260IMU.Parameters params = new BHI260IMU.Parameters(
@@ -124,6 +125,7 @@ public class Drivetrain implements Constants {
     {
         double desiredAngle = 0.0; //TODO: desiredAngle calculations in this class, not in the teleop
         double heading = getFieldHeading();
+        power = Range.clip(power, -DRIVING_GOVERNOR, DRIVING_GOVERNOR);
 
         if(autoAlign)
             turn = Calculator.turnToAngle(heading, desiredAngle);
@@ -132,7 +134,7 @@ public class Drivetrain implements Constants {
 
         double corner1 = power * Math.sin(Math.toRadians(angle - 45.0 + 90.0 - heading));
         double corner2 = power * Math.sin(Math.toRadians(angle + 45.0 + 90.0 - heading));
-
+        //TODO: include headingOffset in corner calculations for resseting field oriented
         backLeft.setVelocity((corner1 + turn) * MAX_SPIN_SPEED);
         backRight.setVelocity((corner2 - turn) * MAX_SPIN_SPEED);
         frontLeft.setVelocity((corner2 + turn) * MAX_SPIN_SPEED);
@@ -154,12 +156,11 @@ public class Drivetrain implements Constants {
     }
 
     /**
-     * Set Current Robot Direction to Field Oriented
-     * by resetting IMU yaw
+     * Set Field Oriented forward to the robot's heading by offsetting the IMU yaw
      */
-    public void resetIMU() {
-        imu.resetYaw();
-    } //TODO: change to an offset, not reset bc messes up auto-align and telemetry
+    public void resetFieldOriented() {
+        headingOffset = getFieldHeading();
+    }
 
     /**
      * Update the robot's odometry, call at the start of each loop() cycle

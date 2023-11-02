@@ -16,6 +16,9 @@ public interface Constants {
     /** The Maximum Spin Speed of a drive motor in ticks/second */
     public static final int MAX_SPIN_SPEED = 2800;
 
+    /** The Governor for Driving Speed as a proportion of available power */
+    public static final double DRIVING_GOVERNOR = 0.75;
+
     /** The Governor for Turning Speed as a proportion of available power */
     public static final double TURNING_GOVERNOR = 0.25;
 

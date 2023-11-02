@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.Range;
  * parabolas to waypoints and have the robot follow
  * those curves using the arc-tangent of the derivative.
  */
-public class Calculator implements Constants {
+public class Calculator implements Constants { //TODO: move methods with only 1 usage class
     /**
      * Adds two angles that are measured in degrees
      *
