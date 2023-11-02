@@ -27,18 +27,6 @@ public class Calculator implements Constants { //TODO: move methods with only 1 
     }
 
     /**
-     * Spins the robot anchor-less to a given heading smoothly using PID
-     *
-     * @param heading        the current robot heading
-     * @param desiredHeading the desired robot heading
-     * @return the turning speed as a proportion
-     */
-    public static double turnToAngle(double heading, double desiredHeading) {
-        double error = desiredHeading - heading;
-        return Range.clip(error * TURNING_P, -TURNING_GOVERNOR, TURNING_GOVERNOR);
-    }
-
-    /**
      * With the robot at (rx, ry), calculates the drive angle of the robot
      * in order to arrive at the waypoint (wx, wy) with the robot's vector
      * approaching a horizontal value, 0 or -180 smoothly

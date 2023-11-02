@@ -14,14 +14,12 @@ import org.firstinspires.ftc.teamcode.utils.Constants;
 
 /**
  * The robot drivetrain
- * TODO: feedforward tuning
- * TODO: odometry tuning
  */
-public class Drivetrain implements Constants {
+public class Drivetrain implements Constants { //TODO: feedforward tuning, odometry tuning
     private BHI260IMU imu;
     private DcMotorEx frontLeft, frontRight, backLeft, backRight, leftDead, rightDead, centerDead;
     private int previousLeft, previousRight, previousCenter;
-    private double x, y, headingOffset;
+    private double x, y, headingOffset, desiredHeading;
     private boolean isBlueAlliance;
 
     public void init(HardwareMap hwMap, boolean isBlueAlliance, double x, double y)
@@ -34,6 +32,7 @@ public class Drivetrain implements Constants {
         this.x = x;
         this.y = y;
         this.headingOffset = 0.0;
+        this.desiredHeading = 0.0;
 
         // Instantiating IMU Parameters, setting angleUnit...
         BHI260IMU.Parameters params = new BHI260IMU.Parameters(
@@ -120,25 +119,46 @@ public class Drivetrain implements Constants {
      * @param angle the angle to drive at in degrees
      * @param turn the turning power
      * @param autoAlign whether to autoAlign
+     * @param fieldOriented whether to drive field oriented
      */
-    public void drive(double power, double angle, double turn, boolean autoAlign)
+    public void drive(double power, double angle, double turn, boolean autoAlign, boolean fieldOriented)
     {
-        double desiredAngle = 0.0; //TODO: desiredAngle calculations in this class, not in the teleop
+        double desiredAngle = Calculator.addAngles(desiredHeading, headingOffset);
         double heading = getFieldHeading();
         power = Range.clip(power, -DRIVING_GOVERNOR, DRIVING_GOVERNOR);
 
-        if(autoAlign)
-            turn = Calculator.turnToAngle(heading, desiredAngle);
+        if(autoAlign && fieldOriented)
+            turn = turnToAngle(heading, desiredAngle);
         else
             turn = Range.clip(turn, -TURNING_GOVERNOR, TURNING_GOVERNOR);
 
-        double corner1 = power * Math.sin(Math.toRadians(angle - 45.0 + 90.0 - heading));
-        double corner2 = power * Math.sin(Math.toRadians(angle + 45.0 + 90.0 - heading));
-        //TODO: include headingOffset in corner calculations for resseting field oriented
+        double corner1;
+        double corner2;
+        if(fieldOriented) { //TODO: check if headingOffset should be added or subtracted
+            corner1 = power * Math.sin(Math.toRadians(angle - 45.0 + 90.0 - heading - headingOffset));
+            corner2 = power * Math.sin(Math.toRadians(angle + 45.0 + 90.0 - heading - headingOffset));
+        }
+        else { //TODO: check if robot oriented works
+            corner1 = power * Math.sin(Math.toRadians(angle - 45.0));
+            corner2 = power * Math.sin(Math.toRadians(angle + 45.0));
+        }
+
         backLeft.setVelocity((corner1 + turn) * MAX_SPIN_SPEED);
         backRight.setVelocity((corner2 - turn) * MAX_SPIN_SPEED);
         frontLeft.setVelocity((corner2 + turn) * MAX_SPIN_SPEED);
         frontRight.setVelocity((corner1 - turn) * MAX_SPIN_SPEED);
+    }
+
+    /**
+     * Spins the robot anchor-less to a given heading smoothly using PID
+     *
+     * @param heading        the current robot heading
+     * @param desiredHeading the desired robot heading
+     * @return the turning speed as a proportion
+     */
+    public static double turnToAngle(double heading, double desiredHeading) {
+        double error = desiredHeading - heading;
+        return Range.clip(error * TURNING_P, -TURNING_GOVERNOR, TURNING_GOVERNOR);
     }
 
     /**
@@ -160,6 +180,14 @@ public class Drivetrain implements Constants {
      */
     public void resetFieldOriented() {
         headingOffset = getFieldHeading();
+    }
+
+    /**
+     * Sets the heading to auto-align to
+     * @param desiredHeading the heading in degrees [-180, 180)
+     */
+    public void setDesiredHeading(double desiredHeading) {
+        this.desiredHeading = desiredHeading;
     }
 
     /**
