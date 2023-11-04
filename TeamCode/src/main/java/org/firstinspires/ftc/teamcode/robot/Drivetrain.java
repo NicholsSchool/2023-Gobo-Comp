@@ -63,13 +63,13 @@ public class Drivetrain implements Constants { //TODO: feedforward tuning, odome
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
         leftDead.setDirection(DcMotorSimple.Direction.FORWARD);
         rightDead.setDirection(DcMotorSimple.Direction.REVERSE);
-        centerDead.setDirection(DcMotorSimple.Direction.REVERSE);
+        centerDead.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        // Set Zero Power Behavior
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        // Set Zero Power Behavior TODO: change back to brake
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         leftDead.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightDead.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         centerDead.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -124,7 +124,9 @@ public class Drivetrain implements Constants { //TODO: feedforward tuning, odome
     public void drive(double power, double angle, double turn, boolean autoAlign, boolean fieldOriented)
     {
         double desiredAngle = Calculator.addAngles(desiredHeading, headingOffset);
-        double heading = getFieldHeading();
+
+        //TODO: check if headingOffset should be added or subtracted
+        double heading = getFieldHeading() - headingOffset;
         power = Range.clip(power, -DRIVING_GOVERNOR, DRIVING_GOVERNOR);
 
         if(autoAlign && fieldOriented)
@@ -134,13 +136,13 @@ public class Drivetrain implements Constants { //TODO: feedforward tuning, odome
 
         double corner1;
         double corner2;
-        if(fieldOriented) { //TODO: check if headingOffset should be added or subtracted
-            corner1 = power * Math.sin(Math.toRadians(angle - 45.0 + 90.0 - heading - headingOffset));
-            corner2 = power * Math.sin(Math.toRadians(angle + 45.0 + 90.0 - heading - headingOffset));
+        if(fieldOriented) {
+            corner1 = power * Math.sin(Math.toRadians(Calculator.addAngles(angle, -45.0 + 90.0 - heading)));
+            corner2 = power * Math.sin(Math.toRadians(Calculator.addAngles(angle, 45.0 + 90.0 - heading)));
         }
         else { //TODO: check if robot oriented works
-            corner1 = power * Math.sin(Math.toRadians(angle - 45.0));
-            corner2 = power * Math.sin(Math.toRadians(angle + 45.0));
+            corner1 = power * Math.sin(Math.toRadians(Calculator.addAngles(angle, -45.0)));
+            corner2 = power * Math.sin(Math.toRadians(Calculator.addAngles(angle, 45.0)));
         }
 
         backLeft.setVelocity((corner1 + turn) * MAX_SPIN_SPEED);
@@ -157,7 +159,7 @@ public class Drivetrain implements Constants { //TODO: feedforward tuning, odome
      * @return the turning speed as a proportion
      */
     public static double turnToAngle(double heading, double desiredHeading) {
-        double error = desiredHeading - heading;
+        double error = Calculator.addAngles(-desiredHeading, heading);
         return Range.clip(error * TURNING_P, -TURNING_GOVERNOR, TURNING_GOVERNOR);
     }
 

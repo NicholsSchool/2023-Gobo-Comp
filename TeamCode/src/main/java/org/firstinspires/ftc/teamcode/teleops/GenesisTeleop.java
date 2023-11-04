@@ -59,7 +59,7 @@ public class GenesisTeleop extends OpMode implements Constants {
         double power = driverOI.leftStickRadius();
         double angle = driverOI.leftStickTheta(alliance);
         double turn = driverOI.right_stick_x.get();
-        drivetrain.drive(power, angle, turn, false);
+        drivetrain.drive(power, angle, turn, driverOI.dpad_up.get(), driverOI.a.get());
 
         // Show Telemetry
         telemetry.addData("Status", "Run Time: " + runtime);
