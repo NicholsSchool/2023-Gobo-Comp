@@ -51,4 +51,10 @@ public interface Constants {
 
     /** The Multiplier to strafe distance tracking */
     public static final double STRAFE_ODOMETRY_CORRECTION = 1.0;
+
+    /** Servo position for intake actuators when vertical */
+    public static final double INTAKE_UP_POSITION = 0.2;
+
+    /** Servo position for intake actuators when touching floor */
+    public static final double INTAKE_DOWN_POSITION = 1;
 }
