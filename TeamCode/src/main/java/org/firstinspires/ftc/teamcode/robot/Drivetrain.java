@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.utils.Constants;
 /**
  * The robot drivetrain
  */
-public class Drivetrain implements Constants { //TODO: feedforward tuning, odometry tuning
+public class Drivetrain implements Constants { //TODO: feedforward tuning, odometry tuning, autoAlign tuning
     private BHI260IMU imu;
     private DcMotorEx frontLeft, frontRight, backLeft, backRight, leftDead, rightDead, centerDead;
     private int previousLeft, previousRight, previousCenter;
@@ -32,7 +32,7 @@ public class Drivetrain implements Constants { //TODO: feedforward tuning, odome
         this.x = x;
         this.y = y;
         this.headingOffset = 0.0;
-        this.desiredHeading = 0.0;
+        this.desiredHeading = isBlueAlliance ? 90.0 : -90.0;
 
         // Instantiating IMU Parameters, setting angleUnit...
         BHI260IMU.Parameters params = new BHI260IMU.Parameters(
@@ -65,11 +65,11 @@ public class Drivetrain implements Constants { //TODO: feedforward tuning, odome
         rightDead.setDirection(DcMotorSimple.Direction.REVERSE);
         centerDead.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        // Set Zero Power Behavior TODO: change back to brake
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        // Set Zero Power Behavior
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftDead.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightDead.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         centerDead.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -125,8 +125,8 @@ public class Drivetrain implements Constants { //TODO: feedforward tuning, odome
     {
         double desiredAngle = Calculator.addAngles(desiredHeading, headingOffset);
 
-        //TODO: check if headingOffset should be added or subtracted
-        double heading = getFieldHeading() - headingOffset;
+        //TODO: test if this works after tuning
+        double heading = getFieldHeading() + headingOffset;
         power = Range.clip(power, -DRIVING_GOVERNOR, DRIVING_GOVERNOR);
 
         if(autoAlign && fieldOriented)
@@ -140,7 +140,7 @@ public class Drivetrain implements Constants { //TODO: feedforward tuning, odome
             corner1 = power * Math.sin(Math.toRadians(Calculator.addAngles(angle, -45.0 + 90.0 - heading)));
             corner2 = power * Math.sin(Math.toRadians(Calculator.addAngles(angle, 45.0 + 90.0 - heading)));
         }
-        else { //TODO: check if robot oriented works
+        else {
             corner1 = power * Math.sin(Math.toRadians(Calculator.addAngles(angle, -45.0)));
             corner2 = power * Math.sin(Math.toRadians(Calculator.addAngles(angle, 45.0)));
         }
@@ -160,7 +160,9 @@ public class Drivetrain implements Constants { //TODO: feedforward tuning, odome
      */
     public static double turnToAngle(double heading, double desiredHeading) {
         double error = Calculator.addAngles(-desiredHeading, heading);
-        return Range.clip(error * TURNING_P, -TURNING_GOVERNOR, TURNING_GOVERNOR);
+        if(Math.abs(error) >= TURNING_ERROR)
+            return Range.clip(error * TURNING_P, -TURNING_GOVERNOR, TURNING_GOVERNOR);
+        return 0.0;
     }
 
     /**
@@ -177,6 +179,7 @@ public class Drivetrain implements Constants { //TODO: feedforward tuning, odome
             return Calculator.addAngles(angle, -90.0);
     }
 
+    //TODO: make sure this works
     /**
      * Set Field Oriented forward to the robot's heading by offsetting the IMU yaw
      */

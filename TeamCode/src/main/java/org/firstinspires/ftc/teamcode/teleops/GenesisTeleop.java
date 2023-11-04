@@ -16,6 +16,7 @@ public class GenesisTeleop extends OpMode implements Constants {
     private GameController driverOI;
     private GameController operatorOI;
     private Drivetrain drivetrain;
+    private boolean fieldOriented;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -27,6 +28,7 @@ public class GenesisTeleop extends OpMode implements Constants {
         operatorOI = new GameController(gamepad2);
         drivetrain = new Drivetrain();
         drivetrain.init(hardwareMap, alliance, 0.0, 0.0);
+        fieldOriented = true;
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -59,31 +61,50 @@ public class GenesisTeleop extends OpMode implements Constants {
         double power = driverOI.leftStickRadius();
         double angle = driverOI.leftStickTheta(alliance);
         double turn = driverOI.right_stick_x.get();
-        drivetrain.drive(power, angle, turn, driverOI.dpad_up.get(), driverOI.a.get());
+
+//        if(driverOI.start.wasJustPressed())
+//            drivetrain.resetFieldOriented();
+        if(driverOI.back.wasJustPressed())
+            fieldOriented = !fieldOriented;
+
+        if(turn != 0.0)
+            drivetrain.setDesiredHeading(drivetrain.getFieldHeading());
+        else if(driverOI.y.wasJustPressed())
+            drivetrain.setDesiredHeading(90.0);
+        else if(driverOI.a.wasJustPressed())
+            drivetrain.setDesiredHeading(-90.0);
+        else if(driverOI.b.wasJustPressed())
+            drivetrain.setDesiredHeading(0.0);
+        else if(driverOI.x.wasJustPressed())
+            drivetrain.setDesiredHeading(-180.0);
+
+        drivetrain.drive(power, angle, turn, turn == 0.0, fieldOriented);
 
         // Show Telemetry
         telemetry.addData("Status", "Run Time: " + runtime);
         telemetry.addData("Drive Power", power);
         telemetry.addData("angle", angle);
         telemetry.addData("turn power", turn);
-        double[] motorPos = drivetrain.getMotorPositions();
-        telemetry.addData("back left drive pos", motorPos[0]);
-        telemetry.addData("back right drive pos", motorPos[1]);
-        telemetry.addData("front left drive pos", motorPos[2]);
-        telemetry.addData("front right drive pos", motorPos[3]);
+//        double[] motorPos = drivetrain.getMotorPositions();
+//        telemetry.addData("back left drive pos", motorPos[0]);
+//        telemetry.addData("back right drive pos", motorPos[1]);
+//        telemetry.addData("front left drive pos", motorPos[2]);
+//        telemetry.addData("front right drive pos", motorPos[3]);
         double[] motorVel = drivetrain.getMotorVelocities();
         telemetry.addData("back left drive vel", motorVel[0]);
         telemetry.addData("back right drive vel", motorVel[1]);
         telemetry.addData("front left drive vel", motorVel[2]);
         telemetry.addData("front right drive vel", motorVel[3]);
-        double[] deadPos = drivetrain.getOdometryPositions();
-        telemetry.addData("left dead pos", deadPos[0]);
-        telemetry.addData("right dead pos", deadPos[1]);
-        telemetry.addData("center dead pos", deadPos[2]);
+//        double[] deadPos = drivetrain.getOdometryPositions();
+//        telemetry.addData("left dead pos", deadPos[0]);
+//        telemetry.addData("right dead pos", deadPos[1]);
+//        telemetry.addData("center dead pos", deadPos[2]);
         double[] xy = drivetrain.getXY();
         telemetry.addData("x", xy[0]);
         telemetry.addData("y", xy[1]);
         telemetry.addData("imu", drivetrain.getFieldHeading());
+        telemetry.addData("autoAligning", turn == 0.0);
+        telemetry.addData("field oriented", fieldOriented);
     }
 
     /*

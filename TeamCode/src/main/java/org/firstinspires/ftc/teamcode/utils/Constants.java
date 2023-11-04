@@ -25,17 +25,20 @@ public interface Constants {
     /** The Proportional Constant for PID turning to an angle */
     public static final double TURNING_P = 0.1;
 
+    /** The +/- allowed error for autoAligning */
+    public static final double TURNING_ERROR = 1.0;
+
     /** The Feedforward Coefficient for the Back Left Drive Motor */
-    public static final double BACK_LEFT_FF = 10.0;
+    public static final double BACK_LEFT_FF = 15.0;
 
     /** The Feedforward Coefficient for the Back Right Drive Motor */
-    public static final double BACK_RIGHT_FF = 10.0;
+    public static final double BACK_RIGHT_FF = 15.0;
 
     /** The Feedforward Coefficient for the Front Left Drive Motor */
-    public static final double FRONT_LEFT_FF = 10.0;
+    public static final double FRONT_LEFT_FF = 15.0;
 
     /** The Feedforward Coefficient for the Front Right Drive Motor */
-    public static final double FRONT_RIGHT_FF = 10.0;
+    public static final double FRONT_RIGHT_FF = 15.0;
 
     /** Ticks per revolution of the dead wheels */
     public static final int TICKS_PER_REV = 8192;
