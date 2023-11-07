@@ -278,7 +278,7 @@ public class Drivetrain implements Constants {
             return toIntake ? 0.0 : -180.0;
         double k = (wy * robotDiff - ry * waypointDiff) / (robotDiff - waypointDiff);
         double angle = Math.toDegrees(Math.atan2(2.0 * (ry - k), rx - h));
-        if(!toIntake ^ Math.abs(rx) > Math.abs(wx)) //TODO fix this logic
+        if(toIntake == Math.abs(rx) > Math.abs(wx))
             return Calculator.addAngles(angle, -180.0);
         return Calculator.addAngles(angle, 0.0);
     }

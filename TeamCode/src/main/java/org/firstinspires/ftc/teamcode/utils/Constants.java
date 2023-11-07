@@ -87,4 +87,10 @@ public interface Constants {
 
     /** The Y value of the Red Intake Point */
     double RED_INTAKE_Y = -60.0;
+
+    /** Servo position for intake actuators when vertical */
+    double INTAKE_UP_POSITION = 0.2;
+
+    /** Servo position for intake actuators when touching floor */
+    double INTAKE_DOWN_POSITION = 0.75;
 }

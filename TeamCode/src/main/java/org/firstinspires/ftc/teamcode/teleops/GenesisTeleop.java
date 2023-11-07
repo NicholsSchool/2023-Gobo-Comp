@@ -6,16 +6,21 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.controller.GameController;
 import org.firstinspires.ftc.teamcode.robot.Drivetrain;
+import org.firstinspires.ftc.teamcode.robot.Intake;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
 @TeleOp(name = "Teleop: Robot Genesis")
 public class GenesisTeleop extends OpMode implements Constants {
     // Declare OpMode members.
     private boolean alliance;
+    private double power;
+    private double angle;
+    private double turn;
     private final ElapsedTime runtime = new ElapsedTime();
     private GameController driverOI;
     private GameController operatorOI;
     private Drivetrain drivetrain;
+    private Intake intake;
     private boolean fieldOriented;
     private boolean splineToIntake;
     private boolean splineToScoring;
@@ -26,10 +31,15 @@ public class GenesisTeleop extends OpMode implements Constants {
     @Override
     public void init() {
         alliance = BLUE_ALLIANCE;
+        power = 0.0;
+        angle = 0.0;
+        turn = 0.0;
         driverOI = new GameController(gamepad1);
         operatorOI = new GameController(gamepad2);
         drivetrain = new Drivetrain();
         drivetrain.init(hardwareMap, alliance, 0.0, 0.0);
+        intake = new Intake();
+        intake.init(hardwareMap);
         fieldOriented = true;
         splineToIntake = false;
         splineToScoring = false;
@@ -60,27 +70,23 @@ public class GenesisTeleop extends OpMode implements Constants {
     public void loop() {
         driverOI.updateValues();
         operatorOI.updateValues();
+
         drivetrain.updatePose();
 
-        double power = driverOI.leftStickRadius();
-        double angle = driverOI.leftStickTheta(alliance);
-        double turn = driverOI.right_stick_x.get();
+        if(driverOI.left_trigger.get() > 0.0)
+            intake.panToPosition(false);
+        else if(driverOI.right_trigger.get() > 0.0)
+            intake.panToPosition(true);
+
+        power = driverOI.leftStickRadius();
+        angle = driverOI.leftStickTheta(alliance);
+        turn = driverOI.right_stick_x.get();
 
         if(driverOI.start.wasJustPressed())
             drivetrain.setHeadingOffset();
 
         if(driverOI.back.wasJustPressed())
             fieldOriented = !fieldOriented;
-
-        if(driverOI.left_bumper.wasJustPressed())
-            splineToScoring = true;
-        if(driverOI.right_bumper.wasJustPressed())
-            splineToIntake = true;
-
-        if(power != 0.0) {
-            splineToScoring = false;
-            splineToIntake = false;
-        }
 
         if(turn != 0.0)
             drivetrain.setDesiredHeading(drivetrain.getFieldHeading());
@@ -93,16 +99,30 @@ public class GenesisTeleop extends OpMode implements Constants {
         else if(driverOI.x.wasJustPressed())
             drivetrain.setDesiredHeading(-180.0);
 
-        if(splineToIntake) {
+        if(driverOI.dpad_left.wasJustPressed())
+            splineToScoring = true;
+        else if(driverOI.dpad_right.wasJustPressed())
+            splineToIntake = true;
+
+        if(power != 0.0) {
+            splineToScoring = false;
+            splineToIntake = false;
+        }
+
+        if(splineToIntake)
             drivetrain.splineToIntake(turn, true);
-        }
-        else if(splineToScoring) {
+        else if(splineToScoring)
             drivetrain.splineToScoring(turn, true);
-        }
         else
             drivetrain.drive(power, angle, turn, turn == 0.0, fieldOriented);
 
-        // Show Telemetry
+        updateTelemetry();
+    }
+
+    /**
+     * Prints Telemetry to the Driver Station
+     */
+    public void updateTelemetry() {
         telemetry.addData("Status", "Run Time: " + runtime);
         telemetry.addData("Drive Power", power);
         telemetry.addData("angle", angle);
@@ -127,6 +147,7 @@ public class GenesisTeleop extends OpMode implements Constants {
         telemetry.addData("imu", drivetrain.getFieldHeading());
         telemetry.addData("autoAligning", turn == 0.0);
         telemetry.addData("field oriented", fieldOriented);
+        telemetry.update();
     }
 
     /*

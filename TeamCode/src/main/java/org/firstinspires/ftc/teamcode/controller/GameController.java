@@ -81,9 +81,9 @@ public class GameController {
      */
     public double leftStickTheta(boolean isBlue) {
         if (isBlue)
-            return Calculator.addAngles(Math.toDegrees(Math.atan2(-left_stick_y.get(), left_stick_x.get())), 0.0);
+            return Calculator.addAngles(Math.toDegrees(Math.atan2(left_stick_y.get(), left_stick_x.get())), 0.0);
         else
-            return Calculator.addAngles(Math.toDegrees(Math.atan2(-left_stick_y.get(), left_stick_x.get())), 180.0);
+            return Calculator.addAngles(Math.toDegrees(Math.atan2(left_stick_y.get(), left_stick_x.get())), 180.0);
     }
 
     /**
@@ -106,9 +106,9 @@ public class GameController {
         left_stick_button.updateStates(gamepad.left_stick_button);
 
         left_stick_x.updateStates(gamepad.left_stick_x);
-        left_stick_y.updateStates(gamepad.left_stick_y);
+        left_stick_y.updateStates(-gamepad.left_stick_y);
         right_stick_x.updateStates(gamepad.right_stick_x);
-        right_stick_y.updateStates(gamepad.right_stick_y);
+        right_stick_y.updateStates(-gamepad.right_stick_y);
         right_trigger.updateStates(gamepad.right_trigger);
         left_trigger.updateStates(gamepad.left_trigger);
     }
