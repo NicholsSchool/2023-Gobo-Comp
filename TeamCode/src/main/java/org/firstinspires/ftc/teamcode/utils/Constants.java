@@ -5,53 +5,86 @@ package org.firstinspires.ftc.teamcode.utils;
  */
 public interface Constants {
     /** Blue Alliance Tag */
-    public static final boolean BLUE_ALLIANCE = true;
+    boolean BLUE_ALLIANCE = true;
 
     /** Red Alliance Tag */
-    public static final boolean RED_ALLIANCE = false;
+    boolean RED_ALLIANCE = false;
 
     /** The Default Controller Axis DeadBand */
-    public static final double DEFAULT_DEADBAND = 0.05;
+    double DEFAULT_DEADBAND = 0.05;
 
     /** The Maximum Spin Speed of a drive motor in ticks/second */
-    public static final int MAX_SPIN_SPEED = 2800;
+    int MAX_SPIN_SPEED = 2800;
 
-    /** The Governor for Driving Speed as a proportion of available power */
-    public static final double DRIVING_GOVERNOR = 0.75;
+    /** The Governor for Maximum Speed as a proportion of available power */
+    double OVERALL_GOVERNOR = 1.0;
 
     /** The Governor for Turning Speed as a proportion of available power */
-    public static final double TURNING_GOVERNOR = 0.25;
+    double TURNING_GOVERNOR = 0.3;
 
     /** The Proportional Constant for PID turning to an angle */
-    public static final double TURNING_P = 0.1;
+    double TURNING_P = 0.025;
 
     /** The +/- allowed error for autoAligning */
-    public static final double TURNING_ERROR = 1.0;
+    double TURNING_ERROR = 0.5;
 
     /** The Feedforward Coefficient for the Back Left Drive Motor */
-    public static final double BACK_LEFT_FF = 15.0;
+    double BACK_LEFT_FF = 12.0;
 
     /** The Feedforward Coefficient for the Back Right Drive Motor */
-    public static final double BACK_RIGHT_FF = 15.0;
+    double BACK_RIGHT_FF = 12.0;
 
     /** The Feedforward Coefficient for the Front Left Drive Motor */
-    public static final double FRONT_LEFT_FF = 15.0;
+    double FRONT_LEFT_FF = 12.0;
 
     /** The Feedforward Coefficient for the Front Right Drive Motor */
-    public static final double FRONT_RIGHT_FF = 15.0;
+    double FRONT_RIGHT_FF = 12.0;
 
     /** Ticks per revolution of the dead wheels */
-    public static final int TICKS_PER_REV = 8192;
+    int TICKS_PER_REV = 8192;
 
     /** Approximate Diameter of our Dead Wheels */
-    public static final double DEAD_DIAMETER = 2.5;
+    double DEAD_DIAMETER = 2.5;
 
     /** Inches driven per encoder tick of a dead wheel */
-    public static final double INCHES_PER_TICK = DEAD_DIAMETER * Math.PI / TICKS_PER_REV;
+    double INCHES_PER_TICK = DEAD_DIAMETER * Math.PI / TICKS_PER_REV;
 
     /** The Multiplier to forward distance tracking */
-    public static final double FORWARD_ODOMETRY_CORRECTION = 1.0;
+    double FORWARD_ODOMETRY_CORRECTION = 130.0 / 134.0;
 
     /** The Multiplier to strafe distance tracking */
-    public static final double STRAFE_ODOMETRY_CORRECTION = 1.0;
+    double STRAFE_ODOMETRY_CORRECTION = 130.0 / 132.5;
+
+    /** The Proportional Constant for PID spline */
+    double SPLINE_P = 0.1;
+
+    /** The X value of the Scoring Points */
+    double SCORING_X = -48.0;
+
+    /** The Y value of the Blue Scoring Point */
+    double BLUE_SCORING_Y = 36.0;
+
+    /** The Y value of the Red Scoring Point */
+    double RED_SCORING_Y = -36.0;
+
+    /** The X value of the Left Waypoint Points */
+    double LEFT_WAYPOINT_X = -12.0;
+
+    /** The X value of the Right Waypoint Points */
+    double RIGHT_WAYPOINT_X = 36.0;
+
+    /** The Y value of the Blue Waypoint Points */
+    double BLUE_WAYPOINT_Y = 36.0;
+
+    /** The Y value of the Red Waypoint Point */
+    double RED_WAYPOINT_Y = -36.0;
+
+    /** The X value of the Intake Points */
+    double INTAKE_X = 60.0;
+
+    /** The Y value of the Blue Intake Point */
+    double BLUE_INTAKE_Y = 60.0;
+
+    /** The Y value of the Red Intake Point */
+    double RED_INTAKE_Y = -60.0;
 }

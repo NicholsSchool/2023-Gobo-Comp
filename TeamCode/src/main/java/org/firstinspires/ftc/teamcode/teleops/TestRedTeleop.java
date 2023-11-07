@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.controller.GameController;
 import org.firstinspires.ftc.teamcode.robot.Drivetrain;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
-@TeleOp(name = "Teleop: Robot Genesis")
-public class GenesisTeleop extends OpMode implements Constants {
+@TeleOp(name = "Teleop: Red Testing")
+public class TestRedTeleop extends OpMode implements Constants {
     // Declare OpMode members.
     private boolean alliance;
     private final ElapsedTime runtime = new ElapsedTime();
@@ -17,22 +17,18 @@ public class GenesisTeleop extends OpMode implements Constants {
     private GameController operatorOI;
     private Drivetrain drivetrain;
     private boolean fieldOriented;
-    private boolean splineToIntake;
-    private boolean splineToScoring;
 
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
-        alliance = BLUE_ALLIANCE;
+        alliance = RED_ALLIANCE;
         driverOI = new GameController(gamepad1);
         operatorOI = new GameController(gamepad2);
         drivetrain = new Drivetrain();
         drivetrain.init(hardwareMap, alliance, 0.0, 0.0);
         fieldOriented = true;
-        splineToIntake = false;
-        splineToScoring = false;
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -72,35 +68,18 @@ public class GenesisTeleop extends OpMode implements Constants {
         if(driverOI.back.wasJustPressed())
             fieldOriented = !fieldOriented;
 
-        if(driverOI.left_bumper.wasJustPressed())
-            splineToScoring = true;
-        if(driverOI.right_bumper.wasJustPressed())
-            splineToIntake = true;
-
-        if(power != 0.0) {
-            splineToScoring = false;
-            splineToIntake = false;
-        }
-
         if(turn != 0.0)
             drivetrain.setDesiredHeading(drivetrain.getFieldHeading());
         else if(driverOI.y.wasJustPressed())
-            drivetrain.setDesiredHeading(90.0);
-        else if(driverOI.a.wasJustPressed())
             drivetrain.setDesiredHeading(-90.0);
+        else if(driverOI.a.wasJustPressed())
+            drivetrain.setDesiredHeading(90.0);
         else if(driverOI.b.wasJustPressed())
-            drivetrain.setDesiredHeading(0.0);
-        else if(driverOI.x.wasJustPressed())
             drivetrain.setDesiredHeading(-180.0);
+        else if(driverOI.x.wasJustPressed())
+            drivetrain.setDesiredHeading(0.0);
 
-        if(splineToIntake) {
-            drivetrain.splineToIntake(turn, true);
-        }
-        else if(splineToScoring) {
-            drivetrain.splineToScoring(turn, true);
-        }
-        else
-            drivetrain.drive(power, angle, turn, turn == 0.0, fieldOriented);
+        drivetrain.drive(power, angle, turn, driverOI.left_bumper.get(), fieldOriented);
 
         // Show Telemetry
         telemetry.addData("Status", "Run Time: " + runtime);

@@ -15,24 +15,37 @@ import org.firstinspires.ftc.teamcode.utils.Constants;
 /**
  * The robot drivetrain
  */
-public class Drivetrain implements Constants { //TODO: feedforward tuning, odometry tuning, autoAlign tuning
+public class Drivetrain implements Constants {
+    //TODO: spline has problems still, troubleshoot them, and for red
+    //TODO: Velocity PIDF and arm PIDF using FTC Dashboard
+    //TODO: then april tags
     private BHI260IMU imu;
-    private DcMotorEx frontLeft, frontRight, backLeft, backRight, leftDead, rightDead, centerDead;
+    //TODO: change back to private after motor tuning
+    public DcMotorEx frontLeft, frontRight, backLeft, backRight, leftDead, rightDead, centerDead;
     private int previousLeft, previousRight, previousCenter;
-    private double x, y, headingOffset, desiredHeading;
-    private boolean isBlueAlliance;
+    private double x, y, heading, headingOffset, desiredHeading;
+    private boolean alliance;
 
-    public void init(HardwareMap hwMap, boolean isBlueAlliance, double x, double y)
+    /**
+     * Initializes the Drivetrain object
+     *
+     * @param hwMap the hardwareMap
+     * @param alliance true for blue, false for red
+     * @param x the starting x coordinate
+     * @param y the starting y coordinate
+     */
+    public void init(HardwareMap hwMap, boolean alliance, double x, double y)
     {
         // Initialize Variables
-        this.isBlueAlliance = isBlueAlliance;
+        this.alliance = alliance;
         this.previousLeft = 0;
         this.previousRight = 0;
         this.previousCenter = 0;
         this.x = x;
         this.y = y;
+        this.heading = alliance ? 90.0 : -90.0;
         this.headingOffset = 0.0;
-        this.desiredHeading = isBlueAlliance ? 90.0 : -90.0;
+        this.desiredHeading = heading;
 
         // Instantiating IMU Parameters, setting angleUnit...
         BHI260IMU.Parameters params = new BHI260IMU.Parameters(
@@ -70,6 +83,10 @@ public class Drivetrain implements Constants { //TODO: feedforward tuning, odome
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         leftDead.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightDead.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         centerDead.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -92,7 +109,7 @@ public class Drivetrain implements Constants { //TODO: feedforward tuning, odome
         rightDead.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         centerDead.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        // Set Motor FF Coefficients
+        // Set Motor PIDF Coefficients
         backLeft.setVelocityPIDFCoefficients(0, 0, 0, BACK_LEFT_FF);
         backRight.setVelocityPIDFCoefficients(0, 0, 0, BACK_RIGHT_FF);
         frontLeft.setVelocityPIDFCoefficients(0, 0, 0, FRONT_LEFT_FF);
@@ -123,16 +140,12 @@ public class Drivetrain implements Constants { //TODO: feedforward tuning, odome
      */
     public void drive(double power, double angle, double turn, boolean autoAlign, boolean fieldOriented)
     {
-        double desiredAngle = Calculator.addAngles(desiredHeading, headingOffset);
-
-        //TODO: test if this works after tuning
-        double heading = getFieldHeading() + headingOffset;
-        power = Range.clip(power, -DRIVING_GOVERNOR, DRIVING_GOVERNOR);
-
         if(autoAlign && fieldOriented)
-            turn = turnToAngle(heading, desiredAngle);
+            turn = turnToAngle();
         else
             turn = Range.clip(turn, -TURNING_GOVERNOR, TURNING_GOVERNOR);
+
+        power = Range.clip(power, turn - OVERALL_GOVERNOR, OVERALL_GOVERNOR - turn);
 
         double corner1;
         double corner2;
@@ -154,12 +167,10 @@ public class Drivetrain implements Constants { //TODO: feedforward tuning, odome
     /**
      * Spins the robot anchor-less to a given heading smoothly using PID
      *
-     * @param heading        the current robot heading
-     * @param desiredHeading the desired robot heading
      * @return the turning speed as a proportion
      */
-    public static double turnToAngle(double heading, double desiredHeading) {
-        double error = Calculator.addAngles(-desiredHeading, heading);
+    public double turnToAngle() {
+        double error = Calculator.addAngles(heading, -desiredHeading);
         if(Math.abs(error) >= TURNING_ERROR)
             return Range.clip(error * TURNING_P, -TURNING_GOVERNOR, TURNING_GOVERNOR);
         return 0.0;
@@ -170,21 +181,24 @@ public class Drivetrain implements Constants { //TODO: feedforward tuning, odome
      *
      * @return the heading in degrees [-180, 180)
      */
-    public double getFieldHeading()
-    {
-        double angle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-        if (isBlueAlliance)
-            return Calculator.addAngles(angle, 90.0);
-        else
-            return Calculator.addAngles(angle, -90.0);
+    public double getFieldHeading() {
+        return heading;
     }
 
-    //TODO: make sure this works
+    /**
+     * Get the Raw IMU Heading of the Robot
+     *
+     * @return the heading in degrees [-180, 180)
+     */
+    public double getRawHeading() {
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+    }
+
     /**
      * Set Field Oriented forward to the robot's heading by offsetting the IMU yaw
      */
-    public void resetFieldOriented() {
-        headingOffset = getFieldHeading();
+    public void setHeadingOffset() {
+        headingOffset = getRawHeading();
     }
 
     /**
@@ -196,9 +210,90 @@ public class Drivetrain implements Constants { //TODO: feedforward tuning, odome
     }
 
     /**
-     * Update the robot's odometry, call at the start of each loop() cycle
+     * Automatically directs the robot to the Coordinates of the Correct Intake
      */
-    public void updateOdometry() {
+    public void splineToIntake(double turn, boolean autoAlign) {
+        double power = Range.clip(SPLINE_P * Math.sqrt(
+                Math.pow(INTAKE_X - x, 2) + Math.pow(alliance ? BLUE_INTAKE_Y - y : RED_INTAKE_Y - y, 2)), -1.0, 1.0);
+        if(x <= LEFT_WAYPOINT_X)
+            drive(power, angleToVertex(x, y, LEFT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, true), turn, autoAlign, true);
+        else if(x <= RIGHT_WAYPOINT_X)
+            drive(power, angleToVertex(x, y, RIGHT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, true), turn, autoAlign, true);
+        else
+            drive(power, angleFromVertex(x, y, INTAKE_X, alliance ? BLUE_INTAKE_Y : RED_INTAKE_Y, RIGHT_WAYPOINT_X, true), turn, autoAlign, true);
+    }
+
+    /**
+     * Automatically directs the robot to the Coordinates of the Correct Backstage
+     */
+    public void splineToScoring(double turn, boolean autoAlign) {
+        double power = Range.clip(SPLINE_P * Math.sqrt(
+                Math.pow(SCORING_X - x, 2) + Math.pow(alliance ? BLUE_SCORING_Y - y : RED_SCORING_Y - y, 2)), -1.0, 1.0);
+        if(x >= RIGHT_WAYPOINT_X)
+            drive(power, angleToVertex(x, y, RIGHT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, false), turn, autoAlign, true);
+        else if(x >= LEFT_WAYPOINT_X)
+            drive(power, angleToVertex(x, y, LEFT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, false), turn, autoAlign, true);
+        else
+            drive(power, angleFromVertex(x, y, SCORING_X, alliance ? BLUE_SCORING_Y : RED_SCORING_Y, LEFT_WAYPOINT_X, false), turn, autoAlign, true);
+    }
+
+    /**
+     * With the robot at (rx, ry), calculates the drive angle of the robot
+     * in order to arrive at the waypoint (wx, wy) with the robot's vector
+     * approaching a horizontal value, 0 or -180 smoothly
+     *
+     * @param rx the robot's x coordinate
+     * @param ry the robot's y coordinate
+     * @param wx the waypoint x coordinate
+     * @param wy the waypoint y coordinate
+     * @param toIntake whether the robot is going to the intake
+     * @return the drive angle in degrees [-180, 180)
+     */
+    public double angleToVertex(double rx, double ry, double wx, double wy, boolean toIntake) {
+        if(rx == wx && ry == wy)
+            return toIntake ? 0.0 : -180.0;
+        double angle = Math.toDegrees(Math.atan2(2.0 * (ry - wy), rx - wx));
+        if(toIntake)
+            return Calculator.addAngles(angle, -180.0);
+        return Calculator.addAngles(angle, 0.0);
+    }
+
+    /**
+     * With the robot at (rx, ry), calculates the drive angle of the robot
+     * in order to arrive at the waypoint (wx, wy) with the robot's vector
+     * leaving a horizontal value, 0 or -180 smoothly
+     *
+     * @param rx the robot's x coordinate
+     * @param ry the robot's y coordinate
+     * @param wx the waypoint x coordinate
+     * @param wy the waypoint y coordinate
+     * @param h  the x value of the previous waypoint
+     * @param toIntake whether the robot is going to the intake
+     * @return the drive angle in degrees [-180, 180)
+     */
+    public static double angleFromVertex(double rx, double ry, double wx, double wy, double h, boolean toIntake) {
+        double robotDiff = Math.pow(rx - h, 2);
+        double waypointDiff = Math.pow(wx - h, 2);
+        if(rx == h || robotDiff == waypointDiff)
+            return toIntake ? 0.0 : -180.0;
+        double k = (wy * robotDiff - ry * waypointDiff) / (robotDiff - waypointDiff);
+        double angle = Math.toDegrees(Math.atan2(2.0 * (ry - k), rx - h));
+        if(!toIntake ^ Math.abs(rx) > Math.abs(wx)) //TODO fix this logic
+            return Calculator.addAngles(angle, -180.0);
+        return Calculator.addAngles(angle, 0.0);
+    }
+
+    /**
+     * Update the robot's pose using odometry and April Tags.
+     * Call at the start of each loop() cycle
+     */
+    public void updatePose() {
+        double angle = getRawHeading();
+        if(alliance)
+            heading = Calculator.addAngles(angle, 90.0 - headingOffset);
+        else
+            heading = Calculator.addAngles(angle, -90.0 - headingOffset);
+
         int currentLeft = leftDead.getCurrentPosition();
         int currentRight = rightDead.getCurrentPosition();
         int currentCenter = centerDead.getCurrentPosition();
