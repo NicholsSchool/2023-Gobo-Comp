@@ -16,11 +16,9 @@ import org.firstinspires.ftc.teamcode.utils.Constants;
  * The robot drivetrain
  */
 public class Drivetrain implements Constants {
-    //TODO: spline has problems still, troubleshoot them, and for red
-    //TODO: Velocity PIDF and arm PIDF using FTC Dashboard
-    //TODO: then april tags
+    //TODO: toubleshoot spline problem and any problem for red alliance
+    //TODO: next step is april tag localization
     private BHI260IMU imu;
-    //TODO: change back to private after motor tuning
     public DcMotorEx frontLeft, frontRight, backLeft, backRight, leftDead, rightDead, centerDead;
     private int previousLeft, previousRight, previousCenter;
     private double x, y, heading, headingOffset, desiredHeading;
@@ -110,10 +108,10 @@ public class Drivetrain implements Constants {
         centerDead.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Set Motor PIDF Coefficients
-        backLeft.setVelocityPIDFCoefficients(0, 0, 0, BACK_LEFT_FF);
-        backRight.setVelocityPIDFCoefficients(0, 0, 0, BACK_RIGHT_FF);
-        frontLeft.setVelocityPIDFCoefficients(0, 0, 0, FRONT_LEFT_FF);
-        frontRight.setVelocityPIDFCoefficients(0, 0, 0, FRONT_RIGHT_FF);
+        backLeft.setVelocityPIDFCoefficients(BACK_LEFT_P, BACK_LEFT_I, BACK_LEFT_D, BACK_LEFT_F);
+        backRight.setVelocityPIDFCoefficients(BACK_RIGHT_P, BACK_RIGHT_I, BACK_RIGHT_D, BACK_RIGHT_F);
+        frontLeft.setVelocityPIDFCoefficients(FRONT_LEFT_P, FRONT_LEFT_I, FRONT_LEFT_D, FRONT_LEFT_F);
+        frontRight.setVelocityPIDFCoefficients(FRONT_RIGHT_P, FRONT_RIGHT_I, FRONT_RIGHT_D, FRONT_RIGHT_F);
     }
 
     /**
@@ -215,6 +213,7 @@ public class Drivetrain implements Constants {
     public void splineToIntake(double turn, boolean autoAlign) {
         double power = Range.clip(SPLINE_P * Math.sqrt(
                 Math.pow(INTAKE_X - x, 2) + Math.pow(alliance ? BLUE_INTAKE_Y - y : RED_INTAKE_Y - y, 2)), -1.0, 1.0);
+
         if(x <= LEFT_WAYPOINT_X)
             drive(power, angleToVertex(x, y, LEFT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, true), turn, autoAlign, true);
         else if(x <= RIGHT_WAYPOINT_X)
@@ -229,6 +228,7 @@ public class Drivetrain implements Constants {
     public void splineToScoring(double turn, boolean autoAlign) {
         double power = Range.clip(SPLINE_P * Math.sqrt(
                 Math.pow(SCORING_X - x, 2) + Math.pow(alliance ? BLUE_SCORING_Y - y : RED_SCORING_Y - y, 2)), -1.0, 1.0);
+
         if(x >= RIGHT_WAYPOINT_X)
             drive(power, angleToVertex(x, y, RIGHT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, false), turn, autoAlign, true);
         else if(x >= LEFT_WAYPOINT_X)

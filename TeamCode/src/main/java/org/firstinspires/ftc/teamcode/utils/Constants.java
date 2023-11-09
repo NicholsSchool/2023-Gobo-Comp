@@ -28,17 +28,53 @@ public interface Constants {
     /** The +/- allowed error for autoAligning */
     double TURNING_ERROR = 0.5;
 
+    /** The Proportional Coefficient for the Back Left Drive Motor */
+    double BACK_LEFT_P = 15.0;
+
+    /** The Integral Coefficient for the Back Left Drive Motor */
+    double BACK_LEFT_I = 0.0;
+
+    /** The Dampening Coefficient for the Back Left Drive Motor */
+    double BACK_LEFT_D = 0.01;
+
     /** The Feedforward Coefficient for the Back Left Drive Motor */
-    double BACK_LEFT_FF = 12.0;
+    double BACK_LEFT_F = 14.9;
+
+    /** The Proportional Coefficient for the Back Right Drive Motor */
+    double BACK_RIGHT_P = 15.0;
+
+    /** The Integral Coefficient for the Back Right Drive Motor */
+    double BACK_RIGHT_I = 0.0;
+
+    /** The Dampening Coefficient for the Back Right Drive Motor */
+    double BACK_RIGHT_D = 0.01;
 
     /** The Feedforward Coefficient for the Back Right Drive Motor */
-    double BACK_RIGHT_FF = 12.0;
+    double BACK_RIGHT_F = 14.9;
+
+    /** The Proportional Coefficient for the Front Left Drive Motor */
+    double FRONT_LEFT_P = 15.0;
+
+    /** The Integral Coefficient for the Front Left Drive Motor */
+    double FRONT_LEFT_I = 0.0;
+
+    /** The Dampening Coefficient for the Front Left Drive Motor */
+    double FRONT_LEFT_D = 0.01;
 
     /** The Feedforward Coefficient for the Front Left Drive Motor */
-    double FRONT_LEFT_FF = 12.0;
+    double FRONT_LEFT_F = 14.9;
+
+    /** The Proportional Coefficient for the Front Right Drive Motor */
+    double FRONT_RIGHT_P = 15.0;
+
+    /** The Integral Coefficient for the Front Right Drive Motor */
+    double FRONT_RIGHT_I = 0.0;
+
+    /** The Dampening Coefficient for the Front Right Drive Motor */
+    double FRONT_RIGHT_D = 0.01;
 
     /** The Feedforward Coefficient for the Front Right Drive Motor */
-    double FRONT_RIGHT_FF = 12.0;
+    double FRONT_RIGHT_F = 14.9;
 
     /** Ticks per revolution of the dead wheels */
     int TICKS_PER_REV = 8192;
@@ -59,13 +95,13 @@ public interface Constants {
     double SPLINE_P = 0.1;
 
     /** The X value of the Scoring Points */
-    double SCORING_X = -48.0;
+    double SCORING_X = -36.0;
 
     /** The Y value of the Blue Scoring Point */
-    double BLUE_SCORING_Y = 36.0;
+    double BLUE_SCORING_Y = -36.0;
 
     /** The Y value of the Red Scoring Point */
-    double RED_SCORING_Y = -36.0;
+    double RED_SCORING_Y = 36.0;
 
     /** The X value of the Left Waypoint Points */
     double LEFT_WAYPOINT_X = -12.0;
@@ -80,13 +116,13 @@ public interface Constants {
     double RED_WAYPOINT_Y = -36.0;
 
     /** The X value of the Intake Points */
-    double INTAKE_X = 60.0;
+    double INTAKE_X = 48.0;
 
     /** The Y value of the Blue Intake Point */
-    double BLUE_INTAKE_Y = 60.0;
+    double BLUE_INTAKE_Y = 48.0;
 
     /** The Y value of the Red Intake Point */
-    double RED_INTAKE_Y = -60.0;
+    double RED_INTAKE_Y = -48.0;
 
     /** Servo position for intake actuators when vertical */
     double INTAKE_UP_POSITION = 0.2;

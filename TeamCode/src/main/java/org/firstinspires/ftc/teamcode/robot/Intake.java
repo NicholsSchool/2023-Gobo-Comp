@@ -5,6 +5,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
+/**
+ * The Intake Subsystem of the Robot
+ */
 public class Intake implements Constants {
 
     private Servo leftServo;
