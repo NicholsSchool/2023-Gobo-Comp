@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.controller.GameController;
 import org.firstinspires.ftc.teamcode.robot.Drivetrain;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
-@TeleOp(name="Teleop: Tune Feedforward Old Version")
+@TeleOp(name="Teleop: Old Tuning")
 public class OldTuningTeleop extends OpMode implements Constants
 {
     // Declare OpMode members.

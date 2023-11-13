@@ -32,7 +32,7 @@ public class Intake implements Constants {
     /**
      * Get the servo positions for telemetry
      *
-     * @return the servo position (left one)
+     * @return the servo position (specifically the left one)
      */
     public double getPosition() {
         return leftServo.getPosition();

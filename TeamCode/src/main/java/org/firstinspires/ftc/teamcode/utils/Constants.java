@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.utils;
 
 /**
- * Robot Constants
+ * Robot Constants contained in a convenient interface
  */
 public interface Constants {
     /** Blue Alliance Tag */
@@ -11,72 +11,75 @@ public interface Constants {
     boolean RED_ALLIANCE = false;
 
     /** The Default Controller Axis DeadBand */
-    double DEFAULT_DEADBAND = 0.05;
+    double DEFAULT_DEADBAND = 0.025;
 
     /** The Maximum Spin Speed of a drive motor in ticks/second */
     int MAX_SPIN_SPEED = 2800;
 
     /** The Governor for Maximum Speed as a proportion of available power */
-    double OVERALL_GOVERNOR = 1.0;
+    double OVERALL_GOVERNOR = 0.9;
 
-    /** The Governor for Turning Speed as a proportion of available power */
-    double TURNING_GOVERNOR = 0.3;
+    /** The Governor for Manual Turning Speed as a proportion of available power */
+    double MANUAL_TURNING_GOVERNOR = 0.3;
+
+    /** The Governor for Auto Turning Speed as a proportion of available power */
+    double AUTO_TURNING_GOVERNOR = 0.3;
 
     /** The Proportional Constant for PID turning to an angle */
-    double TURNING_P = 0.025;
+    double TURNING_P = 0.019;
 
-    /** The +/- allowed error for autoAligning */
+    /** The +/- allowed error for autoAligning in degrees */
     double TURNING_ERROR = 0.5;
 
     /** The Proportional Coefficient for the Back Left Drive Motor */
-    double BACK_LEFT_P = 15.0;
+    double BACK_LEFT_P = 7.5;
 
     /** The Integral Coefficient for the Back Left Drive Motor */
     double BACK_LEFT_I = 0.0;
 
     /** The Dampening Coefficient for the Back Left Drive Motor */
-    double BACK_LEFT_D = 0.01;
+    double BACK_LEFT_D = 4.0;
 
     /** The Feedforward Coefficient for the Back Left Drive Motor */
-    double BACK_LEFT_F = 14.9;
+    double BACK_LEFT_F = 12.8;
 
     /** The Proportional Coefficient for the Back Right Drive Motor */
-    double BACK_RIGHT_P = 15.0;
+    double BACK_RIGHT_P = 7.5;
 
     /** The Integral Coefficient for the Back Right Drive Motor */
     double BACK_RIGHT_I = 0.0;
 
     /** The Dampening Coefficient for the Back Right Drive Motor */
-    double BACK_RIGHT_D = 0.01;
+    double BACK_RIGHT_D = 4.0;
 
     /** The Feedforward Coefficient for the Back Right Drive Motor */
-    double BACK_RIGHT_F = 14.9;
+    double BACK_RIGHT_F = 12.8;
 
     /** The Proportional Coefficient for the Front Left Drive Motor */
-    double FRONT_LEFT_P = 15.0;
+    double FRONT_LEFT_P = 7.5;
 
     /** The Integral Coefficient for the Front Left Drive Motor */
     double FRONT_LEFT_I = 0.0;
 
     /** The Dampening Coefficient for the Front Left Drive Motor */
-    double FRONT_LEFT_D = 0.01;
+    double FRONT_LEFT_D = 4.0;
 
     /** The Feedforward Coefficient for the Front Left Drive Motor */
-    double FRONT_LEFT_F = 14.9;
+    double FRONT_LEFT_F = 12.8;
 
     /** The Proportional Coefficient for the Front Right Drive Motor */
-    double FRONT_RIGHT_P = 15.0;
+    double FRONT_RIGHT_P = 7.5;
 
     /** The Integral Coefficient for the Front Right Drive Motor */
     double FRONT_RIGHT_I = 0.0;
 
     /** The Dampening Coefficient for the Front Right Drive Motor */
-    double FRONT_RIGHT_D = 0.01;
+    double FRONT_RIGHT_D = 4.0;
 
     /** The Feedforward Coefficient for the Front Right Drive Motor */
-    double FRONT_RIGHT_F = 14.9;
+    double FRONT_RIGHT_F = 12.8;
 
-    /** Ticks per revolution of the dead wheels */
+    /** Ticks per revolution of a REV thru bore encoder */
     int TICKS_PER_REV = 8192;
 
     /** Approximate Diameter of our Dead Wheels */
@@ -85,11 +88,11 @@ public interface Constants {
     /** Inches driven per encoder tick of a dead wheel */
     double INCHES_PER_TICK = DEAD_DIAMETER * Math.PI / TICKS_PER_REV;
 
-    /** The Multiplier to forward distance tracking */
-    double FORWARD_ODOMETRY_CORRECTION = 130.0 / 134.0;
+    /** The Multiplier for forward distance tracking */
+    double FORWARD_ODOMETRY_CORRECTION = 1.0;
 
-    /** The Multiplier to strafe distance tracking */
-    double STRAFE_ODOMETRY_CORRECTION = 130.0 / 132.5;
+    /** The Multiplier for strafe distance tracking */
+    double STRAFE_ODOMETRY_CORRECTION = 1.0;
 
     /** The Proportional Constant for PID spline */
     double SPLINE_P = 0.1;
@@ -124,7 +127,7 @@ public interface Constants {
     /** The Y value of the Red Intake Point */
     double RED_INTAKE_Y = -48.0;
 
-    /** Servo position for intake actuators when vertical */
+    /** Servo position for intake actuators when up */
     double INTAKE_UP_POSITION = 0.2;
 
     /** Servo position for intake actuators when touching floor */

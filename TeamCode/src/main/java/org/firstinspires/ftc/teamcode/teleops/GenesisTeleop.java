@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode.teleops;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.controller.GameController;
-import org.firstinspires.ftc.teamcode.robot.Drivetrain;
-import org.firstinspires.ftc.teamcode.robot.Intake;
 import org.firstinspires.ftc.teamcode.robot.RobotContainer;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
@@ -37,7 +36,7 @@ public class GenesisTeleop extends OpMode implements Constants {
         driverOI = new GameController(gamepad1);
         operatorOI = new GameController(gamepad2);
         robotContainer = new RobotContainer();
-        robotContainer.init(hardwareMap, alliance, 48, -48);
+        robotContainer.init(hardwareMap, alliance, 0.0, 0.0);
         fieldOriented = true;
         splineToIntake = false;
         splineToScoring = false;
@@ -104,12 +103,12 @@ public class GenesisTeleop extends OpMode implements Constants {
             splineToIntake = false;
         }
 
-        if(splineToIntake)
-            robotContainer.drivetrain.splineToIntake(turn, true);
-        else if(splineToScoring)
-            robotContainer.drivetrain.splineToScoring(turn, true);
-        else
-            robotContainer.drivetrain.drive(power, angle, turn, turn == 0.0, fieldOriented);
+//        if(splineToIntake)
+//            robotContainer.drivetrain.splineToIntake(turn, true);
+//        else if(splineToScoring)
+//            robotContainer.drivetrain.splineToScoring(turn, true);
+//        else
+            robotContainer.drivetrain.drive(power, angle, turn, false, fieldOriented);
 
         printTelemetry();
     }
@@ -132,16 +131,17 @@ public class GenesisTeleop extends OpMode implements Constants {
         telemetry.addData("back right drive vel", motorVel[1]);
         telemetry.addData("front left drive vel", motorVel[2]);
         telemetry.addData("front right drive vel", motorVel[3]);
-//        double[] deadPos = drivetrain.getOdometryPositions();
-//        telemetry.addData("left dead pos", deadPos[0]);
-//        telemetry.addData("right dead pos", deadPos[1]);
-//        telemetry.addData("center dead pos", deadPos[2]);
+        double[] deadPos = robotContainer.drivetrain.getOdometryPositions();
+        telemetry.addData("left dead pos", deadPos[0]);
+        telemetry.addData("right dead pos", deadPos[1]);
+        telemetry.addData("center dead pos", deadPos[2]);
         double[] xy = robotContainer.drivetrain.getXY();
         telemetry.addData("x", xy[0]);
         telemetry.addData("y", xy[1]);
         telemetry.addData("imu", robotContainer.drivetrain.getFieldHeading());
         telemetry.addData("autoAligning", turn == 0.0);
         telemetry.addData("field oriented", fieldOriented);
+        telemetry.addData("pot", robotContainer.arm.getPot());
         telemetry.update();
     }
 

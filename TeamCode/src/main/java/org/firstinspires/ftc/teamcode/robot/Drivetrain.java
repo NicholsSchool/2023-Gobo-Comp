@@ -2,9 +2,7 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
@@ -16,8 +14,10 @@ import org.firstinspires.ftc.teamcode.utils.Constants;
  * The robot drivetrain
  */
 public class Drivetrain implements Constants {
-    //TODO: toubleshoot spline problem and any problem for red alliance
-    //TODO: next step is april tag localization
+    //TODO: troubleshoot odometry
+    //TODO: smoother autaligning after turning
+    //TODO: test and troubleshoot spline and any problem for red alliance
+    //TODO: april tag localization
     private BHI260IMU imu;
     public DcMotorEx frontLeft, frontRight, backLeft, backRight, leftDead, rightDead, centerDead;
     private int previousLeft, previousRight, previousCenter;
@@ -68,44 +68,44 @@ public class Drivetrain implements Constants {
         centerDead = hwMap.get(DcMotorEx.class, "centerDead");
 
         // Set Motor Directions
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftDead.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightDead.setDirection(DcMotorSimple.Direction.REVERSE);
-        centerDead.setDirection(DcMotorSimple.Direction.FORWARD);
+        backLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        backRight.setDirection(DcMotorEx.Direction.FORWARD);
+        frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        frontRight.setDirection(DcMotorEx.Direction.FORWARD);
+        leftDead.setDirection(DcMotorEx.Direction.FORWARD);
+        rightDead.setDirection(DcMotorEx.Direction.REVERSE);
+        centerDead.setDirection(DcMotorEx.Direction.FORWARD);
 
         // Set Zero Power Behavior
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-//        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-//        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-//        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        leftDead.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightDead.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        centerDead.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+//        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+//        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+//        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        leftDead.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        rightDead.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        centerDead.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         // Stop and Reset Encoders
-        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftDead.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightDead.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        centerDead.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        leftDead.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        rightDead.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        centerDead.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
         // Set Motor RunModes
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftDead.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightDead.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        centerDead.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        frontLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        leftDead.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        rightDead.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        centerDead.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         // Set Motor PIDF Coefficients
         backLeft.setVelocityPIDFCoefficients(BACK_LEFT_P, BACK_LEFT_I, BACK_LEFT_D, BACK_LEFT_F);
@@ -117,7 +117,7 @@ public class Drivetrain implements Constants {
     /**
      * A testing and tuning method, spins motors at equal power
      *
-     * @param power the power proportion to spin motors at
+     * @param power the power proportion to spin motors  [-1, 1]
      */
     public void driveTest(double power)
     {
@@ -141,7 +141,7 @@ public class Drivetrain implements Constants {
         if(autoAlign && fieldOriented)
             turn = turnToAngle();
         else
-            turn = Range.clip(turn, -TURNING_GOVERNOR, TURNING_GOVERNOR);
+            turn = Range.clip(turn, -MANUAL_TURNING_GOVERNOR, MANUAL_TURNING_GOVERNOR);
 
         power = Range.clip(power, turn - OVERALL_GOVERNOR, OVERALL_GOVERNOR - turn);
 
@@ -170,7 +170,7 @@ public class Drivetrain implements Constants {
     public double turnToAngle() {
         double error = Calculator.addAngles(heading, -desiredHeading);
         if(Math.abs(error) >= TURNING_ERROR)
-            return Range.clip(error * TURNING_P, -TURNING_GOVERNOR, TURNING_GOVERNOR);
+            return Range.clip(error * TURNING_P, -AUTO_TURNING_GOVERNOR, AUTO_TURNING_GOVERNOR);
         return 0.0;
     }
 
@@ -207,81 +207,81 @@ public class Drivetrain implements Constants {
         this.desiredHeading = desiredHeading;
     }
 
-    /**
-     * Automatically directs the robot to the Coordinates of the Correct Intake
-     */
-    public void splineToIntake(double turn, boolean autoAlign) {
-        double power = Range.clip(SPLINE_P * Math.sqrt(
-                Math.pow(INTAKE_X - x, 2) + Math.pow(alliance ? BLUE_INTAKE_Y - y : RED_INTAKE_Y - y, 2)), -1.0, 1.0);
+//    /**
+//     * Automatically directs the robot to the Coordinates of the Correct Intake
+//     */
+//    public void splineToIntake(double turn, boolean autoAlign) {
+//        double power = Range.clip(SPLINE_P * Math.sqrt(
+//                Math.pow(INTAKE_X - x, 2) + Math.pow(alliance ? BLUE_INTAKE_Y - y : RED_INTAKE_Y - y, 2)), -1.0, 1.0);
+//
+//        if(x <= LEFT_WAYPOINT_X)
+//            drive(power, angleToVertex(x, y, LEFT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, true), turn, autoAlign, true);
+//        else if(x <= RIGHT_WAYPOINT_X)
+//            drive(power, angleToVertex(x, y, RIGHT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, true), turn, autoAlign, true);
+//        else
+//            drive(power, angleFromVertex(x, y, INTAKE_X, alliance ? BLUE_INTAKE_Y : RED_INTAKE_Y, RIGHT_WAYPOINT_X, true), turn, autoAlign, true);
+//    }
 
-        if(x <= LEFT_WAYPOINT_X)
-            drive(power, angleToVertex(x, y, LEFT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, true), turn, autoAlign, true);
-        else if(x <= RIGHT_WAYPOINT_X)
-            drive(power, angleToVertex(x, y, RIGHT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, true), turn, autoAlign, true);
-        else
-            drive(power, angleFromVertex(x, y, INTAKE_X, alliance ? BLUE_INTAKE_Y : RED_INTAKE_Y, RIGHT_WAYPOINT_X, true), turn, autoAlign, true);
-    }
+//    /**
+//     * Automatically directs the robot to the Coordinates of the Correct Backstage
+//     */
+//    public void splineToScoring(double turn, boolean autoAlign) {
+//        double power = Range.clip(SPLINE_P * Math.sqrt(
+//                Math.pow(SCORING_X - x, 2) + Math.pow(alliance ? BLUE_SCORING_Y - y : RED_SCORING_Y - y, 2)), -1.0, 1.0);
+//
+//        if(x >= RIGHT_WAYPOINT_X)
+//            drive(power, angleToVertex(x, y, RIGHT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, false), turn, autoAlign, true);
+//        else if(x >= LEFT_WAYPOINT_X)
+//            drive(power, angleToVertex(x, y, LEFT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, false), turn, autoAlign, true);
+//        else
+//            drive(power, angleFromVertex(x, y, SCORING_X, alliance ? BLUE_SCORING_Y : RED_SCORING_Y, LEFT_WAYPOINT_X, false), turn, autoAlign, true);
+//    }
 
-    /**
-     * Automatically directs the robot to the Coordinates of the Correct Backstage
-     */
-    public void splineToScoring(double turn, boolean autoAlign) {
-        double power = Range.clip(SPLINE_P * Math.sqrt(
-                Math.pow(SCORING_X - x, 2) + Math.pow(alliance ? BLUE_SCORING_Y - y : RED_SCORING_Y - y, 2)), -1.0, 1.0);
-
-        if(x >= RIGHT_WAYPOINT_X)
-            drive(power, angleToVertex(x, y, RIGHT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, false), turn, autoAlign, true);
-        else if(x >= LEFT_WAYPOINT_X)
-            drive(power, angleToVertex(x, y, LEFT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, false), turn, autoAlign, true);
-        else
-            drive(power, angleFromVertex(x, y, SCORING_X, alliance ? BLUE_SCORING_Y : RED_SCORING_Y, LEFT_WAYPOINT_X, false), turn, autoAlign, true);
-    }
-
-    /**
-     * With the robot at (rx, ry), calculates the drive angle of the robot
-     * in order to arrive at the waypoint (wx, wy) with the robot's vector
-     * approaching a horizontal value, 0 or -180 smoothly
-     *
-     * @param rx the robot's x coordinate
-     * @param ry the robot's y coordinate
-     * @param wx the waypoint x coordinate
-     * @param wy the waypoint y coordinate
-     * @param toIntake whether the robot is going to the intake
-     * @return the drive angle in degrees [-180, 180)
-     */
-    public double angleToVertex(double rx, double ry, double wx, double wy, boolean toIntake) {
-        if(rx == wx && ry == wy)
-            return toIntake ? 0.0 : -180.0;
-        double angle = Math.toDegrees(Math.atan2(2.0 * (ry - wy), rx - wx));
-        if(toIntake)
-            return Calculator.addAngles(angle, -180.0);
-        return Calculator.addAngles(angle, 0.0);
-    }
-
-    /**
-     * With the robot at (rx, ry), calculates the drive angle of the robot
-     * in order to arrive at the waypoint (wx, wy) with the robot's vector
-     * leaving a horizontal value, 0 or -180 smoothly
-     *
-     * @param rx the robot's x coordinate
-     * @param ry the robot's y coordinate
-     * @param wx the waypoint x coordinate
-     * @param wy the waypoint y coordinate
-     * @param h  the x value of the previous waypoint
-     * @param toIntake whether the robot is going to the intake
-     * @return the drive angle in degrees [-180, 180)
-     */
-    public static double angleFromVertex(double rx, double ry, double wx, double wy, double h, boolean toIntake) {
-        double robotDiff = Math.pow(rx - h, 2);
-        double waypointDiff = Math.pow(wx - h, 2);
-        if(rx == h || robotDiff == waypointDiff)
-            return toIntake ? 0.0 : -180.0;
-        double k = (wy * robotDiff - ry * waypointDiff) / (robotDiff - waypointDiff);
-        double angle = Math.toDegrees(Math.atan2(2.0 * (ry - k), rx - h));
-        if(toIntake == Math.abs(rx) > Math.abs(wx))
-            return Calculator.addAngles(angle, -180.0);
-        return Calculator.addAngles(angle, 0.0);
-    }
+//    /**
+//     * With the robot at (rx, ry), calculates the drive angle of the robot
+//     * in order to arrive at the waypoint (wx, wy) with the robot's vector
+//     * approaching a horizontal value, 0 or -180 smoothly
+//     *
+//     * @param rx the robot's x coordinate
+//     * @param ry the robot's y coordinate
+//     * @param wx the waypoint x coordinate
+//     * @param wy the waypoint y coordinate
+//     * @param toIntake whether the robot is going to the intake
+//     * @return the drive angle in degrees [-180, 180)
+//     */
+//    public double angleToVertex(double rx, double ry, double wx, double wy, boolean toIntake) {
+//        if(rx == wx && ry == wy)
+//            return toIntake ? 0.0 : -180.0;
+//        double angle = Math.toDegrees(Math.atan2(2.0 * (ry - wy), rx - wx));
+//        if(toIntake)
+//            return Calculator.addAngles(angle, -180.0);
+//        return Calculator.addAngles(angle, 0.0);
+//    }
+//
+//    /**
+//     * With the robot at (rx, ry), calculates the drive angle of the robot
+//     * in order to arrive at the waypoint (wx, wy) with the robot's vector
+//     * leaving a horizontal value, 0 or -180 smoothly
+//     *
+//     * @param rx the robot's x coordinate
+//     * @param ry the robot's y coordinate
+//     * @param wx the waypoint x coordinate
+//     * @param wy the waypoint y coordinate
+//     * @param h  the x value of the previous waypoint
+//     * @param toIntake whether the robot is going to the intake
+//     * @return the drive angle in degrees [-180, 180)
+//     */
+//    public static double angleFromVertex(double rx, double ry, double wx, double wy, double h, boolean toIntake) {
+//        double robotDiff = Math.pow(rx - h, 2);
+//        double waypointDiff = Math.pow(wx - h, 2);
+//        if(rx == h || robotDiff == waypointDiff)
+//            return toIntake ? 0.0 : -180.0;
+//        double k = (wy * robotDiff - ry * waypointDiff) / (robotDiff - waypointDiff);
+//        double angle = Math.toDegrees(Math.atan2(2.0 * (ry - k), rx - h));
+//        if(toIntake == Math.abs(rx) > Math.abs(wx))
+//            return Calculator.addAngles(angle, -180.0);
+//        return Calculator.addAngles(angle, 0.0);
+//    }
 
     /**
      * Update the robot's pose using odometry and April Tags.
@@ -297,7 +297,6 @@ public class Drivetrain implements Constants {
         int currentLeft = leftDead.getCurrentPosition();
         int currentRight = rightDead.getCurrentPosition();
         int currentCenter = centerDead.getCurrentPosition();
-        double heading = Math.toRadians(getFieldHeading());
 
         double deltaX = (currentCenter - previousCenter) * INCHES_PER_TICK * STRAFE_ODOMETRY_CORRECTION;
         double deltaY = ( (currentLeft - previousLeft ) +

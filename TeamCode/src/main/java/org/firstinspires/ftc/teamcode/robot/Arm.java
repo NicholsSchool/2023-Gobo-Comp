@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.AnalogSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -9,7 +10,7 @@ import org.firstinspires.ftc.teamcode.utils.Constants;
  * The Arm Subsystem of the robot
  */
 public class Arm implements Constants {
-    private AnalogSensor pot;
+    private AnalogInput pot;
 
     /**
      * Initializes the Arm object
@@ -17,7 +18,7 @@ public class Arm implements Constants {
      * @param hwMap the hardwareMap
      */
     public void init(HardwareMap hwMap) {
-        pot = hwMap.get(AnalogSensor.class, "pot");
+        pot = hwMap.get(AnalogInput.class, "pot");
     }
 
     /**
@@ -26,7 +27,7 @@ public class Arm implements Constants {
      * @return the raw potentiometer value
      */
     public double getPot() {
-        return pot.readRawVoltage();
+        return pot.getVoltage();
     }
 
 }

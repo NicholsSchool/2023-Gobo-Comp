@@ -5,12 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.controller.GameController;
-import org.firstinspires.ftc.teamcode.robot.Drivetrain;
-import org.firstinspires.ftc.teamcode.robot.Intake;
 import org.firstinspires.ftc.teamcode.robot.RobotContainer;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
-@TeleOp(name = "Teleop: Red \"Genesis\"")
+@TeleOp(name = "Teleop: Red Test")
 public class TestRedTeleop extends OpMode implements Constants {
     // Declare OpMode members.
     private boolean alliance;
@@ -37,7 +35,7 @@ public class TestRedTeleop extends OpMode implements Constants {
         driverOI = new GameController(gamepad1);
         operatorOI = new GameController(gamepad2);
         robotContainer = new RobotContainer();
-        robotContainer.init(hardwareMap, alliance, 48, 48);
+        robotContainer.init(hardwareMap, alliance, 48, -48);
         fieldOriented = true;
         splineToIntake = false;
         splineToScoring = false;
@@ -104,12 +102,12 @@ public class TestRedTeleop extends OpMode implements Constants {
             splineToIntake = false;
         }
 
-        if(splineToIntake)
-            robotContainer.drivetrain.splineToIntake(turn, true);
-        else if(splineToScoring)
-            robotContainer.drivetrain.splineToScoring(turn, true);
-        else
-            robotContainer.drivetrain.drive(power, angle, turn, turn == 0.0, fieldOriented);
+//        if(splineToIntake)
+//            robotContainer.drivetrain.splineToIntake(turn, true);
+//        else if(splineToScoring)
+//            robotContainer.drivetrain.splineToScoring(turn, true);
+//        else
+        robotContainer.drivetrain.drive(power, angle, turn, turn == 0.0, fieldOriented);
 
         printTelemetry();
     }
