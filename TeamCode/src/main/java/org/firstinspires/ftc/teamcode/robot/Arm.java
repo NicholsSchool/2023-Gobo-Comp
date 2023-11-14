@@ -24,7 +24,7 @@ public class Arm implements Constants {
     /**
      * ACQUIRE THE ZA
      *
-     * @return the raw potentiometer value
+     * @return the za aka the raw potentiometer value
      */
     public double getPot() {
         return pot.getVoltage();

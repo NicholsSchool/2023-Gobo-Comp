@@ -77,14 +77,14 @@ public class Drivetrain implements Constants {
         centerDead.setDirection(DcMotorEx.Direction.FORWARD);
 
         // Set Zero Power Behavior
-//        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-//        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-//        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-//        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+//        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+//        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+//        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+//        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         leftDead.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rightDead.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         centerDead.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -299,8 +299,8 @@ public class Drivetrain implements Constants {
         int currentCenter = centerDead.getCurrentPosition();
 
         double deltaX = (currentCenter - previousCenter) * INCHES_PER_TICK * STRAFE_ODOMETRY_CORRECTION;
-        double deltaY = ( (currentLeft - previousLeft ) +
-                ( currentRight - previousRight ) ) * .5 * INCHES_PER_TICK * FORWARD_ODOMETRY_CORRECTION;
+        double deltaY = ( (currentLeft - previousLeft) +
+                (currentRight - previousRight) ) * .5 * INCHES_PER_TICK * FORWARD_ODOMETRY_CORRECTION;
 
         y += -deltaX * Math.cos(heading) + deltaY * Math.sin(heading);
         x += deltaX * Math.sin(heading) + deltaY * Math.cos(heading);

@@ -62,10 +62,7 @@ public class GenesisTeleop extends OpMode implements Constants {
      */
     @Override
     public void loop() {
-        driverOI.updateValues();
-        operatorOI.updateValues();
-
-        robotContainer.drivetrain.updatePose();
+        updateInstances();
 
         if(driverOI.left_trigger.get() > 0.0)
             robotContainer.intake.panToPosition(false);
@@ -108,9 +105,19 @@ public class GenesisTeleop extends OpMode implements Constants {
 //        else if(splineToScoring)
 //            robotContainer.drivetrain.splineToScoring(turn, true);
 //        else
-            robotContainer.drivetrain.drive(power, angle, turn, false, fieldOriented);
+            robotContainer.drivetrain.drive(power, angle, turn, turn == 0, fieldOriented);
 
         printTelemetry();
+    }
+
+    /**
+     * Updates Objects such as Gamepads and Subsystems
+     */
+    public void updateInstances() {
+        driverOI.updateValues();
+        operatorOI.updateValues();
+
+        robotContainer.drivetrain.updatePose();
     }
 
     /**
@@ -138,7 +145,8 @@ public class GenesisTeleop extends OpMode implements Constants {
         double[] xy = robotContainer.drivetrain.getXY();
         telemetry.addData("x", xy[0]);
         telemetry.addData("y", xy[1]);
-        telemetry.addData("imu", robotContainer.drivetrain.getFieldHeading());
+        telemetry.addData("heading", robotContainer.drivetrain.getFieldHeading());
+        telemetry.addData("raw imu", robotContainer.drivetrain.getRawHeading());
         telemetry.addData("autoAligning", turn == 0.0);
         telemetry.addData("field oriented", fieldOriented);
         telemetry.addData("pot", robotContainer.arm.getPot());
