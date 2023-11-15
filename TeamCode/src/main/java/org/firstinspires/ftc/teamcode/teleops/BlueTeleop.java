@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.teleops;
 
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -9,8 +8,8 @@ import org.firstinspires.ftc.teamcode.controller.GameController;
 import org.firstinspires.ftc.teamcode.robot.RobotContainer;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
-@TeleOp(name = "Teleop: Robot Genesis")
-public class GenesisTeleop extends OpMode implements Constants {
+@TeleOp(name = "Teleop: Blue")
+public class BlueTeleop extends OpMode implements Constants {
     // Declare OpMode members.
     private boolean alliance;
     private double power;
@@ -100,11 +99,11 @@ public class GenesisTeleop extends OpMode implements Constants {
             splineToIntake = false;
         }
 
-//        if(splineToIntake)
-//            robotContainer.drivetrain.splineToIntake(turn, true);
-//        else if(splineToScoring)
-//            robotContainer.drivetrain.splineToScoring(turn, true);
-//        else
+        if(splineToIntake)
+            robotContainer.drivetrain.splineToIntake(turn, true);
+        else if(splineToScoring)
+            robotContainer.drivetrain.splineToScoring(turn, true);
+        else
             robotContainer.drivetrain.drive(power, angle, turn, turn == 0, fieldOriented);
 
         printTelemetry();

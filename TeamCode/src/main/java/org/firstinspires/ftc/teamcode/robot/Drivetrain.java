@@ -201,87 +201,94 @@ public class Drivetrain implements Constants {
 
     /**
      * Sets the heading to auto-align to
+     *
      * @param desiredHeading the heading in degrees [-180, 180)
      */
     public void setDesiredHeading(double desiredHeading) {
         this.desiredHeading = desiredHeading;
     }
 
-//    /**
-//     * Automatically directs the robot to the Coordinates of the Correct Intake
-//     */
-//    public void splineToIntake(double turn, boolean autoAlign) {
-//        double power = Range.clip(SPLINE_P * Math.sqrt(
-//                Math.pow(INTAKE_X - x, 2) + Math.pow(alliance ? BLUE_INTAKE_Y - y : RED_INTAKE_Y - y, 2)), -1.0, 1.0);
-//
-//        if(x <= LEFT_WAYPOINT_X)
-//            drive(power, angleToVertex(x, y, LEFT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, true), turn, autoAlign, true);
-//        else if(x <= RIGHT_WAYPOINT_X)
-//            drive(power, angleToVertex(x, y, RIGHT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, true), turn, autoAlign, true);
-//        else
-//            drive(power, angleFromVertex(x, y, INTAKE_X, alliance ? BLUE_INTAKE_Y : RED_INTAKE_Y, RIGHT_WAYPOINT_X, true), turn, autoAlign, true);
-//    }
+    /**
+     * Automatically directs the robot to the Coordinates of the Correct Intake
+     */
+    public void splineToIntake(double turn, boolean autoAlign) {
+        double power = Range.clip(SPLINE_P * Math.sqrt(
+                Math.pow(INTAKE_X - x, 2) + Math.pow(alliance ? BLUE_INTAKE_Y - y : RED_INTAKE_Y - y, 2)), -1.0, 1.0);
 
-//    /**
-//     * Automatically directs the robot to the Coordinates of the Correct Backstage
-//     */
-//    public void splineToScoring(double turn, boolean autoAlign) {
-//        double power = Range.clip(SPLINE_P * Math.sqrt(
-//                Math.pow(SCORING_X - x, 2) + Math.pow(alliance ? BLUE_SCORING_Y - y : RED_SCORING_Y - y, 2)), -1.0, 1.0);
-//
-//        if(x >= RIGHT_WAYPOINT_X)
-//            drive(power, angleToVertex(x, y, RIGHT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, false), turn, autoAlign, true);
-//        else if(x >= LEFT_WAYPOINT_X)
-//            drive(power, angleToVertex(x, y, LEFT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, false), turn, autoAlign, true);
-//        else
-//            drive(power, angleFromVertex(x, y, SCORING_X, alliance ? BLUE_SCORING_Y : RED_SCORING_Y, LEFT_WAYPOINT_X, false), turn, autoAlign, true);
-//    }
+        if(x <= LEFT_WAYPOINT_X)
+            drive(power, angleToVertex(x, y, LEFT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, true), turn, autoAlign, true);
+        else if(x <= RIGHT_WAYPOINT_X)
+            drive(power, angleToVertex(x, y, RIGHT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, true), turn, autoAlign, true);
+        else
+            drive(power, angleFromVertex(x, y, INTAKE_X, alliance ? BLUE_INTAKE_Y : RED_INTAKE_Y, RIGHT_WAYPOINT_X, true), turn, autoAlign, true);
+    }
 
-//    /**
-//     * With the robot at (rx, ry), calculates the drive angle of the robot
-//     * in order to arrive at the waypoint (wx, wy) with the robot's vector
-//     * approaching a horizontal value, 0 or -180 smoothly
-//     *
-//     * @param rx the robot's x coordinate
-//     * @param ry the robot's y coordinate
-//     * @param wx the waypoint x coordinate
-//     * @param wy the waypoint y coordinate
-//     * @param toIntake whether the robot is going to the intake
-//     * @return the drive angle in degrees [-180, 180)
-//     */
-//    public double angleToVertex(double rx, double ry, double wx, double wy, boolean toIntake) {
-//        if(rx == wx && ry == wy)
-//            return toIntake ? 0.0 : -180.0;
-//        double angle = Math.toDegrees(Math.atan2(2.0 * (ry - wy), rx - wx));
-//        if(toIntake)
-//            return Calculator.addAngles(angle, -180.0);
-//        return Calculator.addAngles(angle, 0.0);
-//    }
-//
-//    /**
-//     * With the robot at (rx, ry), calculates the drive angle of the robot
-//     * in order to arrive at the waypoint (wx, wy) with the robot's vector
-//     * leaving a horizontal value, 0 or -180 smoothly
-//     *
-//     * @param rx the robot's x coordinate
-//     * @param ry the robot's y coordinate
-//     * @param wx the waypoint x coordinate
-//     * @param wy the waypoint y coordinate
-//     * @param h  the x value of the previous waypoint
-//     * @param toIntake whether the robot is going to the intake
-//     * @return the drive angle in degrees [-180, 180)
-//     */
-//    public static double angleFromVertex(double rx, double ry, double wx, double wy, double h, boolean toIntake) {
-//        double robotDiff = Math.pow(rx - h, 2);
-//        double waypointDiff = Math.pow(wx - h, 2);
-//        if(rx == h || robotDiff == waypointDiff)
-//            return toIntake ? 0.0 : -180.0;
-//        double k = (wy * robotDiff - ry * waypointDiff) / (robotDiff - waypointDiff);
-//        double angle = Math.toDegrees(Math.atan2(2.0 * (ry - k), rx - h));
-//        if(toIntake == Math.abs(rx) > Math.abs(wx))
-//            return Calculator.addAngles(angle, -180.0);
-//        return Calculator.addAngles(angle, 0.0);
-//    }
+    /**
+     * Automatically directs the robot to the Coordinates of the Correct Backstage
+     */
+    public void splineToScoring(double turn, boolean autoAlign) {
+        double power = Range.clip(SPLINE_P * Math.sqrt(
+                Math.pow(SCORING_X - x, 2) + Math.pow(alliance ? BLUE_SCORING_Y - y : RED_SCORING_Y - y, 2)), -1.0, 1.0);
+
+        if(x >= RIGHT_WAYPOINT_X)
+            drive(power, angleToVertex(x, y, RIGHT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, false), turn, autoAlign, true);
+        else if(x >= LEFT_WAYPOINT_X)
+            drive(power, angleToVertex(x, y, LEFT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, false), turn, autoAlign, true);
+        else
+            drive(power, angleFromVertex(x, y, SCORING_X, alliance ? BLUE_SCORING_Y : RED_SCORING_Y, LEFT_WAYPOINT_X, false), turn, autoAlign, true);
+    }
+
+    /**
+     * With the robot at (rx, ry), calculates the drive angle of the robot
+     * in order to arrive at the waypoint (wx, wy) with the robot's vector
+     * approaching a horizontal value, 0 or -180, smoothly
+     *
+     * @param rx the robot's x coordinate
+     * @param ry the robot's y coordinate
+     * @param wx the waypoint x coordinate
+     * @param wy the waypoint y coordinate
+     * @param toIntake whether the robot is going to the intake
+     * @return the drive angle in degrees [-180, 180)
+     */
+    public double angleToVertex(double rx, double ry, double wx, double wy, boolean toIntake) {
+        if(rx == wx) {
+            if(ry == wy)
+                return toIntake ? 0.0 : -180.0;
+            else
+                return ry > wy ? -90.0 : 90.0;
+        }
+        double angle = Math.toDegrees(Math.atan2(2.0 * (ry - wy), rx - wx));
+        if(toIntake)
+            return Calculator.addAngles(angle, 0.0);
+        return Calculator.addAngles(angle, -180.0);
+    }
+
+    /**
+     * With the robot at (rx, ry), calculates the drive angle of the robot
+     * in order to arrive at the waypoint (wx, wy) with the robot's vector
+     * leaving a horizontal value, 0 or -180, smoothly
+     *
+     * @param rx the robot's x coordinate
+     * @param ry the robot's y coordinate
+     * @param wx the waypoint x coordinate
+     * @param wy the waypoint y coordinate
+     * @param h  the x value of the previous waypoint
+     * @param toIntake whether the robot is going to the intake
+     * @return the drive angle in degrees [-180, 180)
+     */
+    public static double angleFromVertex(double rx, double ry, double wx, double wy, double h, boolean toIntake) {
+        double robotDiff = Math.pow(rx - h, 2);
+        double waypointDiff = Math.pow(wx - h, 2);
+        if(rx == h)
+            return toIntake ? 0.0 : -180.0;
+        else if(robotDiff == waypointDiff)
+            return ry > wy ? -90.0 : 90.0;
+        double k = (wy * robotDiff - ry * waypointDiff) / (robotDiff - waypointDiff);
+        double angle = Math.toDegrees(Math.atan2(2.0 * (ry - k), rx - h));
+        if(toIntake == Math.abs(rx) > Math.abs(wx))
+            return Calculator.addAngles(angle, -180.0);
+        return Calculator.addAngles(angle, 0.0);
+    }
 
     /**
      * Update the robot's pose using odometry and April Tags.

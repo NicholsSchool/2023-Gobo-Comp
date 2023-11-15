@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.controller.GameController;
 import org.firstinspires.ftc.teamcode.robot.RobotContainer;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
-@TeleOp(name = "Teleop: Red Test")
+@TeleOp(name = "Teleop: Red")
 public class TestRedTeleop extends OpMode implements Constants {
     // Declare OpMode members.
     private boolean alliance;
@@ -35,7 +35,7 @@ public class TestRedTeleop extends OpMode implements Constants {
         driverOI = new GameController(gamepad1);
         operatorOI = new GameController(gamepad2);
         robotContainer = new RobotContainer();
-        robotContainer.init(hardwareMap, alliance, 48, -48);
+        robotContainer.init(hardwareMap, alliance, 0.0, 0.0);
         fieldOriented = true;
         splineToIntake = false;
         splineToScoring = false;
@@ -61,10 +61,7 @@ public class TestRedTeleop extends OpMode implements Constants {
      */
     @Override
     public void loop() {
-        driverOI.updateValues();
-        operatorOI.updateValues();
-
-        robotContainer.drivetrain.updatePose();
+        updateInstances();
 
         if(driverOI.left_trigger.get() > 0.0)
             robotContainer.intake.panToPosition(false);
@@ -102,14 +99,24 @@ public class TestRedTeleop extends OpMode implements Constants {
             splineToIntake = false;
         }
 
-//        if(splineToIntake)
-//            robotContainer.drivetrain.splineToIntake(turn, true);
-//        else if(splineToScoring)
-//            robotContainer.drivetrain.splineToScoring(turn, true);
-//        else
-        robotContainer.drivetrain.drive(power, angle, turn, turn == 0.0, fieldOriented);
+        if(splineToIntake)
+            robotContainer.drivetrain.splineToIntake(turn, true);
+        else if(splineToScoring)
+            robotContainer.drivetrain.splineToScoring(turn, true);
+        else
+            robotContainer.drivetrain.drive(power, angle, turn, turn == 0, fieldOriented);
 
         printTelemetry();
+    }
+
+    /**
+     * Updates Objects such as Gamepads and Subsystems
+     */
+    public void updateInstances() {
+        driverOI.updateValues();
+        operatorOI.updateValues();
+
+        robotContainer.drivetrain.updatePose();
     }
 
     /**
@@ -130,16 +137,18 @@ public class TestRedTeleop extends OpMode implements Constants {
         telemetry.addData("back right drive vel", motorVel[1]);
         telemetry.addData("front left drive vel", motorVel[2]);
         telemetry.addData("front right drive vel", motorVel[3]);
-//        double[] deadPos = drivetrain.getOdometryPositions();
-//        telemetry.addData("left dead pos", deadPos[0]);
-//        telemetry.addData("right dead pos", deadPos[1]);
-//        telemetry.addData("center dead pos", deadPos[2]);
+        double[] deadPos = robotContainer.drivetrain.getOdometryPositions();
+        telemetry.addData("left dead pos", deadPos[0]);
+        telemetry.addData("right dead pos", deadPos[1]);
+        telemetry.addData("center dead pos", deadPos[2]);
         double[] xy = robotContainer.drivetrain.getXY();
         telemetry.addData("x", xy[0]);
         telemetry.addData("y", xy[1]);
-        telemetry.addData("imu", robotContainer.drivetrain.getFieldHeading());
+        telemetry.addData("heading", robotContainer.drivetrain.getFieldHeading());
+        telemetry.addData("raw imu", robotContainer.drivetrain.getRawHeading());
         telemetry.addData("autoAligning", turn == 0.0);
         telemetry.addData("field oriented", fieldOriented);
+        telemetry.addData("pot", robotContainer.arm.getPot());
         telemetry.update();
     }
 

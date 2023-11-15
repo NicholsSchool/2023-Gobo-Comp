@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.AnalogSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.utils.Constants;
@@ -24,10 +23,9 @@ public class Arm implements Constants {
     /**
      * ACQUIRE THE ZA
      *
-     * @return the za aka the raw potentiometer value
+     * @return the za aka the potentiometer voltage output
      */
     public double getPot() {
         return pot.getVoltage();
     }
-
 }

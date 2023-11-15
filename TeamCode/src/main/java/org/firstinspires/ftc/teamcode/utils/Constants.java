@@ -128,7 +128,7 @@ public interface Constants {
     double RED_INTAKE_Y = -48.0;
 
     /** Servo position for intake actuators when up */
-    double INTAKE_UP_POSITION = 0.2;
+    double INTAKE_UP_POSITION = 0.25;
 
     /** Servo position for intake actuators when touching floor */
     double INTAKE_DOWN_POSITION = 0.75;
