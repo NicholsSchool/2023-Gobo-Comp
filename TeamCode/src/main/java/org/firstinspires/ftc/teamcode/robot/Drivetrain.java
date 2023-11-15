@@ -295,6 +295,11 @@ public class Drivetrain implements Constants {
      * Call at the start of each loop() cycle
      */
     public void updatePose() {
+        updateWithOdometry();
+        updateWithAprilTags();
+    }
+
+    private void updateWithOdometry() {
         double angle = getRawHeading();
         if(alliance)
             heading = Calculator.addAngles(angle, 90.0 - headingOffset);
@@ -314,6 +319,10 @@ public class Drivetrain implements Constants {
         previousLeft = currentLeft;
         previousRight = currentRight;
         previousCenter = currentCenter;
+    }
+
+    private void updateWithAprilTags() {
+        
     }
 
     /**
