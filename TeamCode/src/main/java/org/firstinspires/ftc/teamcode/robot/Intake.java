@@ -23,10 +23,12 @@ public class Intake implements Constants {
 
     /**
      * Sets pan actuators to the position
+     *
+     * @param isRaising whether to raise or lower the intake
      */
-    public void panToPosition(boolean upPosition) {
-        leftServo.setPosition(upPosition ? INTAKE_UP_POSITION : INTAKE_DOWN_POSITION);
-        rightServo.setPosition(upPosition ? INTAKE_UP_POSITION : INTAKE_DOWN_POSITION);
+    public void panToPosition(boolean isRaising) {
+        leftServo.setPosition(isRaising ? INTAKE_UP_POSITION : INTAKE_DOWN_POSITION);
+        rightServo.setPosition(isRaising ? INTAKE_UP_POSITION : INTAKE_DOWN_POSITION);
     }
 
     /**
@@ -37,5 +39,4 @@ public class Intake implements Constants {
     public double getPosition() {
         return leftServo.getPosition();
     }
-
 }

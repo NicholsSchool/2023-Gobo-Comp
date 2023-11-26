@@ -17,10 +17,13 @@ public class IndicatorLights {
      * Initializes the IndicatorLights subsystem
      *
      * @param hwMap the hardwareMap
+     * @param alliance the alliance
      */
-    public void init(HardwareMap hwMap) {
+    public void init(HardwareMap hwMap, boolean alliance) {
         leftBlinkin = hwMap.get(RevBlinkinLedDriver.class,"leftBlinkin");
         rightBlinkin = hwMap.get(RevBlinkinLedDriver.class, "rightBlinkin");
+
+        setColour(alliance ? RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_BLUE : RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
     }
 
     /** Sets both left and right LED strips to a certain colour pattern.

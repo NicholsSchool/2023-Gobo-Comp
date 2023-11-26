@@ -1,12 +1,9 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-import com.qualcomm.hardware.bosch.BHI260IMU;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.utils.Calculator;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
@@ -14,14 +11,9 @@ import org.firstinspires.ftc.teamcode.utils.Constants;
  * The robot drivetrain
  */
 public class Drivetrain implements Constants {
-    //TODO: troubleshoot odometry
-    //TODO: smoother autaligning after turning
-    //TODO: test and troubleshoot spline and any problem for red alliance
-    //TODO: april tag localization
-    private BHI260IMU imu;
     public DcMotorEx frontLeft, frontRight, backLeft, backRight, leftDead, rightDead, centerDead;
     private int previousLeft, previousRight, previousCenter;
-    private double x, y, heading, headingOffset, desiredHeading;
+    private double x, y, heading, desiredHeading;
     private boolean alliance;
 
     /**
@@ -42,21 +34,7 @@ public class Drivetrain implements Constants {
         this.x = x;
         this.y = y;
         this.heading = alliance ? 90.0 : -90.0;
-        this.headingOffset = 0.0;
         this.desiredHeading = heading;
-
-        // Instantiating IMU Parameters, setting angleUnit...
-        BHI260IMU.Parameters params = new BHI260IMU.Parameters(
-                new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                        RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
-                )
-        );
-
-        // Defining and Initializing IMU... Initializing it with the above Parameters...
-        imu = hwMap.get(BHI260IMU.class, "imu");
-        imu.initialize(params);
-        imu.resetYaw(); //Don't do this for actual matches
 
         // Initialize Motors
         backLeft = hwMap.get(DcMotorEx.class, "backLeftDrive");
@@ -77,14 +55,14 @@ public class Drivetrain implements Constants {
         centerDead.setDirection(DcMotorEx.Direction.FORWARD);
 
         // Set Zero Power Behavior
-        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-//        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-//        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-//        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-//        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+//        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+//        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+//        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+//        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         leftDead.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rightDead.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         centerDead.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -121,6 +99,7 @@ public class Drivetrain implements Constants {
      */
     public void driveTest(double power)
     {
+        power = Range.clip( power, -1.0, 1.0);
         backLeft.setVelocity(power * MAX_SPIN_SPEED);
         backRight.setVelocity(power * MAX_SPIN_SPEED);
         frontLeft.setVelocity(power * MAX_SPIN_SPEED);
@@ -147,6 +126,7 @@ public class Drivetrain implements Constants {
 
         double corner1;
         double corner2;
+
         if(fieldOriented) {
             corner1 = power * Math.sin(Math.toRadians(Calculator.addAngles(angle, -45.0 + 90.0 - heading)));
             corner2 = power * Math.sin(Math.toRadians(Calculator.addAngles(angle, 45.0 + 90.0 - heading)));
@@ -172,31 +152,6 @@ public class Drivetrain implements Constants {
         if(Math.abs(error) >= TURNING_ERROR)
             return Range.clip(error * TURNING_P, -AUTO_TURNING_GOVERNOR, AUTO_TURNING_GOVERNOR);
         return 0.0;
-    }
-
-    /**
-     * Gets the heading of the robot on the field coordinate system
-     *
-     * @return the heading in degrees [-180, 180)
-     */
-    public double getFieldHeading() {
-        return heading;
-    }
-
-    /**
-     * Get the Raw IMU Heading of the Robot
-     *
-     * @return the heading in degrees [-180, 180)
-     */
-    public double getRawHeading() {
-        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-    }
-
-    /**
-     * Set Field Oriented forward to the robot's heading by offsetting the IMU yaw
-     */
-    public void setHeadingOffset() {
-        headingOffset = getRawHeading();
     }
 
     /**
@@ -240,8 +195,8 @@ public class Drivetrain implements Constants {
 
     /**
      * With the robot at (rx, ry), calculates the drive angle of the robot
-     * in order to arrive at the waypoint (wx, wy) with the robot's vector
-     * approaching a horizontal value, 0 or -180, smoothly
+     * in order to arrive at the waypoint (wx, wy) that is the vertex of a
+     * parabola that is defined using the robot's position.
      *
      * @param rx the robot's x coordinate
      * @param ry the robot's y coordinate
@@ -257,16 +212,19 @@ public class Drivetrain implements Constants {
             else
                 return ry > wy ? -90.0 : 90.0;
         }
+
         double angle = Math.toDegrees(Math.atan2(2.0 * (ry - wy), rx - wx));
-        if(toIntake)
+
+        if(rx < wx)
             return Calculator.addAngles(angle, 0.0);
         return Calculator.addAngles(angle, -180.0);
     }
 
     /**
      * With the robot at (rx, ry), calculates the drive angle of the robot
-     * in order to arrive at the waypoint (wx, wy) with the robot's vector
-     * leaving a horizontal value, 0 or -180, smoothly
+     * in order to arrive at the waypoint (wx, wy). This waypoint and the
+     * robot are on a parabola whose vertex is constrained to the x-value
+     * of the previous waypoint, h.
      *
      * @param rx the robot's x coordinate
      * @param ry the robot's y coordinate
@@ -279,15 +237,18 @@ public class Drivetrain implements Constants {
     public static double angleFromVertex(double rx, double ry, double wx, double wy, double h, boolean toIntake) {
         double robotDiff = Math.pow(rx - h, 2);
         double waypointDiff = Math.pow(wx - h, 2);
+
         if(rx == h)
             return toIntake ? 0.0 : -180.0;
         else if(robotDiff == waypointDiff)
             return ry > wy ? -90.0 : 90.0;
+
         double k = (wy * robotDiff - ry * waypointDiff) / (robotDiff - waypointDiff);
         double angle = Math.toDegrees(Math.atan2(2.0 * (ry - k), rx - h));
-        if(toIntake == Math.abs(rx) > Math.abs(wx))
-            return Calculator.addAngles(angle, -180.0);
-        return Calculator.addAngles(angle, 0.0);
+
+        if(rx < wx)
+            return Calculator.addAngles(angle, 0.0);
+        return Calculator.addAngles(angle, -180.0);
     }
 
     /**
@@ -300,29 +261,34 @@ public class Drivetrain implements Constants {
     }
 
     private void updateWithOdometry() {
-        double angle = getRawHeading();
-        if(alliance)
-            heading = Calculator.addAngles(angle, 90.0 - headingOffset);
-        else
-            heading = Calculator.addAngles(angle, -90.0 - headingOffset);
-
         int currentLeft = leftDead.getCurrentPosition();
         int currentRight = rightDead.getCurrentPosition();
         int currentCenter = centerDead.getCurrentPosition();
 
-        double deltaX = (currentCenter - previousCenter) * INCHES_PER_TICK * STRAFE_ODOMETRY_CORRECTION;
-        double deltaY = ( (currentLeft - previousLeft) +
-                (currentRight - previousRight) ) * .5 * INCHES_PER_TICK * FORWARD_ODOMETRY_CORRECTION;
+        int deltaLeft = currentLeft - previousLeft;
+        int deltaRight = currentRight - previousRight;
+        int deltaCenter = currentCenter - previousCenter;
 
-        y += -deltaX * Math.cos(heading) + deltaY * Math.sin(heading);
-        x += deltaX * Math.sin(heading) + deltaY * Math.cos(heading);
+        double deltaHeading = (deltaRight - deltaLeft) * DEGREES_PER_TICK * HEADING_ODOMETRY_CORRECTION;
+        heading = Calculator.addAngles(heading, deltaHeading);
+
+        double deltaX = (deltaCenter) * INCHES_PER_TICK * STRAFE_ODOMETRY_CORRECTION;
+        double deltaY = ( deltaLeft + deltaRight ) * .5 * INCHES_PER_TICK * FORWARD_ODOMETRY_CORRECTION;
+
+        double inRadians = Math.toRadians(heading);
+        y += -deltaX * Math.cos(inRadians) + deltaY * Math.sin(inRadians);
+        x += deltaX * Math.sin(inRadians) + deltaY * Math.cos(inRadians);
+
         previousLeft = currentLeft;
         previousRight = currentRight;
         previousCenter = currentCenter;
     }
 
+    /**
+     * Updates the Robot Pose using April Tags
+     */
     private void updateWithAprilTags() {
-        
+        return;
     }
 
     /**
@@ -377,5 +343,14 @@ public class Drivetrain implements Constants {
      */
     public double[] getXY() {
         return new double[]{x, y};
+    }
+
+    /**
+     * Gets the heading of the robot on the field coordinate system
+     *
+     * @return the heading in degrees [-180, 180)
+     */
+    public double getFieldHeading() {
+        return heading;
     }
 }

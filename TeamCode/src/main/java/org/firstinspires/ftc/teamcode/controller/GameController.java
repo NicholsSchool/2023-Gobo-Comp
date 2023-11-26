@@ -83,7 +83,7 @@ public class GameController {
         if (isBlue)
             return Calculator.addAngles(Math.toDegrees(Math.atan2(left_stick_y.get(), left_stick_x.get())), 0.0);
         else
-            return Calculator.addAngles(Math.toDegrees(Math.atan2(left_stick_y.get(), left_stick_x.get())), 180.0);
+            return Calculator.addAngles(Math.toDegrees(Math.atan2(left_stick_y.get(), left_stick_x.get())), -180.0);
     }
 
     /**

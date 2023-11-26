@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.robot.RobotContainer;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
-@TeleOp(name = "Blue")
-public class BlueTeleop extends OpMode implements Constants {
+@TeleOp(name = "Red")
+public class RedTeleop extends OpMode implements Constants {
     private RobotContainer robotContainer;
 
     /*
@@ -16,7 +16,7 @@ public class BlueTeleop extends OpMode implements Constants {
     @Override
     public void init() {
         robotContainer = new RobotContainer();
-        robotContainer.init(hardwareMap, telemetry, BLUE_ALLIANCE, 0.0, 0.0, gamepad1, gamepad2);
+        robotContainer.init(hardwareMap, telemetry, RED_ALLIANCE, 0.0, 0.0, gamepad1, gamepad2);
     }
 
     /*

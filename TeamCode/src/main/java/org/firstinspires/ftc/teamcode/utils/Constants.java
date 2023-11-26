@@ -11,7 +11,7 @@ public interface Constants {
     boolean RED_ALLIANCE = false;
 
     /** The Default Controller Axis DeadBand */
-    double DEFAULT_DEADBAND = 0.025;
+    double DEFAULT_DEADBAND = 0.01;
 
     /** The Maximum Spin Speed of a drive motor in ticks/second */
     int MAX_SPIN_SPEED = 2800;
@@ -30,6 +30,9 @@ public interface Constants {
 
     /** The +/- allowed error for autoAligning in degrees */
     double TURNING_ERROR = 0.5;
+
+    /** The number of code loops to wait before auto-aligning */
+    int LOOPS_TO_WAIT = 5;
 
     /** The Proportional Coefficient for the Back Left Drive Motor */
     double BACK_LEFT_P = 7.5;
@@ -85,14 +88,22 @@ public interface Constants {
     /** Approximate Diameter of our Dead Wheels */
     double DEAD_DIAMETER = 2.5;
 
+    /** The distance between the center of the left and right dead wheels in inches */
+    double ROBOT_TRACKWIDTH = 5.8;
+
     /** Inches driven per encoder tick of a dead wheel */
     double INCHES_PER_TICK = DEAD_DIAMETER * Math.PI / TICKS_PER_REV;
 
+    double DEGREES_PER_TICK = DEAD_DIAMETER * .5 * 360.0 / (TICKS_PER_REV * ROBOT_TRACKWIDTH);
+
     /** The Multiplier for forward distance tracking */
-    double FORWARD_ODOMETRY_CORRECTION = 1.0;
+    double FORWARD_ODOMETRY_CORRECTION = 0.964;
 
     /** The Multiplier for strafe distance tracking */
-    double STRAFE_ODOMETRY_CORRECTION = 1.0;
+    double STRAFE_ODOMETRY_CORRECTION = 0.964;
+
+    /** THe Multiplier for heading tracking */
+    double HEADING_ODOMETRY_CORRECTION = 0.9099;
 
     /** The Proportional Constant for PID spline */
     double SPLINE_P = 0.1;

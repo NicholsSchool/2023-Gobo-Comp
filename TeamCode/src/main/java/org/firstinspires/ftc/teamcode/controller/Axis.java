@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.utils.Constants;
  */
 public class Axis implements Constants {
     private final double deadBand;
+    private int loopsAtZero;
     private double value;
-    private double previousValue;
 
     /**
      * Creates an Axis Object with the default deadBand
@@ -26,8 +26,8 @@ public class Axis implements Constants {
      */
     public Axis(double deadBand) {
         this.value = 0.0;
-        this.previousValue = 0.0;
         this.deadBand = deadBand;
+        this.loopsAtZero = 0;
     }
 
     /**
@@ -40,12 +40,13 @@ public class Axis implements Constants {
     }
 
     /**
-     * Whether the axis value just changed
+     * Whether the Axis has been zero for
+     * a specified number of loops of the code
      *
-     * @return true if the value just changed, false otherwise
+     * @return true iff the Axis has been zero for enough loops
      */
-    public boolean valueJustChanged() {
-        return value != previousValue;
+    public boolean hasBeenZeroForEnoughTime() {
+        return loopsAtZero >= LOOPS_TO_WAIT;
     }
 
     /**
@@ -54,8 +55,11 @@ public class Axis implements Constants {
      * @param newValue the value to set the current value to
      */
     public void updateStates(double newValue) {
-        previousValue = value;
         value = applyDeadBand(newValue);
+        if(value == 0)
+            loopsAtZero++;
+        else
+            loopsAtZero = 0;
     }
 
     private double applyDeadBand(double value) {

@@ -7,17 +7,15 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.robot.RobotContainer;
+import org.firstinspires.ftc.teamcode.robot.Drivetrain;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
-import java.io.PrintWriter;
-
 @Config
-@TeleOp(name="Tuning Opmode")
+@TeleOp(name="Drive Motor Tuning")
 public class DriveMotorTuningTeleop extends OpMode implements Constants
 {
     private final ElapsedTime runtime = new ElapsedTime();
-    public RobotContainer robotContainer;
+    public Drivetrain drivetrain;
     public static double lbp = BACK_LEFT_P;
     public static double lbi = BACK_LEFT_I;
     public static double lbd = BACK_LEFT_D;
@@ -38,12 +36,12 @@ public class DriveMotorTuningTeleop extends OpMode implements Constants
 
     @Override
     public void init() {
-        robotContainer = new RobotContainer();
-        robotContainer.init(hardwareMap, true, 0, 0);
-        robotContainer.drivetrain.backLeft.setVelocityPIDFCoefficients(lbp, lbi, lbd, lbf);
-        robotContainer.drivetrain.backRight.setVelocityPIDFCoefficients(rbp, rbi,rbd, rbf);
-        robotContainer.drivetrain.frontLeft.setVelocityPIDFCoefficients(lfp, lfi, lfd, lff);
-        robotContainer.drivetrain.frontRight.setVelocityPIDFCoefficients(rfp, rfi, rfd, rff);
+        drivetrain = new Drivetrain();
+        drivetrain.init(hardwareMap, true, 0, 0);
+        drivetrain.backLeft.setVelocityPIDFCoefficients(lbp, lbi, lbd, lbf);
+        drivetrain.backRight.setVelocityPIDFCoefficients(rbp, rbi,rbd, rbf);
+        drivetrain.frontLeft.setVelocityPIDFCoefficients(lfp, lfi, lfd, lff);
+        drivetrain.frontRight.setVelocityPIDFCoefficients(rfp, rfi, rfd, rff);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
 
@@ -53,17 +51,17 @@ public class DriveMotorTuningTeleop extends OpMode implements Constants
             runtime.reset();
             targetMotorVelocity *= -1;
         }
-        robotContainer.drivetrain.backLeft.setVelocityPIDFCoefficients(lbp, lbi, lbd, lbf);
-        robotContainer.drivetrain.backRight.setVelocityPIDFCoefficients(rbp, rbi,rbd, rbf);
-        robotContainer.drivetrain.frontLeft.setVelocityPIDFCoefficients(lfp, lfi, lfd, lff);
-        robotContainer.drivetrain.frontRight.setVelocityPIDFCoefficients(rfp, rfi, rfd, rff);
+        drivetrain.backLeft.setVelocityPIDFCoefficients(lbp, lbi, lbd, lbf);
+        drivetrain.backRight.setVelocityPIDFCoefficients(rbp, rbi,rbd, rbf);
+        drivetrain.frontLeft.setVelocityPIDFCoefficients(lfp, lfi, lfd, lff);
+        drivetrain.frontRight.setVelocityPIDFCoefficients(rfp, rfi, rfd, rff);
 
-        robotContainer.drivetrain.driveTest(targetMotorVelocity / 2800.0);
+        drivetrain.driveTest(targetMotorVelocity / 2800.0);
 
-        double backLeftVel = robotContainer.drivetrain.backLeft.getVelocity();
-        double backRightVel = robotContainer.drivetrain.backRight.getVelocity();
-        double frontLeftVel = robotContainer.drivetrain.frontLeft.getVelocity();
-        double frontRightVel = robotContainer.drivetrain.frontRight.getVelocity();
+        double backLeftVel = drivetrain.backLeft.getVelocity();
+        double backRightVel = drivetrain.backRight.getVelocity();
+        double frontLeftVel = drivetrain.frontLeft.getVelocity();
+        double frontRightVel = drivetrain.frontRight.getVelocity();
 
         telemetry.addData("back left vel", backLeftVel);
         telemetry.addData("back right vel", backRightVel);
