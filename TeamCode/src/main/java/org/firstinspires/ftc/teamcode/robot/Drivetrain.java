@@ -55,14 +55,14 @@ public class Drivetrain implements Constants {
         centerDead.setDirection(DcMotorEx.Direction.FORWARD);
 
         // Set Zero Power Behavior
-//        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-//        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-//        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-//        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+//        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+//        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+//        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+//        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         leftDead.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rightDead.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         centerDead.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -252,15 +252,9 @@ public class Drivetrain implements Constants {
     }
 
     /**
-     * Update the robot's pose using odometry and April Tags.
-     * Call at the start of each loop() cycle
+     * Updates Pose using Odometry Wheels
      */
-    public void updatePose() {
-        updateWithOdometry();
-        updateWithAprilTags();
-    }
-
-    private void updateWithOdometry() {
+    public void updateWithOdometry() {
         int currentLeft = leftDead.getCurrentPosition();
         int currentRight = rightDead.getCurrentPosition();
         int currentCenter = centerDead.getCurrentPosition();
@@ -272,8 +266,8 @@ public class Drivetrain implements Constants {
         double deltaHeading = (deltaRight - deltaLeft) * DEGREES_PER_TICK * HEADING_ODOMETRY_CORRECTION;
         heading = Calculator.addAngles(heading, deltaHeading);
 
-        double deltaX = (deltaCenter) * INCHES_PER_TICK * STRAFE_ODOMETRY_CORRECTION;
-        double deltaY = ( deltaLeft + deltaRight ) * .5 * INCHES_PER_TICK * FORWARD_ODOMETRY_CORRECTION;
+        double deltaX = deltaCenter * INCHES_PER_TICK * STRAFE_ODOMETRY_CORRECTION;
+        double deltaY = (deltaLeft + deltaRight) * .5 * INCHES_PER_TICK * FORWARD_ODOMETRY_CORRECTION;
 
         double inRadians = Math.toRadians(heading);
         y += -deltaX * Math.cos(inRadians) + deltaY * Math.sin(inRadians);

@@ -109,6 +109,8 @@ public class RobotContainer {
         else
             drivetrain.drive(power, angle, turn, driverOI.right_stick_x.hasBeenZeroForEnoughTime(), fieldOriented);
 
+        setLightsColor();
+
         printTelemetry();
     }
 
@@ -119,7 +121,28 @@ public class RobotContainer {
         driverOI.updateValues();
         operatorOI.updateValues();
 
-        drivetrain.updatePose();
+        updatePose();
+    }
+
+    /**
+     * Update the robot's pose using odometry and April Tags.
+     * Call at the start of each loop() cycle
+     */
+    public void updatePose() {
+        drivetrain.updateWithOdometry();
+        //vision.updateWithAprilTags();
+    }
+
+    /**
+     * Sets the light patterns for the robot
+     */
+    public void setLightsColor() {
+        if(!fieldOriented)
+            lights.setColour(RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY);
+        else if(splineToScoring || splineToIntake)
+            lights.setColour(RevBlinkinLedDriver.BlinkinPattern.CONFETTI);
+        else
+            lights.setDefaultColor();
     }
 
     /**

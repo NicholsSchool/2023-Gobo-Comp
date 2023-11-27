@@ -12,6 +12,7 @@ public class IndicatorLights {
 
     private RevBlinkinLedDriver leftBlinkin;
     private RevBlinkinLedDriver rightBlinkin;
+    private RevBlinkinLedDriver.BlinkinPattern defaultPattern;
 
     /**
      * Initializes the IndicatorLights subsystem
@@ -22,8 +23,8 @@ public class IndicatorLights {
     public void init(HardwareMap hwMap, boolean alliance) {
         leftBlinkin = hwMap.get(RevBlinkinLedDriver.class,"leftBlinkin");
         rightBlinkin = hwMap.get(RevBlinkinLedDriver.class, "rightBlinkin");
-
-        setColour(alliance ? RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_BLUE : RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
+        defaultPattern = alliance ? RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_BLUE : RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED;
+        setColour(defaultPattern);
     }
 
     /** Sets both left and right LED strips to a certain colour pattern.
@@ -51,5 +52,13 @@ public class IndicatorLights {
      */
     public void setRightColour(RevBlinkinLedDriver.BlinkinPattern pattern) {
         rightBlinkin.setPattern(pattern);
+    }
+
+    /**
+     * Sets the default color, red or blue.
+     */
+    public void setDefaultColor() {
+        leftBlinkin.setPattern(defaultPattern);
+        rightBlinkin.setPattern(defaultPattern);
     }
 }

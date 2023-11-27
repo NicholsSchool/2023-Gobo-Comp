@@ -35,52 +35,52 @@ public interface Constants {
     int LOOPS_TO_WAIT = 5;
 
     /** The Proportional Coefficient for the Back Left Drive Motor */
-    double BACK_LEFT_P = 7.5;
+    double BACK_LEFT_P = 1.0;
 
     /** The Integral Coefficient for the Back Left Drive Motor */
     double BACK_LEFT_I = 0.0;
 
     /** The Dampening Coefficient for the Back Left Drive Motor */
-    double BACK_LEFT_D = 4.0;
+    double BACK_LEFT_D = 0.0;
 
     /** The Feedforward Coefficient for the Back Left Drive Motor */
-    double BACK_LEFT_F = 12.8;
+    double BACK_LEFT_F = 14.0;
 
     /** The Proportional Coefficient for the Back Right Drive Motor */
-    double BACK_RIGHT_P = 7.5;
+    double BACK_RIGHT_P = 1.0;
 
     /** The Integral Coefficient for the Back Right Drive Motor */
     double BACK_RIGHT_I = 0.0;
 
     /** The Dampening Coefficient for the Back Right Drive Motor */
-    double BACK_RIGHT_D = 4.0;
+    double BACK_RIGHT_D = 0.0;
 
     /** The Feedforward Coefficient for the Back Right Drive Motor */
-    double BACK_RIGHT_F = 12.8;
+    double BACK_RIGHT_F = 14.0;
 
     /** The Proportional Coefficient for the Front Left Drive Motor */
-    double FRONT_LEFT_P = 7.5;
+    double FRONT_LEFT_P = 1.0;
 
     /** The Integral Coefficient for the Front Left Drive Motor */
     double FRONT_LEFT_I = 0.0;
 
     /** The Dampening Coefficient for the Front Left Drive Motor */
-    double FRONT_LEFT_D = 4.0;
+    double FRONT_LEFT_D = 0.0;
 
     /** The Feedforward Coefficient for the Front Left Drive Motor */
-    double FRONT_LEFT_F = 12.8;
+    double FRONT_LEFT_F = 14.0;;
 
     /** The Proportional Coefficient for the Front Right Drive Motor */
-    double FRONT_RIGHT_P = 7.5;
+    double FRONT_RIGHT_P = 1.0;
 
     /** The Integral Coefficient for the Front Right Drive Motor */
     double FRONT_RIGHT_I = 0.0;
 
     /** The Dampening Coefficient for the Front Right Drive Motor */
-    double FRONT_RIGHT_D = 4.0;
+    double FRONT_RIGHT_D = 0.0;
 
     /** The Feedforward Coefficient for the Front Right Drive Motor */
-    double FRONT_RIGHT_F = 12.8;
+    double FRONT_RIGHT_F = 14.0;
 
     /** Ticks per revolution of a REV thru bore encoder */
     int TICKS_PER_REV = 8192;
@@ -139,7 +139,7 @@ public interface Constants {
     double RED_INTAKE_Y = -48.0;
 
     /** Servo position for intake actuators when up */
-    double INTAKE_UP_POSITION = 0.25;
+    double INTAKE_UP_POSITION = 0.5;
 
     /** Servo position for intake actuators when touching floor */
     double INTAKE_DOWN_POSITION = 0.75;
