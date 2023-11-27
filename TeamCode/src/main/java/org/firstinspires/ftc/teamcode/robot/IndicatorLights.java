@@ -5,8 +5,8 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 /**
  * The class defining the Indicator Lights on the robot.
- * Here is a full list of blink codes.
- * <a href="https://first-tech-challenge.github.io/SkyStone/com/qualcomm/hardware/rev/RevBlinkinLedDriver.BlinkinPattern.html">...</a>
+ * Here is a full list of
+ * <a href="https://first-tech-challenge.github.io/SkyStone/com/qualcomm/hardware/rev/RevBlinkinLedDriver.BlinkinPattern.html">blink codes</a>.
  */
 public class IndicatorLights {
 
@@ -18,12 +18,13 @@ public class IndicatorLights {
      * Initializes the IndicatorLights subsystem
      *
      * @param hwMap the hardwareMap
-     * @param alliance the alliance
+     * @param isBlueAlliance whether we are blue alliance
      */
-    public void init(HardwareMap hwMap, boolean alliance) {
+    public void init(HardwareMap hwMap, boolean isBlueAlliance) {
         leftBlinkin = hwMap.get(RevBlinkinLedDriver.class,"leftBlinkin");
         rightBlinkin = hwMap.get(RevBlinkinLedDriver.class, "rightBlinkin");
-        defaultPattern = alliance ? RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_BLUE : RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED;
+        defaultPattern = isBlueAlliance ? RevBlinkinLedDriver.BlinkinPattern.RAINBOW_OCEAN_PALETTE
+                : RevBlinkinLedDriver.BlinkinPattern.RAINBOW_LAVA_PALETTE;
         setColour(defaultPattern);
     }
 
@@ -53,6 +54,7 @@ public class IndicatorLights {
     public void setRightColour(RevBlinkinLedDriver.BlinkinPattern pattern) {
         rightBlinkin.setPattern(pattern);
     }
+
 
     /**
      * Sets the default color, red or blue.

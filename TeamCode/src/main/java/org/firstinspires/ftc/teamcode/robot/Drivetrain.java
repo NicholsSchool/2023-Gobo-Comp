@@ -252,6 +252,15 @@ public class Drivetrain implements Constants {
     }
 
     /**
+     * Update the robot's pose using odometry and April Tags.
+     * Call at the start of each loop() cycle
+     */
+    public void updatePose() {
+        updateWithOdometry();
+        updateWithAprilTags();
+    }
+
+    /**
      * Updates Pose using Odometry Wheels
      */
     public void updateWithOdometry() {
@@ -282,22 +291,11 @@ public class Drivetrain implements Constants {
      * Updates the Robot Pose using April Tags
      */
     private void updateWithAprilTags() {
-        return;
-    }
-
-    /**
-     * Get Motor Positions for telemetry
-     *
-     * @return in order: backLeft, backRight, frontLeft, frontRight positions
-     */
-    public double[] getMotorPositions()
-    {
-        return new double[]{
-                backLeft.getCurrentPosition(),
-                backRight.getCurrentPosition(),
-                frontLeft.getCurrentPosition(),
-                frontRight.getCurrentPosition()
-        };
+        //TODO: this method once localization is done
+        //double[] pose = visionSubsystem.getPose();
+        //this.x = pose[0];
+        //this.y = pose[1];
+        //this.heading = pose[2];
     }
 
     /**

@@ -7,16 +7,19 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.controller.GameController;
 
+//TODO: double cameras
+//TODO: optimize exposure
+//TODO: camera localization
+//TODO: re-tune odometry
+//TODO: re-tune drive motors
+//TODO: arm stuff
+//TODO: test full blue alliance controls
+//TODO: test full red alliance controls
+
 /**
  * The Robot Container
  */
 public class RobotContainer {
-    //TODO: tune odometry
-    //TODO: test blue alliance stuff
-    //TODO: test red alliance stuff
-    //TODO: tune drive motors
-    //TODO: test spline (red alliance too)
-    //TODO: april tag localization
     private boolean alliance;
     private Drivetrain drivetrain;
     private Intake intake;
@@ -77,7 +80,6 @@ public class RobotContainer {
         angle = driverOI.leftStickTheta(alliance);
         turn = driverOI.right_stick_x.get();
 
-
         if(driverOI.back.wasJustPressed())
             fieldOriented = !fieldOriented;
 
@@ -121,16 +123,7 @@ public class RobotContainer {
         driverOI.updateValues();
         operatorOI.updateValues();
 
-        updatePose();
-    }
-
-    /**
-     * Update the robot's pose using odometry and April Tags.
-     * Call at the start of each loop() cycle
-     */
-    public void updatePose() {
-        drivetrain.updateWithOdometry();
-        //vision.updateWithAprilTags();
+        drivetrain.updatePose();
     }
 
     /**
@@ -152,11 +145,6 @@ public class RobotContainer {
         telemetry.addData("Drive Power", power);
         telemetry.addData("angle", angle);
         telemetry.addData("turn power", turn);
-//        double[] motorPos = drivetrain.getMotorPositions();
-//        telemetry.addData("back left drive pos", motorPos[0]);
-//        telemetry.addData("back right drive pos", motorPos[1]);
-//        telemetry.addData("front left drive pos", motorPos[2]);
-//        telemetry.addData("front right drive pos", motorPos[3]);
         double[] motorVel = drivetrain.getMotorVelocities();
         telemetry.addData("back left drive vel", motorVel[0]);
         telemetry.addData("back right drive vel", motorVel[1]);
