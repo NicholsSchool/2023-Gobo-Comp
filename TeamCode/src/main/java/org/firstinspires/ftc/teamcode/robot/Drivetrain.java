@@ -4,8 +4,12 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.utils.Calculator;
+import org.firstinspires.ftc.teamcode.utils.MathUtilities;
 import org.firstinspires.ftc.teamcode.utils.Constants;
+
+//TODO: re-tune odometry
+//TODO: re-tune drive motors
+//TODO: fix spline, rework undefined cases
 
 /**
  * The robot drivetrain
@@ -24,7 +28,7 @@ public class Drivetrain implements Constants {
      * @param x the starting x coordinate
      * @param y the starting y coordinate
      */
-    public void init(HardwareMap hwMap, boolean alliance, double x, double y)
+    public void init(HardwareMap hwMap, boolean alliance, double x, double y, double heading)
     {
         // Initialize Variables
         this.alliance = alliance;
@@ -33,7 +37,7 @@ public class Drivetrain implements Constants {
         this.previousCenter = 0;
         this.x = x;
         this.y = y;
-        this.heading = alliance ? 90.0 : -90.0;
+        this.heading = heading;
         this.desiredHeading = heading;
 
         // Initialize Motors
@@ -128,12 +132,12 @@ public class Drivetrain implements Constants {
         double corner2;
 
         if(fieldOriented) {
-            corner1 = power * Math.sin(Math.toRadians(Calculator.addAngles(angle, -45.0 + 90.0 - heading)));
-            corner2 = power * Math.sin(Math.toRadians(Calculator.addAngles(angle, 45.0 + 90.0 - heading)));
+            corner1 = power * Math.sin(Math.toRadians(MathUtilities.addAngles(angle, -45.0 + 90.0 - heading)));
+            corner2 = power * Math.sin(Math.toRadians(MathUtilities.addAngles(angle, 45.0 + 90.0 - heading)));
         }
         else {
-            corner1 = power * Math.sin(Math.toRadians(Calculator.addAngles(angle, -45.0)));
-            corner2 = power * Math.sin(Math.toRadians(Calculator.addAngles(angle, 45.0)));
+            corner1 = power * Math.sin(Math.toRadians(MathUtilities.addAngles(angle, -45.0)));
+            corner2 = power * Math.sin(Math.toRadians(MathUtilities.addAngles(angle, 45.0)));
         }
 
         backLeft.setVelocity((corner1 + turn) * MAX_SPIN_SPEED);
@@ -148,7 +152,7 @@ public class Drivetrain implements Constants {
      * @return the turning speed as a proportion
      */
     public double turnToAngle() {
-        double error = Calculator.addAngles(heading, -desiredHeading);
+        double error = MathUtilities.addAngles(heading, -desiredHeading);
         if(Math.abs(error) >= TURNING_ERROR)
             return Range.clip(error * TURNING_P, -AUTO_TURNING_GOVERNOR, AUTO_TURNING_GOVERNOR);
         return 0.0;
@@ -165,99 +169,96 @@ public class Drivetrain implements Constants {
 
     /**
      * Automatically directs the robot to the Coordinates of the Correct Intake
+     * using parabolas in piecewise.
      */
     public void splineToIntake(double turn, boolean autoAlign) {
         double power = Range.clip(SPLINE_P * Math.sqrt(
                 Math.pow(INTAKE_X - x, 2) + Math.pow(alliance ? BLUE_INTAKE_Y - y : RED_INTAKE_Y - y, 2)), -1.0, 1.0);
 
+        double angle;
         if(x <= LEFT_WAYPOINT_X)
-            drive(power, angleToVertex(x, y, LEFT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, true), turn, autoAlign, true);
+            angle = angleToVertex(LEFT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, true);
         else if(x <= RIGHT_WAYPOINT_X)
-            drive(power, angleToVertex(x, y, RIGHT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, true), turn, autoAlign, true);
+            angle = angleToVertex(RIGHT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, true);
         else
-            drive(power, angleFromVertex(x, y, INTAKE_X, alliance ? BLUE_INTAKE_Y : RED_INTAKE_Y, RIGHT_WAYPOINT_X, true), turn, autoAlign, true);
+            angle = angleToVertex(RIGHT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, true);
+
+        drive(power, angle, turn, autoAlign, true);
     }
 
     /**
      * Automatically directs the robot to the Coordinates of the Correct Backstage
+     * using parabolas in piecewise.
      */
     public void splineToScoring(double turn, boolean autoAlign) {
         double power = Range.clip(SPLINE_P * Math.sqrt(
                 Math.pow(SCORING_X - x, 2) + Math.pow(alliance ? BLUE_SCORING_Y - y : RED_SCORING_Y - y, 2)), -1.0, 1.0);
 
+        double angle;
         if(x >= RIGHT_WAYPOINT_X)
-            drive(power, angleToVertex(x, y, RIGHT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, false), turn, autoAlign, true);
+            angle = angleToVertex(RIGHT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, false);
         else if(x >= LEFT_WAYPOINT_X)
-            drive(power, angleToVertex(x, y, LEFT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, false), turn, autoAlign, true);
+            angle = angleToVertex(LEFT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, false);
         else
-            drive(power, angleFromVertex(x, y, SCORING_X, alliance ? BLUE_SCORING_Y : RED_SCORING_Y, LEFT_WAYPOINT_X, false), turn, autoAlign, true);
+            angle = angleFromVertex(SCORING_X, alliance ? BLUE_SCORING_Y : RED_SCORING_Y, LEFT_WAYPOINT_X, false);
+
+        drive(power, angle, turn, autoAlign, true);
     }
 
     /**
      * With the robot at (rx, ry), calculates the drive angle of the robot
-     * in order to arrive at the waypoint (wx, wy) that is the vertex of a
-     * parabola that is defined using the robot's position.
+     * in order to follow a parabola and arrive at the waypoint (wx, wy)
+     * that is the vertex. The parabola is defined to contain the robot's coordinates.
      *
-     * @param rx the robot's x coordinate
-     * @param ry the robot's y coordinate
      * @param wx the waypoint x coordinate
      * @param wy the waypoint y coordinate
      * @param toIntake whether the robot is going to the intake
+     *
      * @return the drive angle in degrees [-180, 180)
      */
-    public double angleToVertex(double rx, double ry, double wx, double wy, boolean toIntake) {
-        if(rx == wx) {
-            if(ry == wy)
-                return toIntake ? 0.0 : -180.0;
-            else
-                return ry > wy ? -90.0 : 90.0;
-        }
+    public double angleToVertex(double wx, double wy, boolean toIntake) {
+        if(x == wx)
+            return toIntake ? 0.0 : -180.0;
 
-        double angle = Math.toDegrees(Math.atan2(2.0 * (ry - wy), rx - wx));
-
-        if(rx < wx)
-            return Calculator.addAngles(angle, 0.0);
-        return Calculator.addAngles(angle, -180.0);
+        return MathUtilities.addAngles( Math.toDegrees(Math.atan2(2.0 * (wy - y), wx - x) ), 0.0);
     }
 
     /**
      * With the robot at (rx, ry), calculates the drive angle of the robot
-     * in order to arrive at the waypoint (wx, wy). This waypoint and the
-     * robot are on a parabola whose vertex is constrained to the x-value
-     * of the previous waypoint, h.
+     * in order to follow a parabola and arrive at the waypoint (wx, wy).
+     * The parabola is defined with its vertex constrained to the x-value
+     * of h (previous waypoint) and contains both the waypoint and robot
+     * coordinates.
      *
-     * @param rx the robot's x coordinate
-     * @param ry the robot's y coordinate
      * @param wx the waypoint x coordinate
      * @param wy the waypoint y coordinate
      * @param h  the x value of the previous waypoint
      * @param toIntake whether the robot is going to the intake
      * @return the drive angle in degrees [-180, 180)
      */
-    public static double angleFromVertex(double rx, double ry, double wx, double wy, double h, boolean toIntake) {
-        double robotDiff = Math.pow(rx - h, 2);
+    public double angleFromVertex(double wx, double wy, double h, boolean toIntake) {
+        double robotDiff = Math.pow(x - h, 2);
         double waypointDiff = Math.pow(wx - h, 2);
 
-        if(rx == h)
+        if(x == h)
             return toIntake ? 0.0 : -180.0;
         else if(robotDiff == waypointDiff)
-            return ry > wy ? -90.0 : 90.0;
+            return y > wy ? -90.0 : 90.0;
 
-        double k = (wy * robotDiff - ry * waypointDiff) / (robotDiff - waypointDiff);
-        double angle = Math.toDegrees(Math.atan2(2.0 * (ry - k), rx - h));
-
-        if(rx < wx)
-            return Calculator.addAngles(angle, 0.0);
-        return Calculator.addAngles(angle, -180.0);
+        double k = (wy * robotDiff - y * waypointDiff) / (robotDiff - waypointDiff);
+        return MathUtilities.addAngles( Math.toDegrees(Math.atan2(2.0 * (k - y), h - x) ), 0.0);
     }
 
     /**
      * Update the robot's pose using odometry and April Tags.
      * Call at the start of each loop() cycle
+     *
+     * @param pose the robot's pose [x, y, theta]
      */
-    public void updatePose() {
+    public void updatePose(double[] pose) {
         updateWithOdometry();
-        updateWithAprilTags();
+        if(pose[0] != -6969)
+            updateWithAprilTags(pose);
     }
 
     /**
@@ -273,7 +274,7 @@ public class Drivetrain implements Constants {
         int deltaCenter = currentCenter - previousCenter;
 
         double deltaHeading = (deltaRight - deltaLeft) * DEGREES_PER_TICK * HEADING_ODOMETRY_CORRECTION;
-        heading = Calculator.addAngles(heading, deltaHeading);
+        heading = MathUtilities.addAngles(heading, deltaHeading);
 
         double deltaX = deltaCenter * INCHES_PER_TICK * STRAFE_ODOMETRY_CORRECTION;
         double deltaY = (deltaLeft + deltaRight) * .5 * INCHES_PER_TICK * FORWARD_ODOMETRY_CORRECTION;
@@ -289,13 +290,13 @@ public class Drivetrain implements Constants {
 
     /**
      * Updates the Robot Pose using April Tags
+     *
+     * @param pose the pose [x, y, theta]
      */
-    private void updateWithAprilTags() {
-        //TODO: this method once localization is done
-        //double[] pose = visionSubsystem.getPose();
-        //this.x = pose[0];
-        //this.y = pose[1];
-        //this.heading = pose[2];
+    private void updateWithAprilTags(double[] pose) {
+        this.x = pose[0];
+        this.y = pose[1];
+        this.heading = pose[2];
     }
 
     /**

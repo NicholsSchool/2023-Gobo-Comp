@@ -55,7 +55,6 @@ public class IndicatorLights {
         rightBlinkin.setPattern(pattern);
     }
 
-
     /**
      * Sets the default color, red or blue.
      */

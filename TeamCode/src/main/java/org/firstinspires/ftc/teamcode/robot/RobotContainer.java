@@ -7,14 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.controller.GameController;
 
-//TODO: double cameras
-//TODO: optimize exposure
-//TODO: camera localization
-//TODO: re-tune odometry
-//TODO: re-tune drive motors
-//TODO: arm stuff
-//TODO: test full blue alliance controls
-//TODO: test full red alliance controls
+//TODO: test full blue AND red alliance controls after every major change
 
 /**
  * The Robot Container
@@ -25,6 +18,7 @@ public class RobotContainer {
     private Intake intake;
     private Arm arm;
     private IndicatorLights lights;
+    private Vision vision;
     private GameController driverOI;
     private GameController operatorOI;
     private Telemetry telemetry;
@@ -44,16 +38,18 @@ public class RobotContainer {
      * @param x starting x
      * @param y starting y
      */
-    public void init(HardwareMap hwMap, Telemetry telemetry, boolean alliance, double x, double y, Gamepad g1, Gamepad g2) {
+    public void init(HardwareMap hwMap, Telemetry telemetry, boolean alliance, double x, double y, double heading, Gamepad g1, Gamepad g2) {
         this.alliance = alliance;
         drivetrain = new Drivetrain();
         intake = new Intake();
         arm = new Arm();
         lights = new IndicatorLights();
-        drivetrain.init(hwMap, alliance, x, y);
+        vision = new Vision();
+        drivetrain.init(hwMap, alliance, x, y, heading);
         intake.init(hwMap);
         arm.init(hwMap);
         lights.init(hwMap, alliance);
+        vision.init(hwMap);
         driverOI = new GameController(g1);
         operatorOI = new GameController(g2);
         this.telemetry = telemetry;
@@ -105,25 +101,24 @@ public class RobotContainer {
         }
 
         if(splineToIntake)
-            drivetrain.splineToIntake(turn, true);
+            drivetrain.splineToIntake(turn, driverOI.right_stick_x.hasBeenZeroForEnoughTime());
         else if(splineToScoring)
-            drivetrain.splineToScoring(turn, true);
+            drivetrain.splineToScoring(turn, driverOI.right_stick_x.hasBeenZeroForEnoughTime());
         else
             drivetrain.drive(power, angle, turn, driverOI.right_stick_x.hasBeenZeroForEnoughTime(), fieldOriented);
 
         setLightsColor();
-
         printTelemetry();
     }
 
     /**
-     * Updates Objects such as Gamepads and Subsystems
+     * Updates GameControllers and Subsystems
      */
     public void updateInstances() {
         driverOI.updateValues();
         operatorOI.updateValues();
 
-        drivetrain.updatePose();
+        drivetrain.updatePose(vision.localize());
     }
 
     /**

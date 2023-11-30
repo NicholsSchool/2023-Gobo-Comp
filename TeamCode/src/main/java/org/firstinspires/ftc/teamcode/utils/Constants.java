@@ -11,7 +11,7 @@ public interface Constants {
     boolean RED_ALLIANCE = false;
 
     /** The Default Controller Axis DeadBand */
-    double DEFAULT_DEADBAND = 0.01;
+    double DEFAULT_DEADBAND = 0.005;
 
     /** The Maximum Spin Speed of a drive motor in ticks/second */
     int MAX_SPIN_SPEED = 2800;
@@ -143,4 +143,16 @@ public interface Constants {
 
     /** Servo position for intake actuators when touching floor */
     double INTAKE_DOWN_POSITION = 0.75;
+
+    /** Servo position for Arm actuators when retracted */
+    double EXTENSION_IN_POSITION = 0.0;
+
+    /** Servo position for Arm actuators when extended */
+    double EXTENSION_OUT_POSITION = 1.0;
+
+    /** Max power allowed for the shoulder motors */
+    double ARM_GOVERNOR = 1.0;
+
+    /** Max power allowed for the shoulder motors */
+    double WRIST_GOVERNOR = 1.0;
 }

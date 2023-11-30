@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.controller;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.utils.Calculator;
+import org.firstinspires.ftc.teamcode.utils.MathUtilities;
 
 /**
  * The Class defining a GameController
@@ -81,9 +81,9 @@ public class GameController {
      */
     public double leftStickTheta(boolean isBlue) {
         if (isBlue)
-            return Calculator.addAngles(Math.toDegrees(Math.atan2(left_stick_y.get(), left_stick_x.get())), 0.0);
+            return MathUtilities.addAngles(Math.toDegrees(Math.atan2(left_stick_y.get(), left_stick_x.get())), 0.0);
         else
-            return Calculator.addAngles(Math.toDegrees(Math.atan2(left_stick_y.get(), left_stick_x.get())), -180.0);
+            return MathUtilities.addAngles(Math.toDegrees(Math.atan2(left_stick_y.get(), left_stick_x.get())), -180.0);
     }
 
     /**

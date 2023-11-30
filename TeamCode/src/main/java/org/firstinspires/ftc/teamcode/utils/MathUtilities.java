@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.utils;
 /**
  * A Math Utilities Class for the Robot.
  */
-public class Calculator implements Constants {
+public class MathUtilities implements Constants {
     /**
      * Adds two angles that are measured in degrees
      *

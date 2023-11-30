@@ -16,7 +16,7 @@ public class RedTeleop extends OpMode implements Constants {
     @Override
     public void init() {
         robotContainer = new RobotContainer();
-        robotContainer.init(hardwareMap, telemetry, RED_ALLIANCE, 0.0, 0.0, gamepad1, gamepad2);
+        robotContainer.init(hardwareMap, telemetry, RED_ALLIANCE, 48.0, 48.0, -90.0, gamepad1, gamepad2);
     }
 
     /*
