@@ -8,32 +8,32 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
-//TODO: plane launcher, pot conversion, shoulder PID
+//TODO: plane launcher, pot conversion, then shoulder PID
 
 /**
  * The Arm Subsystem of the robot
  */
 public class Arm implements Constants {
-    private AnalogInput pot;
-    private DcMotorEx leftShoulder;
-    private DcMotorEx rightShoulder;
-    private Servo innerLeftExtension;
-    private Servo innerRightExtension;
-    //private Servo planeLauncher;
+    private final AnalogInput pot;
+    private final DcMotorEx leftShoulder;
+    private final DcMotorEx rightShoulder;
+    private final Servo leftExtension;
+    private final Servo rightExtension;
+    //TODO: private Servo planeLauncher;
 
     /**
      * Initializes the Arm object
      *
      * @param hwMap the hardwareMap
      */
-    public void init(HardwareMap hwMap) {
+    public Arm(HardwareMap hwMap) {
         pot = hwMap.get(AnalogInput.class, "pot");
 
         leftShoulder = hwMap.get(DcMotorEx.class, "leftDead");
         rightShoulder = hwMap.get(DcMotorEx.class, "rightDead");
 
-        innerLeftExtension = hwMap.get(Servo.class, "innerLeftExtension");
-        innerRightExtension = hwMap.get(Servo.class, "innerRightExtension");
+        leftExtension = hwMap.get(Servo.class, "innerLeftExtension");
+        rightExtension = hwMap.get(Servo.class, "innerRightExtension");
         //planeLauncher = hwMap.get(Servo.class, "planeLauncher");
     }
 
@@ -43,19 +43,19 @@ public class Arm implements Constants {
      * @param power the turning power
      */
     public void armManualControl(double power) {
-        power = Range.clip(power, -ARM_GOVERNOR, ARM_GOVERNOR);
+        power = Range.clip(power, -SHOULDER_GOVERNOR, SHOULDER_GOVERNOR);
         leftShoulder.setPower(power);
         rightShoulder.setPower(power);
     }
 
     /**
-     * Linear Actuators on the Arm
+     * Move Linear Actuators on the Arm
      *
      * @param isExtending whether to extend or retract
      */
-    public void extensionGoTo(boolean isExtending) {
-        innerLeftExtension.setPosition(isExtending ? EXTENSION_OUT_POSITION : EXTENSION_IN_POSITION);
-        innerRightExtension.setPosition(isExtending ? EXTENSION_OUT_POSITION : EXTENSION_IN_POSITION);
+    public void setExtensionPos(boolean isExtending) {
+        leftExtension.setPosition(isExtending ? EXTENSION_OUT_POSITION : EXTENSION_IN_POSITION);
+        rightExtension.setPosition(isExtending ? EXTENSION_OUT_POSITION : EXTENSION_IN_POSITION);
     }
 
     /**

@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.utils;
 
 /**
- * Robot Constants contained in a convenient interface
+ * All Robot Constants contained in a convenient interface,
+ * Implement in all necessary classes.
  */
 public interface Constants {
     /** Blue Alliance Tag */
@@ -35,49 +36,49 @@ public interface Constants {
     int LOOPS_TO_WAIT = 5;
 
     /** The Proportional Coefficient for the Back Left Drive Motor */
-    double BACK_LEFT_P = 1.0;
+    double BACK_LEFT_P = 10.0;
 
     /** The Integral Coefficient for the Back Left Drive Motor */
     double BACK_LEFT_I = 0.0;
 
     /** The Dampening Coefficient for the Back Left Drive Motor */
-    double BACK_LEFT_D = 0.0;
+    double BACK_LEFT_D = 1.0;
 
     /** The Feedforward Coefficient for the Back Left Drive Motor */
     double BACK_LEFT_F = 14.0;
 
     /** The Proportional Coefficient for the Back Right Drive Motor */
-    double BACK_RIGHT_P = 1.0;
+    double BACK_RIGHT_P = 10.0;
 
     /** The Integral Coefficient for the Back Right Drive Motor */
     double BACK_RIGHT_I = 0.0;
 
     /** The Dampening Coefficient for the Back Right Drive Motor */
-    double BACK_RIGHT_D = 0.0;
+    double BACK_RIGHT_D = 1.0;
 
     /** The Feedforward Coefficient for the Back Right Drive Motor */
     double BACK_RIGHT_F = 14.0;
 
     /** The Proportional Coefficient for the Front Left Drive Motor */
-    double FRONT_LEFT_P = 1.0;
+    double FRONT_LEFT_P = 10.0;
 
     /** The Integral Coefficient for the Front Left Drive Motor */
     double FRONT_LEFT_I = 0.0;
 
     /** The Dampening Coefficient for the Front Left Drive Motor */
-    double FRONT_LEFT_D = 0.0;
+    double FRONT_LEFT_D = 1.0;
 
     /** The Feedforward Coefficient for the Front Left Drive Motor */
     double FRONT_LEFT_F = 14.0;;
 
     /** The Proportional Coefficient for the Front Right Drive Motor */
-    double FRONT_RIGHT_P = 1.0;
+    double FRONT_RIGHT_P = 10.0;
 
     /** The Integral Coefficient for the Front Right Drive Motor */
     double FRONT_RIGHT_I = 0.0;
 
     /** The Dampening Coefficient for the Front Right Drive Motor */
-    double FRONT_RIGHT_D = 0.0;
+    double FRONT_RIGHT_D = 1.0;
 
     /** The Feedforward Coefficient for the Front Right Drive Motor */
     double FRONT_RIGHT_F = 14.0;
@@ -151,8 +152,11 @@ public interface Constants {
     double EXTENSION_OUT_POSITION = 1.0;
 
     /** Max power allowed for the shoulder motors */
-    double ARM_GOVERNOR = 1.0;
+    double SHOULDER_GOVERNOR = 1.0;
 
     /** Max power allowed for the shoulder motors */
     double WRIST_GOVERNOR = 1.0;
+
+    /** Wrist Position Proportional Coefficient */
+    double WRIST_P = 0.1;
 }

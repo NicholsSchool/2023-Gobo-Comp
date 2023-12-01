@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.utils.Constants;
 
 //TODO: re-tune odometry
 //TODO: re-tune drive motors
-//TODO: fix spline, rework undefined cases
 
 /**
  * The robot drivetrain
@@ -18,7 +17,7 @@ public class Drivetrain implements Constants {
     public DcMotorEx frontLeft, frontRight, backLeft, backRight, leftDead, rightDead, centerDead;
     private int previousLeft, previousRight, previousCenter;
     private double x, y, heading, desiredHeading;
-    private boolean alliance;
+    private final boolean alliance;
 
     /**
      * Initializes the Drivetrain object
@@ -28,7 +27,7 @@ public class Drivetrain implements Constants {
      * @param x the starting x coordinate
      * @param y the starting y coordinate
      */
-    public void init(HardwareMap hwMap, boolean alliance, double x, double y, double heading)
+    public Drivetrain(HardwareMap hwMap, boolean alliance, double x, double y, double heading)
     {
         // Initialize Variables
         this.alliance = alliance;
@@ -173,7 +172,8 @@ public class Drivetrain implements Constants {
      */
     public void splineToIntake(double turn, boolean autoAlign) {
         double power = Range.clip(SPLINE_P * Math.sqrt(
-                Math.pow(INTAKE_X - x, 2) + Math.pow(alliance ? BLUE_INTAKE_Y - y : RED_INTAKE_Y - y, 2)), -1.0, 1.0);
+                Math.pow(INTAKE_X - x, 2) + Math.pow(alliance ? BLUE_INTAKE_Y - y : RED_INTAKE_Y - y, 2) )
+                , -1.0, 1.0);
 
         double angle;
         if(x <= LEFT_WAYPOINT_X)
@@ -192,7 +192,8 @@ public class Drivetrain implements Constants {
      */
     public void splineToScoring(double turn, boolean autoAlign) {
         double power = Range.clip(SPLINE_P * Math.sqrt(
-                Math.pow(SCORING_X - x, 2) + Math.pow(alliance ? BLUE_SCORING_Y - y : RED_SCORING_Y - y, 2)), -1.0, 1.0);
+                Math.pow(SCORING_X - x, 2) + Math.pow(alliance ? BLUE_SCORING_Y - y : RED_SCORING_Y - y, 2) )
+                , -1.0, 1.0);
 
         double angle;
         if(x >= RIGHT_WAYPOINT_X)
@@ -219,7 +220,6 @@ public class Drivetrain implements Constants {
     public double angleToVertex(double wx, double wy, boolean toIntake) {
         if(x == wx)
             return toIntake ? 0.0 : -180.0;
-
         return MathUtilities.addAngles( Math.toDegrees(Math.atan2(2.0 * (wy - y), wx - x) ), 0.0);
     }
 
@@ -257,7 +257,7 @@ public class Drivetrain implements Constants {
      */
     public void updatePose(double[] pose) {
         updateWithOdometry();
-        if(pose[0] != -6969)
+        if(pose != null)
             updateWithAprilTags(pose);
     }
 

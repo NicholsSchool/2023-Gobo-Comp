@@ -10,13 +10,13 @@ import org.firstinspires.ftc.teamcode.utils.Constants;
  */
 public class Intake implements Constants {
 
-    private Servo leftServo;
-    private Servo rightServo;
+    private final Servo leftServo;
+    private final Servo rightServo;
 
     /** Initializes pan servos (linear actuators)
      *  MUST BE CALLED DURING TELEOP INIT OR ELSE
      */
-    public void init(HardwareMap hwMap) {
+    public Intake(HardwareMap hwMap) {
         leftServo = hwMap.get(Servo.class, "leftDust");
         rightServo = hwMap.get(Servo.class, "rightDust");
     }

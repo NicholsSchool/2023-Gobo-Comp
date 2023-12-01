@@ -10,9 +10,9 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
  */
 public class IndicatorLights {
 
-    private RevBlinkinLedDriver leftBlinkin;
-    private RevBlinkinLedDriver rightBlinkin;
-    private RevBlinkinLedDriver.BlinkinPattern defaultPattern;
+    private final RevBlinkinLedDriver leftBlinkin;
+    private final RevBlinkinLedDriver rightBlinkin;
+    private final RevBlinkinLedDriver.BlinkinPattern defaultPattern;
 
     /**
      * Initializes the IndicatorLights subsystem
@@ -20,7 +20,7 @@ public class IndicatorLights {
      * @param hwMap the hardwareMap
      * @param isBlueAlliance whether we are blue alliance
      */
-    public void init(HardwareMap hwMap, boolean isBlueAlliance) {
+    public IndicatorLights(HardwareMap hwMap, boolean isBlueAlliance) {
         leftBlinkin = hwMap.get(RevBlinkinLedDriver.class,"leftBlinkin");
         rightBlinkin = hwMap.get(RevBlinkinLedDriver.class, "rightBlinkin");
         defaultPattern = isBlueAlliance ? RevBlinkinLedDriver.BlinkinPattern.RAINBOW_OCEAN_PALETTE

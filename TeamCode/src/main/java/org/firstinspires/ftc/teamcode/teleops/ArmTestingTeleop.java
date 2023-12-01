@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.robot.Arm;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
 @Config
-@TeleOp(name="Arm Manual Testing")
+@TeleOp(name="[DASHBOARD] Arm Testing")
 public class ArmTestingTeleop extends OpMode implements Constants
 {
     public Arm arm;
@@ -19,8 +19,7 @@ public class ArmTestingTeleop extends OpMode implements Constants
 
     @Override
     public void init() {
-        arm = new Arm();
-        arm.init(hardwareMap);
+        arm = new Arm(hardwareMap);
         shoulderPower = 0.0;
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
@@ -29,7 +28,7 @@ public class ArmTestingTeleop extends OpMode implements Constants
     public void loop() {
 
         arm.armManualControl(shoulderPower);
-        arm.extensionGoTo(extend);
+        arm.setExtensionPos(extend);
 
         telemetry.addData("shoulderPower", shoulderPower);
         telemetry.addData("extending", extend);

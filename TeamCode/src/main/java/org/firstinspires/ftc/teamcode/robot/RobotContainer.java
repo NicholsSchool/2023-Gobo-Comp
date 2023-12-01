@@ -17,6 +17,7 @@ public class RobotContainer {
     private Drivetrain drivetrain;
     private Intake intake;
     private Arm arm;
+    private Hand hand;
     private IndicatorLights lights;
     private Vision vision;
     private GameController driverOI;
@@ -40,18 +41,17 @@ public class RobotContainer {
      */
     public void init(HardwareMap hwMap, Telemetry telemetry, boolean alliance, double x, double y, double heading, Gamepad g1, Gamepad g2) {
         this.alliance = alliance;
-        drivetrain = new Drivetrain();
-        intake = new Intake();
-        arm = new Arm();
-        lights = new IndicatorLights();
-        vision = new Vision();
-        drivetrain.init(hwMap, alliance, x, y, heading);
-        intake.init(hwMap);
-        arm.init(hwMap);
-        lights.init(hwMap, alliance);
-        vision.init(hwMap);
+
+        drivetrain = new Drivetrain(hwMap, alliance, x, y, heading);
+        intake = new Intake(hwMap);
+        arm = new Arm(hwMap);
+        hand = new Hand(hwMap);
+        lights = new IndicatorLights(hwMap, alliance);
+        vision = new Vision(hwMap);
+
         driverOI = new GameController(g1);
         operatorOI = new GameController(g2);
+
         this.telemetry = telemetry;
         power = 0.0;
         angle = 0.0;
@@ -118,7 +118,7 @@ public class RobotContainer {
         driverOI.updateValues();
         operatorOI.updateValues();
 
-        drivetrain.updatePose(vision.localize());
+        drivetrain.updatePose(vision.localize() );
     }
 
     /**
@@ -140,22 +140,28 @@ public class RobotContainer {
         telemetry.addData("Drive Power", power);
         telemetry.addData("angle", angle);
         telemetry.addData("turn power", turn);
+
         double[] motorVel = drivetrain.getMotorVelocities();
         telemetry.addData("back left drive vel", motorVel[0]);
         telemetry.addData("back right drive vel", motorVel[1]);
         telemetry.addData("front left drive vel", motorVel[2]);
         telemetry.addData("front right drive vel", motorVel[3]);
+
         double[] deadPos = drivetrain.getOdometryPositions();
         telemetry.addData("left dead pos", deadPos[0]);
         telemetry.addData("right dead pos", deadPos[1]);
         telemetry.addData("center dead pos", deadPos[2]);
+
         double[] xy = drivetrain.getXY();
         telemetry.addData("x", xy[0]);
         telemetry.addData("y", xy[1]);
+
         telemetry.addData("heading", drivetrain.getFieldHeading());
         telemetry.addData("autoAligning", turn == 0.0);
         telemetry.addData("field oriented", fieldOriented);
         telemetry.addData("pot", arm.getPot());
+        telemetry.addData("# Tags Detected", vision.getNumDetections() );
+
         telemetry.update();
     }
 }
