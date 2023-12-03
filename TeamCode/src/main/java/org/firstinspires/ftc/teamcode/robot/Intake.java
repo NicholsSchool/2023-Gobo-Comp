@@ -20,15 +20,23 @@ public class Intake implements Constants {
         leftServo = hwMap.get(Servo.class, "leftDust");
         rightServo = hwMap.get(Servo.class, "rightDust");
     }
-
     /**
-     * Sets pan actuators to the position
-     *
-     * @param isRaising whether to raise or lower the intake
+     * does pan movement without getting in the way of the arm
+     * @param isLowering is the driver lowering the pan
+     * @param potAngle angle of the arm
+     * @param deltaPot is the arm going up or down
      */
-    public void panToPosition(boolean isRaising) {
-        leftServo.setPosition(isRaising ? INTAKE_UP_POSITION : INTAKE_DOWN_POSITION);
-        rightServo.setPosition(isRaising ? INTAKE_UP_POSITION : INTAKE_DOWN_POSITION);
+    public void panToPosition(boolean isLowering, double potAngle, double deltaPot) {
+        if(isLowering) {
+            leftServo.setPosition(INTAKE_DOWN_POSITION);
+            rightServo.setPosition(INTAKE_DOWN_POSITION);
+        }else if((potAngle > PAN_ARM_UP_LIMIT && deltaPot < 0) || (potAngle > PAN_ARM_DOWN_LIMIT)){
+            leftServo.setPosition(INTAKE_UP_POSITION);
+            rightServo.setPosition(INTAKE_UP_POSITION);
+        }else if((potAngle < PAN_ARM_UP_LIMIT && deltaPot > 0) || potAngle < PAN_ARM_DOWN_LIMIT){
+            leftServo.setPosition(PAN_SAFE_POS);
+            rightServo.setPosition(PAN_SAFE_POS);
+        }
     }
 
     /**

@@ -257,8 +257,8 @@ public class Drivetrain implements Constants {
      */
     public void updatePose(double[] pose) {
         updateWithOdometry();
-        if(pose != null)
-            updateWithAprilTags(pose);
+//        if(pose != null)
+//            updateWithAprilTags(pose);
     }
 
     /**
@@ -293,11 +293,11 @@ public class Drivetrain implements Constants {
      *
      * @param pose the pose [x, y, theta]
      */
-    private void updateWithAprilTags(double[] pose) {
-        this.x = pose[0];
-        this.y = pose[1];
-        this.heading = pose[2];
-    }
+//    private void updateWithAprilTags(double[] pose) {
+//        this.x = pose[0];
+//        this.y = pose[1];
+//        this.heading = pose[2];
+//    }
 
     /**
      * Get Motor Velocities for telemetry

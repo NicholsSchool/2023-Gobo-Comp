@@ -19,6 +19,8 @@ public class Arm implements Constants {
     private final DcMotorEx rightShoulder;
     private final Servo leftExtension;
     private final Servo rightExtension;
+    public double previousPot;
+    public double deltaPot;
     //TODO: private Servo planeLauncher;
 
     /**
@@ -32,8 +34,10 @@ public class Arm implements Constants {
         leftShoulder = hwMap.get(DcMotorEx.class, "leftDead");
         rightShoulder = hwMap.get(DcMotorEx.class, "rightDead");
 
-        leftExtension = hwMap.get(Servo.class, "innerLeftExtension");
-        rightExtension = hwMap.get(Servo.class, "innerRightExtension");
+        leftExtension = hwMap.get(Servo.class, "leftExtension");
+        rightExtension = hwMap.get(Servo.class, "rightExtension");
+
+        this.previousPot = 0;
         //planeLauncher = hwMap.get(Servo.class, "planeLauncher");
     }
 
@@ -44,7 +48,7 @@ public class Arm implements Constants {
      */
     public void armManualControl(double power) {
         power = Range.clip(power, -SHOULDER_GOVERNOR, SHOULDER_GOVERNOR);
-        leftShoulder.setPower(power);
+        leftShoulder.setPower(-power);
         rightShoulder.setPower(power);
     }
 
@@ -66,4 +70,15 @@ public class Arm implements Constants {
     public double getPot() {
         return pot.getVoltage();
     }
+
+    public double potToAngle(){
+        double angle = Math.log(2.41854 / getPot() - 1) / 0.0100245 + 415.482;
+        return angle;
+    }
+    public void deltaPot(){
+        double pot = getPot();
+        deltaPot = 100 * (pot - previousPot);
+        previousPot = pot;
+    }
+
 }

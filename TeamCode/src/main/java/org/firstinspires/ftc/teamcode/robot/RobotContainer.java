@@ -6,20 +6,21 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.controller.GameController;
+import org.firstinspires.ftc.teamcode.utils.Constants;
 
 //TODO: test full blue AND red alliance controls after every major change
 
 /**
  * The Robot Container
  */
-public class RobotContainer {
+public class RobotContainer implements Constants{
     private boolean alliance;
     private Drivetrain drivetrain;
     private Intake intake;
     private Arm arm;
     private Hand hand;
     private IndicatorLights lights;
-    private Vision vision;
+//    private Vision vision;
     private GameController driverOI;
     private GameController operatorOI;
     private Telemetry telemetry;
@@ -45,9 +46,9 @@ public class RobotContainer {
         drivetrain = new Drivetrain(hwMap, alliance, x, y, heading);
         intake = new Intake(hwMap);
         arm = new Arm(hwMap);
-        hand = new Hand(hwMap);
+        //hand = new Hand(hwMap);
         lights = new IndicatorLights(hwMap, alliance);
-        vision = new Vision(hwMap);
+//        vision = new Vision(hwMap);
 
         driverOI = new GameController(g1);
         operatorOI = new GameController(g2);
@@ -67,11 +68,9 @@ public class RobotContainer {
     public void robot() {
         updateInstances();
 
-        if(driverOI.left_trigger.get() > 0.0)
-            intake.panToPosition(false);
-        else if(driverOI.right_trigger.get() > 0.0)
-            intake.panToPosition(true);
+        arm.armManualControl(operatorOI.left_stick_y.get());
 
+        intake.panToPosition(driverOI.left_trigger.get() > 0, arm.potToAngle(), arm.deltaPot);
         power = driverOI.leftStickRadius();
         angle = driverOI.leftStickTheta(alliance);
         turn = driverOI.right_stick_x.get();
@@ -117,8 +116,10 @@ public class RobotContainer {
     public void updateInstances() {
         driverOI.updateValues();
         operatorOI.updateValues();
+        drivetrain.updateWithOdometry();
+        arm.deltaPot();
 
-        drivetrain.updatePose(vision.localize() );
+//        drivetrain.updatePose(vision.localize() );
     }
 
     /**
@@ -160,7 +161,9 @@ public class RobotContainer {
         telemetry.addData("autoAligning", turn == 0.0);
         telemetry.addData("field oriented", fieldOriented);
         telemetry.addData("pot", arm.getPot());
-        telemetry.addData("# Tags Detected", vision.getNumDetections() );
+        telemetry.addData("potAngle", arm.potToAngle());
+        telemetry.addData("deltaPot", arm.deltaPot);
+//        telemetry.addData("# Tags Detected", vision.getNumDetections() );
 
         telemetry.update();
     }

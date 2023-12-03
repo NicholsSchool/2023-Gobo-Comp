@@ -140,7 +140,7 @@ public interface Constants {
     double RED_INTAKE_Y = -48.0;
 
     /** Servo position for intake actuators when up */
-    double INTAKE_UP_POSITION = 0.5;
+    double INTAKE_UP_POSITION = 0.4;
 
     /** Servo position for intake actuators when touching floor */
     double INTAKE_DOWN_POSITION = 0.75;
@@ -152,11 +152,18 @@ public interface Constants {
     double EXTENSION_OUT_POSITION = 1.0;
 
     /** Max power allowed for the shoulder motors */
-    double SHOULDER_GOVERNOR = 1.0;
-
+    double SHOULDER_GOVERNOR = 0.2;
     /** Max power allowed for the shoulder motors */
     double WRIST_GOVERNOR = 1.0;
 
     /** Wrist Position Proportional Coefficient */
     double WRIST_P = 0.1;
+    /** Used to keep the pan from running into the arm going up*/
+    double PAN_ARM_UP_LIMIT = 20;
+    /** used to keep the pan from running into the arm going down*/
+    double PAN_ARM_DOWN_LIMIT = 150;
+    /** used as a soft cap for the arm movement*/
+    double LARGEST_POT_ANGLE = 210;
+    /**The position at which the pan isnt in the way of the arm or something idk*/
+    double PAN_SAFE_POS = 0.6;
 }
