@@ -8,22 +8,23 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.controller.GameController;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
-//TODO: test full blue AND red alliance controls after every major change
+//TODO: test and troubleshoot full blue AND red alliance controls
+//TODO: fix vision
 
 /**
  * The Robot Container
  */
 public class RobotContainer implements Constants{
-    private boolean alliance;
-    private Drivetrain drivetrain;
-    private Intake intake;
-    private Arm arm;
-    private Hand hand;
-    private IndicatorLights lights;
-//    private Vision vision;
-    private GameController driverOI;
-    private GameController operatorOI;
-    private Telemetry telemetry;
+    private final boolean alliance;
+    private final Drivetrain drivetrain;
+    private final Intake intake;
+    private final Arm arm;
+    //private final Hand hand;
+    private final IndicatorLights lights;
+    //private final Vision vision;
+    private final GameController driverOI;
+    private final GameController operatorOI;
+    private final Telemetry telemetry;
     private double power;
     private double angle;
     private double turn;
@@ -40,7 +41,7 @@ public class RobotContainer implements Constants{
      * @param x starting x
      * @param y starting y
      */
-    public void init(HardwareMap hwMap, Telemetry telemetry, boolean alliance, double x, double y, double heading, Gamepad g1, Gamepad g2) {
+    public RobotContainer(HardwareMap hwMap, Telemetry telemetry, boolean alliance, double x, double y, double heading, Gamepad g1, Gamepad g2) {
         this.alliance = alliance;
 
         drivetrain = new Drivetrain(hwMap, alliance, x, y, heading);
@@ -48,18 +49,12 @@ public class RobotContainer implements Constants{
         arm = new Arm(hwMap);
         //hand = new Hand(hwMap);
         lights = new IndicatorLights(hwMap, alliance);
-//        vision = new Vision(hwMap);
+        //vision = new Vision(hwMap);
 
         driverOI = new GameController(g1);
         operatorOI = new GameController(g2);
 
         this.telemetry = telemetry;
-        power = 0.0;
-        angle = 0.0;
-        turn = 0.0;
-        fieldOriented = true;
-        splineToIntake = false;
-        splineToScoring = false;
     }
 
     /**
@@ -70,15 +65,13 @@ public class RobotContainer implements Constants{
 
         arm.armManualControl(operatorOI.left_stick_y.get());
 
-        intake.panToPosition(driverOI.left_trigger.get() > 0, arm.potToAngle(), arm.deltaPot);
+        intake.setPanPos(driverOI.left_trigger.get() > 0);
+
         power = driverOI.leftStickRadius();
         angle = driverOI.leftStickTheta(alliance);
         turn = driverOI.right_stick_x.get();
 
-        if(driverOI.back.wasJustPressed())
-            fieldOriented = !fieldOriented;
-
-        if(!driverOI.right_stick_x.hasBeenZeroForEnoughTime() )
+        if(!driverOI.right_stick_x.wasZeroLongEnough() )
             drivetrain.setDesiredHeading(drivetrain.getFieldHeading());
         else if(driverOI.y.wasJustPressed())
             drivetrain.setDesiredHeading(alliance ? 90.0 : -90.0);
@@ -88,6 +81,8 @@ public class RobotContainer implements Constants{
             drivetrain.setDesiredHeading(alliance ? 0.0 : -180.0);
         else if(driverOI.x.wasJustPressed())
             drivetrain.setDesiredHeading(alliance ? -180.0 : 0.0);
+
+        fieldOriented = driverOI.back.getToggleState();
 
         if(driverOI.dpad_left.wasJustPressed())
             splineToScoring = true;
@@ -100,26 +95,24 @@ public class RobotContainer implements Constants{
         }
 
         if(splineToIntake)
-            drivetrain.splineToIntake(turn, driverOI.right_stick_x.hasBeenZeroForEnoughTime());
+            drivetrain.splineToIntake(turn, driverOI.right_stick_x.wasZeroLongEnough());
         else if(splineToScoring)
-            drivetrain.splineToScoring(turn, driverOI.right_stick_x.hasBeenZeroForEnoughTime());
+            drivetrain.splineToScoring(turn, driverOI.right_stick_x.wasZeroLongEnough());
         else
-            drivetrain.drive(power, angle, turn, driverOI.right_stick_x.hasBeenZeroForEnoughTime(), fieldOriented);
+            drivetrain.drive(power, angle, turn, driverOI.right_stick_x.wasZeroLongEnough(), fieldOriented);
 
         setLightsColor();
         printTelemetry();
     }
 
     /**
-     * Updates GameControllers and Subsystems
+     * Updates GameControllers and Necessary Subsystems
      */
     public void updateInstances() {
         driverOI.updateValues();
         operatorOI.updateValues();
-        drivetrain.updateWithOdometry();
-        arm.deltaPot();
 
-//        drivetrain.updatePose(vision.localize() );
+        drivetrain.updatePose(null); //TODO: .updatePose(vision.localize());
     }
 
     /**
@@ -161,9 +154,7 @@ public class RobotContainer implements Constants{
         telemetry.addData("autoAligning", turn == 0.0);
         telemetry.addData("field oriented", fieldOriented);
         telemetry.addData("pot", arm.getPot());
-        telemetry.addData("potAngle", arm.potToAngle());
-        telemetry.addData("deltaPot", arm.deltaPot);
-//        telemetry.addData("# Tags Detected", vision.getNumDetections() );
+        //telemetry.addData("# of Tags", vision.getNumDetections() );
 
         telemetry.update();
     }

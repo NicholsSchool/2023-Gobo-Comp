@@ -2,11 +2,12 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 
 /**
  * The class defining the Indicator Lights on the robot.
- * Here is a full list of
- * <a href="https://first-tech-challenge.github.io/SkyStone/com/qualcomm/hardware/rev/RevBlinkinLedDriver.BlinkinPattern.html">blink codes</a>.
+ * A full list of blink codes can be found
+ * <a href="https://first-tech-challenge.github.io/SkyStone/com/qualcomm/hardware/rev/RevBlinkinLedDriver.BlinkinPattern.html">here</a>.
  */
 public class IndicatorLights {
 
@@ -23,8 +24,9 @@ public class IndicatorLights {
     public IndicatorLights(HardwareMap hwMap, boolean isBlueAlliance) {
         leftBlinkin = hwMap.get(RevBlinkinLedDriver.class,"leftBlinkin");
         rightBlinkin = hwMap.get(RevBlinkinLedDriver.class, "rightBlinkin");
-        defaultPattern = isBlueAlliance ? RevBlinkinLedDriver.BlinkinPattern.RAINBOW_OCEAN_PALETTE
-                : RevBlinkinLedDriver.BlinkinPattern.RAINBOW_LAVA_PALETTE;
+
+        defaultPattern = isBlueAlliance ? BlinkinPattern.RAINBOW_OCEAN_PALETTE
+                : BlinkinPattern.RAINBOW_LAVA_PALETTE;
         setColour(defaultPattern);
     }
 
@@ -32,7 +34,7 @@ public class IndicatorLights {
      *
      * @param pattern The pattern to set the LEDs to (BlinkinPattern)
      */
-    public void setColour(RevBlinkinLedDriver.BlinkinPattern pattern) {
+    public void setColour(BlinkinPattern pattern) {
         leftBlinkin.setPattern(pattern);
         rightBlinkin.setPattern(pattern);
     }
@@ -42,7 +44,7 @@ public class IndicatorLights {
      *
      * @param pattern The pattern to set the LEDs to (BlinkinPattern)
      */
-    public void setLeftColour(RevBlinkinLedDriver.BlinkinPattern pattern) {
+    public void setLeftColour(BlinkinPattern pattern) {
         leftBlinkin.setPattern(pattern);
     }
 
@@ -51,12 +53,12 @@ public class IndicatorLights {
      *
      * @param pattern The pattern to set the LEDs to (BlinkinPattern)
      */
-    public void setRightColour(RevBlinkinLedDriver.BlinkinPattern pattern) {
+    public void setRightColour(BlinkinPattern pattern) {
         rightBlinkin.setPattern(pattern);
     }
 
     /**
-     * Sets the default color, red or blue.
+     * Sets the default color, red or blue based on alliance.
      */
     public void setDefaultColor() {
         leftBlinkin.setPattern(defaultPattern);

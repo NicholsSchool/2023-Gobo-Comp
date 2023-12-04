@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.controller;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.utils.MathUtilities;
 
@@ -70,7 +69,7 @@ public class GameController {
     public double leftStickRadius() {
         double x = left_stick_x.get();
         double y = left_stick_y.get();
-        return Range.clip(Math.sqrt(x * x + y * y), -1.0, 1.0);
+        return MathUtilities.clip(Math.sqrt(x * x + y * y), -1.0, 1.0);
     }
 
     /**

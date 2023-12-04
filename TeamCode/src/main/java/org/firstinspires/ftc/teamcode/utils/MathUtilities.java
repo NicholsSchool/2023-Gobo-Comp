@@ -9,6 +9,7 @@ public class MathUtilities implements Constants {
      *
      * @param angle1 the first angle
      * @param angle2 the second angle
+     *
      * @return the sum in the range [-180, 180)
      */
     public static double addAngles(double angle1, double angle2) {
@@ -18,5 +19,20 @@ public class MathUtilities implements Constants {
         while(sum < -180.0)
             sum += 360.0;
         return sum;
+    }
+
+    /**
+     * Clips a number in the range [min, max]
+     *
+     * @param num the number to clip
+     * @param min the minimum allowed value
+     * @param max the minimum allowed value
+     *
+     * @return the number in the range
+     */
+    public static double clip(double num, double min, double max) {
+        if(num > max)
+            return max;
+        return Math.max(num, min);
     }
 }

@@ -153,17 +153,19 @@ public interface Constants {
 
     /** Max power allowed for the shoulder motors */
     double SHOULDER_GOVERNOR = 0.2;
-    /** Max power allowed for the shoulder motors */
+
+    /** Max power allowed for the wrist motor */
     double WRIST_GOVERNOR = 1.0;
 
     /** Wrist Position Proportional Coefficient */
     double WRIST_P = 0.1;
+
     /** Used to keep the pan from running into the arm going up*/
     double PAN_ARM_UP_LIMIT = 20;
+
     /** used to keep the pan from running into the arm going down*/
     double PAN_ARM_DOWN_LIMIT = 150;
-    /** used as a soft cap for the arm movement*/
-    double LARGEST_POT_ANGLE = 210;
+
     /**The position at which the pan isnt in the way of the arm or something idk*/
     double PAN_SAFE_POS = 0.6;
 }

@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-//TODO: localization issue with weird values, exposure tuning, calibration (with scrcpy?)
-
-import android.util.Size;
+//TODO: parallel cameras, localization, exposure tuning (with scrcpy?)
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -14,8 +12,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.ArrayList;
 
 /**
- * Contains April Tag Processing for Robot Localization
- * and Object Detection for Auto
+ * The Vision Subsystem on the Robot
  */
 public class Vision {
     private final AprilTagProcessor aprilTagProcessor;
@@ -27,12 +24,11 @@ public class Vision {
      * @param hwMap the Hardware Map
      */
     public Vision(HardwareMap hwMap) {
-        aprilTagProcessor = new AprilTagProcessor.Builder().build(); //TODO: calibration???
-        //TODO: double check
+        aprilTagProcessor = new AprilTagProcessor.Builder().build();
+
         VisionPortal frontCamPortal = new VisionPortal.Builder()
                 .setCamera(hwMap.get(WebcamName.class, "Webcam 1"))
                 .addProcessor(aprilTagProcessor)
-                .setCameraResolution(new Size(1280, 720)) //TODO: double check
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .setAutoStopLiveView(true)
                 .build();
@@ -40,7 +36,6 @@ public class Vision {
         VisionPortal backCamPortal = new VisionPortal.Builder()
                 .setCamera(hwMap.get(WebcamName.class, "Webcam 2"))
                 .addProcessor(aprilTagProcessor)
-                .setCameraResolution(new Size(1280, 720))
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .setAutoStopLiveView(true)
                 .build();
@@ -49,25 +44,9 @@ public class Vision {
     }
 
     /**
-     * Iterates through the April Tag Detections on both Vision Portals
-     */
-    public void updateDetections() {
-        detections.clear();
-        ArrayList<AprilTagDetection> aprilTagDetections = aprilTagProcessor.getDetections();
-        for(AprilTagDetection aprilTagDetection : aprilTagDetections) {
-            if (aprilTagDetection.metadata != null) {
-                detections.add( new double[] {
-                        aprilTagDetection.ftcPose.x, //TODO: raw pose???
-                        aprilTagDetection.ftcPose.y,
-                        aprilTagDetection.ftcPose.yaw,
-                        aprilTagDetection.id }
-                );
-            }
-        }
-    }
-
-    /**
      * Localizes the Robot
+     *
+     * @return the robot pose [x, y, theta] in inches and degrees
      */
     public double[] localize() {
         updateDetections();
@@ -98,7 +77,26 @@ public class Vision {
         averagedPose[0] /= size;
         averagedPose[1] /= size;
         averagedPose[2] /= size;
+
         return averagedPose;
+    }
+
+    /**
+     * Iterates through the April Tag Detections on both Vision Portals
+     */
+    public void updateDetections() {
+        detections.clear();
+        ArrayList<AprilTagDetection> aprilTagDetections = aprilTagProcessor.getDetections();
+        for(AprilTagDetection aprilTagDetection : aprilTagDetections) {
+            if (aprilTagDetection.metadata != null) {
+                detections.add( new double[] {
+                        aprilTagDetection.ftcPose.x, //TODO: localize
+                        aprilTagDetection.ftcPose.y,
+                        aprilTagDetection.ftcPose.yaw,
+                        aprilTagDetection.id }
+                );
+            }
+        }
     }
 
     /**

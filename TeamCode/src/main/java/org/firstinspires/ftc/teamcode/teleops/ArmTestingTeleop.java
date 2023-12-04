@@ -9,18 +9,22 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.robot.Arm;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
+/**
+ * A teleop for testing Arm functionalities using
+ * FTC Dashboard
+ */
 @Config
 @TeleOp(name="[DASHBOARD] Arm Testing")
 public class ArmTestingTeleop extends OpMode implements Constants
 {
     public Arm arm;
     public static double shoulderPower;
-    public static boolean extend;
+    public static double extensionPosition;
+    public static double planeLauncherPosition;
 
     @Override
     public void init() {
         arm = new Arm(hardwareMap);
-        shoulderPower = 0.0;
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
 
@@ -28,10 +32,12 @@ public class ArmTestingTeleop extends OpMode implements Constants
     public void loop() {
 
         arm.armManualControl(shoulderPower);
-        arm.setExtensionPos(extend);
+        arm.setExtensionManual(extensionPosition);
+        arm.setPlaneLauncherManual(planeLauncherPosition);
 
         telemetry.addData("shoulderPower", shoulderPower);
-        telemetry.addData("extending", extend);
+        telemetry.addData("extensionPosition", extensionPosition);
+        telemetry.addData("planeLauncherPosition", planeLauncherPosition);
         telemetry.addData("pot", arm.getPot());
         telemetry.update();
     }

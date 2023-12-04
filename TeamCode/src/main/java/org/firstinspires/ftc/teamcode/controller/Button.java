@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 public class Button {
     private boolean state;
     private boolean previousState;
+    private boolean toggleState;
 
     /**
      * Creates a Button Object
@@ -15,6 +16,7 @@ public class Button {
     public Button() {
         this.state = false;
         this.previousState = false;
+        this.toggleState = false;
     }
 
     /**
@@ -27,12 +29,12 @@ public class Button {
     }
 
     /**
-     * Whether the button's state just changed
+     * The button's toggle value starts as false and is switched when the button is pressed.
      *
-     * @return true if the button's state just changed, false otherwise
+     * @return the button's toggle value
      */
-    public boolean stateJustChanged() {
-        return state != previousState;
+    public boolean getToggleState() {
+        return toggleState;
     }
 
     /**
@@ -45,15 +47,6 @@ public class Button {
     }
 
     /**
-     * Whether the button was just released
-     *
-     * @return true if the button was just released, false otherwise
-     */
-    public boolean wasJustReleased() {
-        return !state && previousState;
-    }
-
-    /**
      * Updates the button's current and previous states
      *
      * @param newState the state to set the current state to
@@ -61,6 +54,7 @@ public class Button {
     public void updateStates(boolean newState) {
         previousState = state;
         state = newState;
+        toggleState = (state && !previousState) != toggleState;
     }
 
     /**

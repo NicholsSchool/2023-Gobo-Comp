@@ -13,7 +13,7 @@ public class Axis implements Constants {
     private double value;
 
     /**
-     * Creates an Axis Object with the default deadBand
+     * Creates an Axis Object with the default deadBand defined in Constants
      */
     public Axis() {
         this(DEFAULT_DEADBAND);
@@ -22,7 +22,7 @@ public class Axis implements Constants {
     /**
      * Creates an Axis Object with a specified deadBand
      *
-     * @param deadBand the desired deadBand
+     * @param deadBand the deadBand
      */
     public Axis(double deadBand) {
         this.value = 0.0;
@@ -45,7 +45,7 @@ public class Axis implements Constants {
      *
      * @return true iff the Axis has been zero for enough loops
      */
-    public boolean hasBeenZeroForEnoughTime() {
+    public boolean wasZeroLongEnough() {
         return loopsAtZero >= LOOPS_TO_WAIT;
     }
 

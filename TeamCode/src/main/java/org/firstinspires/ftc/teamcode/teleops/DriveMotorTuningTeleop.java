@@ -10,6 +10,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.robot.Drivetrain;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
+/**
+ * A teleop for tuning drive motors using
+ * FTC Dashboard
+ */
 @Config
 @TeleOp(name="[DASHBOARD] Drive Motor Tuning")
 public class DriveMotorTuningTeleop extends OpMode implements Constants

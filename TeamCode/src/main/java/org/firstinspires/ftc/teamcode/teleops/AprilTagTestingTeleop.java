@@ -15,11 +15,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 
 /*
- * This OpMode illustrates the basics of AprilTag recognition and pose estimation, using
- * two webcams.
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
+ * April Tag Proof of Concept using edited Sample Opmode
  */
 @TeleOp(name = "April Tag Testing")
 public class AprilTagTestingTeleop extends OpMode {

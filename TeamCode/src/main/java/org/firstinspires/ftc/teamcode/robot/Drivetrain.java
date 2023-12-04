@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.utils.MathUtilities;
 import org.firstinspires.ftc.teamcode.utils.Constants;
@@ -31,9 +30,6 @@ public class Drivetrain implements Constants {
     {
         // Initialize Variables
         this.alliance = alliance;
-        this.previousLeft = 0;
-        this.previousRight = 0;
-        this.previousCenter = 0;
         this.x = x;
         this.y = y;
         this.heading = heading;
@@ -62,10 +58,12 @@ public class Drivetrain implements Constants {
         backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-//        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-//        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-//        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-//        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+/*
+        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+*/
         leftDead.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rightDead.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         centerDead.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -102,7 +100,7 @@ public class Drivetrain implements Constants {
      */
     public void driveTest(double power)
     {
-        power = Range.clip( power, -1.0, 1.0);
+        power = MathUtilities.clip( power, -1.0, 1.0);
         backLeft.setVelocity(power * MAX_SPIN_SPEED);
         backRight.setVelocity(power * MAX_SPIN_SPEED);
         frontLeft.setVelocity(power * MAX_SPIN_SPEED);
@@ -123,9 +121,9 @@ public class Drivetrain implements Constants {
         if(autoAlign && fieldOriented)
             turn = turnToAngle();
         else
-            turn = Range.clip(turn, -MANUAL_TURNING_GOVERNOR, MANUAL_TURNING_GOVERNOR);
+            turn = MathUtilities.clip(turn, -MANUAL_TURNING_GOVERNOR, MANUAL_TURNING_GOVERNOR);
 
-        power = Range.clip(power, turn - OVERALL_GOVERNOR, OVERALL_GOVERNOR - turn);
+        power = MathUtilities.clip(power, turn - OVERALL_GOVERNOR, OVERALL_GOVERNOR - turn);
 
         double corner1;
         double corner2;
@@ -146,15 +144,15 @@ public class Drivetrain implements Constants {
     }
 
     /**
-     * Spins the robot anchor-less to a given heading smoothly using PID
+     * Spins the robot about its center to a given heading smoothly using PID
      *
      * @return the turning speed as a proportion
      */
     public double turnToAngle() {
         double error = MathUtilities.addAngles(heading, -desiredHeading);
-        if(Math.abs(error) >= TURNING_ERROR)
-            return Range.clip(error * TURNING_P, -AUTO_TURNING_GOVERNOR, AUTO_TURNING_GOVERNOR);
-        return 0.0;
+        if(Math.abs(error) < TURNING_ERROR)
+            return 0.0;
+        return MathUtilities.clip(error * TURNING_P, -AUTO_TURNING_GOVERNOR, AUTO_TURNING_GOVERNOR);
     }
 
     /**
@@ -168,10 +166,10 @@ public class Drivetrain implements Constants {
 
     /**
      * Automatically directs the robot to the Coordinates of the Correct Intake
-     * using parabolas in piecewise.
+     * area using parabolas in piecewise.
      */
     public void splineToIntake(double turn, boolean autoAlign) {
-        double power = Range.clip(SPLINE_P * Math.sqrt(
+        double power = MathUtilities.clip(SPLINE_P * Math.sqrt(
                 Math.pow(INTAKE_X - x, 2) + Math.pow(alliance ? BLUE_INTAKE_Y - y : RED_INTAKE_Y - y, 2) )
                 , -1.0, 1.0);
 
@@ -188,10 +186,10 @@ public class Drivetrain implements Constants {
 
     /**
      * Automatically directs the robot to the Coordinates of the Correct Backstage
-     * using parabolas in piecewise.
+     * area using parabolas in piecewise.
      */
     public void splineToScoring(double turn, boolean autoAlign) {
-        double power = Range.clip(SPLINE_P * Math.sqrt(
+        double power = MathUtilities.clip(SPLINE_P * Math.sqrt(
                 Math.pow(SCORING_X - x, 2) + Math.pow(alliance ? BLUE_SCORING_Y - y : RED_SCORING_Y - y, 2) )
                 , -1.0, 1.0);
 
@@ -207,7 +205,7 @@ public class Drivetrain implements Constants {
     }
 
     /**
-     * With the robot at (rx, ry), calculates the drive angle of the robot
+     * With the robot at (x, y), calculates the drive angle of the robot
      * in order to follow a parabola and arrive at the waypoint (wx, wy)
      * that is the vertex. The parabola is defined to contain the robot's coordinates.
      *
@@ -224,11 +222,11 @@ public class Drivetrain implements Constants {
     }
 
     /**
-     * With the robot at (rx, ry), calculates the drive angle of the robot
+     * With the robot at (x, y), calculates the drive angle of the robot
      * in order to follow a parabola and arrive at the waypoint (wx, wy).
      * The parabola is defined with its vertex constrained to the x-value
-     * of h (previous waypoint) and contains both the waypoint and robot
-     * coordinates.
+     * of h (the previous waypoint), and the curve consists of both the
+     * waypoint and robot coordinates.
      *
      * @param wx the waypoint x coordinate
      * @param wy the waypoint y coordinate
@@ -257,8 +255,8 @@ public class Drivetrain implements Constants {
      */
     public void updatePose(double[] pose) {
         updateWithOdometry();
-//        if(pose != null)
-//            updateWithAprilTags(pose);
+        if(pose != null)
+            updateWithAprilTags(pose);
     }
 
     /**
@@ -293,11 +291,11 @@ public class Drivetrain implements Constants {
      *
      * @param pose the pose [x, y, theta]
      */
-//    private void updateWithAprilTags(double[] pose) {
-//        this.x = pose[0];
-//        this.y = pose[1];
-//        this.heading = pose[2];
-//    }
+    private void updateWithAprilTags(double[] pose) {
+        this.x = pose[0];
+        this.y = pose[1];
+        this.heading = pose[2];
+    }
 
     /**
      * Get Motor Velocities for telemetry
