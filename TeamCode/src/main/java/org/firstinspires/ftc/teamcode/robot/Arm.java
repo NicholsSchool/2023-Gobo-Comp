@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 import org.firstinspires.ftc.teamcode.utils.MathUtilities;
 
-//TODO: do plane launcher, do pot conversion, shoulder PID?, find ideal climb extension, wrist goToPos/forbar
+//TODO: do plane launcher, do pot conversion, shoulder PID?, wrist goToPos/forbar
 
 /**
  * The Arm Subsystem of the robot
@@ -82,8 +82,8 @@ public class Arm implements Constants {
      * @param isExtending whether to extend or retract
      */
     public void setExtensionPos(boolean isExtending) {
-        leftExtension.setPosition(isExtending ? EXTENSION_OUT_POSITION : EXTENSION_IN_POSITION);
-        rightExtension.setPosition(isExtending ? EXTENSION_OUT_POSITION : EXTENSION_IN_POSITION);
+        leftExtension.setPosition(isExtending ? 1.0 : 0.0);
+        rightExtension.setPosition(isExtending ? 1.0 : 0.0);
     }
 
     /**

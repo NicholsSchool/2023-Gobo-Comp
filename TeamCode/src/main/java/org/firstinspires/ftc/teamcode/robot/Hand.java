@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
-//TODO: might need to reconfig, turny wrist goTo, fingers open/close
+//TODO: fingers open/close once mechanical fixes them...
 
 /**
  * The Hand Subsystem
@@ -24,6 +24,9 @@ public class Hand implements Constants {
         turnyWrist = hwMap.get(Servo.class, "turnyWrist");
         leftClaw = hwMap.get(Servo.class, "leftClaw");
         rightClaw = hwMap.get(Servo.class, "rightClaw");
+
+        turnyWrist.scaleRange(0.0, MAX_TURNY_WRIST);
+
 
         //TODO: this stuff
 //        leftClaw.setDirection();
@@ -44,19 +47,11 @@ public class Hand implements Constants {
     /**
      * Moves the wrist manually
      *
-     * @param open true if we want to open the claws, false otherwise
+     * @param positionL the left pos
+     * @param positionR the right pos
      */
-    public void setClawsPos(boolean open) {
-        leftClaw.setPosition(open ? 1.0 : 0.0);
-        rightClaw.setPosition(open ? 1.0 : 0.0);
-    }
-
-    /**
-     * Return the turny wrist Position
-     *
-     * @return the servo position [0, 1]
-     */
-    public double getTurnyWristPos() {
-        return turnyWrist.getPosition();
+    public void setClawPos(double positionL, double positionR) {
+        leftClaw.setPosition(positionL);
+        rightClaw.setPosition(positionR);
     }
 }

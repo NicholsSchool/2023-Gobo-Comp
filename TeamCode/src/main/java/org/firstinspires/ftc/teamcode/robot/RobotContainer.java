@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.controller.GameController;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
 //TODO: test and troubleshoot full blue AND red alliance controls
-//TODO: fix vision
+//TODO: vision and hand are commented out
 
 /**
  * The Robot Container

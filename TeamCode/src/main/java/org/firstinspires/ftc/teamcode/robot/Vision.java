@@ -59,7 +59,12 @@ public class Vision {
 
         for(int i = 0; i < size; i++)
         {
+            double localizedX = 0;
+            double localizedY = 0;
+            double localizedHeading = 0;
+
             int id = (int)detections.get(i)[0];
+
             boolean isFrontTag = id >= 7 && id <= 10;
             if(isFrontTag)
             {
@@ -70,9 +75,9 @@ public class Vision {
             {
                 //TODO: scoring side localization calculations
             }
-            averagedPose[0] += detections.get(i)[0];
-            averagedPose[1] += detections.get(i)[1];
-            averagedPose[2] += detections.get(i)[2];
+            averagedPose[0] += localizedX;
+            averagedPose[1] += localizedY;
+            averagedPose[2] += localizedHeading;
         }
         averagedPose[0] /= size;
         averagedPose[1] /= size;
@@ -90,9 +95,11 @@ public class Vision {
         for(AprilTagDetection aprilTagDetection : aprilTagDetections) {
             if (aprilTagDetection.metadata != null) {
                 detections.add( new double[] {
-                        aprilTagDetection.ftcPose.x, //TODO: localize
+                        aprilTagDetection.ftcPose.x,
                         aprilTagDetection.ftcPose.y,
                         aprilTagDetection.ftcPose.yaw,
+                        aprilTagDetection.ftcPose.range,
+                        aprilTagDetection.ftcPose.bearing,
                         aprilTagDetection.id }
                 );
             }

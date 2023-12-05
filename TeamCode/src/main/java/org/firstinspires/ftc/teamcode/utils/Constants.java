@@ -145,12 +145,6 @@ public interface Constants {
     /** Servo position for intake actuators when touching floor */
     double INTAKE_DOWN_POSITION = 0.75;
 
-    /** Servo position for Arm actuators when retracted */
-    double EXTENSION_IN_POSITION = 0.0;
-
-    /** Servo position for Arm actuators when extended */
-    double EXTENSION_OUT_POSITION = 1.0;
-
     /** Max power allowed for the shoulder motors */
     double SHOULDER_GOVERNOR = 0.2;
 
@@ -160,12 +154,6 @@ public interface Constants {
     /** Wrist Position Proportional Coefficient */
     double WRIST_P = 0.1;
 
-    /** Used to keep the pan from running into the arm going up*/
-    double PAN_ARM_UP_LIMIT = 20;
-
-    /** used to keep the pan from running into the arm going down*/
-    double PAN_ARM_DOWN_LIMIT = 150;
-
-    /**The position at which the pan isnt in the way of the arm or something idk*/
-    double PAN_SAFE_POS = 0.6;
+    /** The Max Useful Servo Range of the Turny Wrist */
+    double MAX_TURNY_WRIST = 0.2;
 }
