@@ -18,7 +18,7 @@ import java.util.List;
  * April Tag Proof of Concept using edited Sample Opmode
  */
 @TeleOp(name = "April Tag Testing")
-public class AprilTagTestingTeleop extends OpMode {
+public class AprilTagSampleTeleop extends OpMode {
 
     /*
      * Variables used for switching cameras.

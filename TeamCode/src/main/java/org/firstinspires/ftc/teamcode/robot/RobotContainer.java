@@ -55,6 +55,7 @@ public class RobotContainer implements Constants{
         operatorOI = new GameController(g2);
 
         this.telemetry = telemetry;
+        this.telemetry.setMsTransmissionInterval(33);
     }
 
     /**

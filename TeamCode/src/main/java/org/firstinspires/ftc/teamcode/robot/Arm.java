@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 import org.firstinspires.ftc.teamcode.utils.MathUtilities;
 
-//TODO: do plane launcher, do pot conversion, shoulder PID?, wrist goToPos/forbar
+//TODO: do pot conversion, shoulder PID?, wrist goToPos/forbar
 
 /**
  * The Arm Subsystem of the robot
@@ -44,6 +44,8 @@ public class Arm implements Constants {
         leftExtension = hwMap.get(Servo.class, "leftExtension");
         rightExtension = hwMap.get(Servo.class, "rightExtension");
         planeLauncher = hwMap.get(Servo.class, "planeLauncher");
+
+        planeLauncher.scaleRange(PLANE_LAUNCHER_COCKED, 1.0);
     }
 
     /**

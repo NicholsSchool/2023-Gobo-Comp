@@ -148,6 +148,9 @@ public interface Constants {
     /** Max power allowed for the shoulder motors */
     double SHOULDER_GOVERNOR = 0.2;
 
+    /** The servo position of the plane launcher when cocked */
+    double PLANE_LAUNCHER_COCKED = 0.3;
+
     /** Max power allowed for the wrist motor */
     double WRIST_GOVERNOR = 1.0;
 
@@ -156,4 +159,55 @@ public interface Constants {
 
     /** The Max Useful Servo Range of the Turny Wrist */
     double MAX_TURNY_WRIST = 0.2;
+
+    /** The open position for the left claw */
+    double LEFT_CLAW_OPEN = 0.25;
+
+    /** The open position for the right claw */
+    double RIGHT_CLAW_OPEN = 0.25;
+
+    /** X Coordinate of Intake Side April Tags */
+    double APRIL_TAG_INTAKE_X = 72;
+
+    /** Y Coordinate of Tag #7 */
+    double APRIL_TAG_7_Y = 42;
+
+    /** Y Coordinate of Tag #8 */
+    double APRIL_TAG_8_Y = 36;
+
+    /** Y Coordinate of Tag #9 */
+    double APRIL_TAG_9_Y = -36;
+
+    /** Y Coordinate of Tag #10 */
+    double APRIL_TAG_10_Y = -48;
+
+    /** X Coordinate of Scoring Side April Tags */
+    double APRIL_TAG_SCORING_X = -61.5;
+
+    /** Y Coordinate of Tag #1 */
+    double APRIL_TAG_1_Y = -42;
+
+    /** Y Coordinate of Tag #2 */
+    double APRIL_TAG_2_Y = -36;
+
+    /** Y Coordinate of Tag #3 */
+    double APRIL_TAG_3_Y = -30;
+
+    /** Y Coordinate of Tag #4 */
+    double APRIL_TAG_4_Y = 30;
+
+    /** Y Coordinate of Tag #5 */
+    double APRIL_TAG_5_Y = 36;
+
+    /** Y Coordinate of Tag #6 */
+    double APRIL_TAG_6_Y = 42;
+
+    /** The distance in inches from the back cam to the robot's center */
+    double BACK_CAM_DIST = 6.0;
+
+    /** The forward distance in inches from the front cam to the robot's center */
+    double FRONT_CAM_FORWARD_DIST = 5.5;
+
+    /** The horizontal distance in inches from the front cam to the robot's center */
+    double FRONT_CAM_HORIZONTAL_DIST = 4.5;
 }

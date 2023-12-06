@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
-//TODO: fingers open/close once mechanical fixes them...
+//TODO: scale turnywrist range
 
 /**
  * The Hand Subsystem
@@ -26,13 +26,9 @@ public class Hand implements Constants {
         rightClaw = hwMap.get(Servo.class, "rightClaw");
 
         turnyWrist.scaleRange(0.0, MAX_TURNY_WRIST);
-
-
-        //TODO: this stuff
-//        leftClaw.setDirection();
-//        rightClaw.setDirection();
-//        leftClaw.scaleRange();
-//        rightClaw.scaleRange();
+        leftClaw.scaleRange(0.0, LEFT_CLAW_OPEN);
+        rightClaw.scaleRange(0.0, RIGHT_CLAW_OPEN);
+        rightClaw.setDirection(Servo.Direction.REVERSE);
     }
 
     /**
