@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.controller.GameController;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
 //TODO: test and troubleshoot full blue AND red alliance controls
-//TODO: vision and hand are commented out
+//TODO: hand is commented out
 
 /**
  * The Robot Container
@@ -21,7 +21,7 @@ public class RobotContainer implements Constants{
     private final Arm arm;
     //private final Hand hand;
     private final IndicatorLights lights;
-    //private final Vision vision;
+    private final Vision vision;
     private final GameController driverOI;
     private final GameController operatorOI;
     private final Telemetry telemetry;
@@ -49,13 +49,12 @@ public class RobotContainer implements Constants{
         arm = new Arm(hwMap);
         //hand = new Hand(hwMap);
         lights = new IndicatorLights(hwMap, alliance);
-        //vision = new Vision(hwMap);
+        vision = new Vision(hwMap);
 
         driverOI = new GameController(g1);
         operatorOI = new GameController(g2);
 
         this.telemetry = telemetry;
-        this.telemetry.setMsTransmissionInterval(33);
     }
 
     /**
@@ -113,7 +112,7 @@ public class RobotContainer implements Constants{
         driverOI.updateValues();
         operatorOI.updateValues();
 
-        drivetrain.updatePose(null); //TODO: .updatePose(vision.localize());
+        drivetrain.updatePose(vision.update());
     }
 
     /**

@@ -23,8 +23,16 @@ public class VisionTestingTeleop extends OpMode implements Constants
 
     @Override
     public void loop() {
-        vision.update();
+        double[] pose = vision.update();
         telemetry.addData("num detections", vision.getNumDetections());
-        telemetry.setMsTransmissionInterval(100);
+        telemetry.addData("X", pose != null ? pose[0] : "null");
+        telemetry.addData("Y", pose != null ? pose[1] : "null");
+        telemetry.addData("Theta", pose != null ? pose[2] : "null");
+        telemetry.update();
+    }
+
+    @Override
+    public void stop() {
+        vision.close();
     }
 }
