@@ -89,10 +89,11 @@ public class Vision implements Constants {
         if(frontSize + backSize == 0)
             return null;
 
-        averagedPose[0] /= frontSize + backSize;
-        averagedPose[1] /= frontSize + backSize;
-        averagedPose[2] /= frontSize + backSize;
+        averagedPose[0] /= (frontSize + backSize);
+        averagedPose[1] /= (frontSize + backSize);
+        averagedPose[2] /= (frontSize + backSize);
 
+        averagedPose[2] = MathUtilities.addAngles(averagedPose[2], 0.0);
         return averagedPose;
     }
 
@@ -101,8 +102,8 @@ public class Vision implements Constants {
         backDetections = backAprilTagProcessor.getDetections();
     }
 
-    private double[] localize(int i, boolean isFront) {
-        AprilTagDetection aprilTagDetection = isFront ? frontDetections.get(i) : backDetections.get(i);
+    private double[] localize(int i, boolean isFrontCam) {
+        AprilTagDetection aprilTagDetection = isFrontCam ? frontDetections.get(i) : backDetections.get(i);
 
         int id = aprilTagDetection.id;
         double range = aprilTagDetection.ftcPose.range;
@@ -112,7 +113,7 @@ public class Vision implements Constants {
         double tagX = (id >= 7 && id <= 10) ? APRIL_TAG_INTAKE_X : APRIL_TAG_SCORING_X;
         double tagY = getTagYCoordinate(id);
 
-        double fieldHeading = isFront == (id >= 7 && id <= 10) ? -yaw : MathUtilities.addAngles(-yaw, -180.0);
+        double fieldHeading = isFrontCam == (id >= 7 && id <= 10) ? -yaw : MathUtilities.addAngles(-yaw, -180.0);
 
         double cameraDeltaX = range * Math.cos(Math.toRadians(bearing - yaw));
         double cameraDeltaY = range * Math.sin(Math.toRadians(bearing - yaw));
@@ -124,7 +125,7 @@ public class Vision implements Constants {
 
         double localizedX;
         double localizedY;
-        if(isFront) {
+        if(isFrontCam) {
             localizedX = cameraX - FRONT_CAM_FORWARD_DIST * Math.cos(fieldHeadingInRadians)
                     + FRONT_CAM_HORIZONTAL_DIST * Math.sin(fieldHeadingInRadians);
             localizedY = cameraY - FRONT_CAM_HORIZONTAL_DIST * Math.cos(fieldHeadingInRadians)

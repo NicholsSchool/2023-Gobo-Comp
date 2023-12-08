@@ -30,15 +30,16 @@ public class MathUtilities implements Constants {
      * @return the sum for pose averaging
      */
     public static double addAnglesForAverage(double angle1, double angle2) {
-        while(angle1 >= 0.0)
+        while(angle1 >= 360.0)
             angle1 -= 360.0;
-        while(angle1 < -360.0)
+        while(angle1 < 0.0)
             angle1 += 360.0;
 
-        while(angle2 >= 0.0)
+        while(angle2 >= 360.0)
             angle2 -= 360.0;
-        while(angle2 < -360.0)
+        while(angle2 < 0.0)
             angle2 += 360.0;
+
         return angle1 + angle2;
     }
 

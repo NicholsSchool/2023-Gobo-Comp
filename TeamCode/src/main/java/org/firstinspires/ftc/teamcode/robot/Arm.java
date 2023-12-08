@@ -18,8 +18,10 @@ public class Arm implements Constants {
     private final DcMotorEx leftShoulder;
     private final DcMotorEx rightShoulder;
     private final DcMotorEx wristMotor;
-    private final Servo leftExtension;
-    private final Servo rightExtension;
+    private final Servo leftExtension1;
+    private final Servo leftExtension2;
+    private final Servo rightExtension1;
+    private final Servo rightExtension2;
     private final Servo planeLauncher;
 
     /**
@@ -41,8 +43,10 @@ public class Arm implements Constants {
         wristMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         wristMotor.setPositionPIDFCoefficients(WRIST_P);
 
-        leftExtension = hwMap.get(Servo.class, "leftExtension");
-        rightExtension = hwMap.get(Servo.class, "rightExtension");
+        leftExtension1 = hwMap.get(Servo.class, "leftExtension1");
+        leftExtension2 = hwMap.get(Servo.class, "leftExtension2");
+        rightExtension1 = hwMap.get(Servo.class, "rightExtension1");
+        rightExtension2 = hwMap.get(Servo.class, "rightExtension2");
         planeLauncher = hwMap.get(Servo.class, "planeLauncher");
 
         planeLauncher.scaleRange(PLANE_LAUNCHER_COCKED, 1.0);
@@ -84,8 +88,10 @@ public class Arm implements Constants {
      * @param isExtending whether to extend or retract
      */
     public void setExtensionPos(boolean isExtending) {
-        leftExtension.setPosition(isExtending ? 1.0 : 0.0);
-        rightExtension.setPosition(isExtending ? 1.0 : 0.0);
+        leftExtension1.setPosition(isExtending ? 1.0 : 0.0);
+        leftExtension2.setPosition(isExtending ? 1.0 : 0.0);
+        rightExtension1.setPosition(isExtending ? 1.0 : 0.0);
+        rightExtension2.setPosition(isExtending ? 1.0 : 0.0);
     }
 
     /**
@@ -94,8 +100,10 @@ public class Arm implements Constants {
      * @param position the position to extend to [0, 1]
      */
     public void setExtensionManual(double position) {
-        leftExtension.setPosition(position);
-        rightExtension.setPosition(position);
+        leftExtension1.setPosition(position);
+        leftExtension2.setPosition(position);
+        rightExtension1.setPosition(position);
+        rightExtension2.setPosition(position);
     }
 
     /**
