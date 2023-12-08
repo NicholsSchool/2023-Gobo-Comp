@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 import org.firstinspires.ftc.teamcode.utils.MathUtilities;
 
-//TODO: do pot conversion, shoulder PID?, wrist goToPos/forbar
+//TODO: do pot conversion, shoulder goToPos, wrist goToPos, 4 actuators
 
 /**
  * The Arm Subsystem of the robot
@@ -99,11 +99,12 @@ public class Arm implements Constants {
     }
 
     /**
-     * TODO: TEMPORARY METHOD UNTIL WE KNOW THE CORRECT SERVO RANGE, MAKE A CONSTANT
-     * @param position the position to turn to [0, 1]
+     * Shoots the plane launcher
+     *
+     * @param shoot whether to shoot the plane
      */
-    public void setPlaneLauncherManual(double position) {
-        planeLauncher.setPosition(position);
+    public void setPlaneLauncher(boolean shoot) {
+        planeLauncher.setPosition(shoot ? 1.0 : PLANE_LAUNCHER_COCKED);
     }
 
     /**

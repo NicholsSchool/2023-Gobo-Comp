@@ -19,7 +19,7 @@ public class RobotContainer implements Constants{
     private final Drivetrain drivetrain;
     private final Intake intake;
     private final Arm arm;
-    //private final Hand hand;
+    private final Hand hand;
     private final IndicatorLights lights;
     private final Vision vision;
     private final GameController driverOI;
@@ -47,7 +47,7 @@ public class RobotContainer implements Constants{
         drivetrain = new Drivetrain(hwMap, alliance, x, y, heading);
         intake = new Intake(hwMap);
         arm = new Arm(hwMap);
-        //hand = new Hand(hwMap);
+        hand = new Hand(hwMap);
         lights = new IndicatorLights(hwMap, alliance);
         vision = new Vision(hwMap);
 

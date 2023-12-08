@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
-//TODO: scale turnywrist range
+//TODO: scale turnywrist range again for -60, 60
 
 /**
  * The Hand Subsystem
@@ -43,11 +43,10 @@ public class Hand implements Constants {
     /**
      * Moves the wrist manually
      *
-     * @param positionL the left pos
-     * @param positionR the right pos
+     * @param open whether to open or close
      */
-    public void setClawPos(double positionL, double positionR) {
-        leftClaw.setPosition(positionL);
-        rightClaw.setPosition(positionR);
+    public void setClawPos(boolean open) {
+        leftClaw.setPosition(open ? LEFT_CLAW_OPEN : 0.0);
+        rightClaw.setPosition(open ? LEFT_CLAW_OPEN : 0.0);
     }
 }

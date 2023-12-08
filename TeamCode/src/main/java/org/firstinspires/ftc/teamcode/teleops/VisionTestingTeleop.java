@@ -30,9 +30,4 @@ public class VisionTestingTeleop extends OpMode implements Constants
         telemetry.addData("Theta", pose != null ? pose[2] : "null");
         telemetry.update();
     }
-
-    @Override
-    public void stop() {
-        vision.close();
-    }
 }

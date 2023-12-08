@@ -20,7 +20,7 @@ public class ArmTestingTeleop extends OpMode implements Constants
     public Arm arm;
     public static double shoulderPower;
     public static double extensionPosition;
-    public static double planeLauncherPosition;
+    public static boolean launchPlane;
 
     @Override
     public void init() {
@@ -33,11 +33,11 @@ public class ArmTestingTeleop extends OpMode implements Constants
 
         arm.armManualControl(shoulderPower);
         arm.setExtensionManual(extensionPosition);
-        arm.setPlaneLauncherManual(planeLauncherPosition);
+        arm.setPlaneLauncher(launchPlane);
 
         telemetry.addData("shoulderPower", shoulderPower);
         telemetry.addData("extensionPosition", extensionPosition);
-        telemetry.addData("planeLauncherPosition", planeLauncherPosition);
+        telemetry.addData("launchPlane", launchPlane);
         telemetry.addData("pot", arm.getPot());
         telemetry.update();
     }

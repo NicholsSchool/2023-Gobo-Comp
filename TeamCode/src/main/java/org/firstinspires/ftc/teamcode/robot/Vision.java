@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-//TODO: switching cameras, exposure tuning (with scrcpy?)
-
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
+import java.util.ArrayList;
+import java.util.List;
+import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 import org.firstinspires.ftc.teamcode.utils.MathUtilities;
@@ -13,88 +12,97 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-import java.util.ArrayList;
+//TODO: heading is still actually fricked
 
 /**
- * The Vision Subsystem on the Robot
+ * The Vision Subsystem of the Robot
  */
 public class Vision implements Constants {
-    private final AprilTagProcessor aprilTagProcessor;
-    private final VisionPortal visionPortal;
-    private final WebcamName webcam1, webcam2;
-    private ArrayList<AprilTagDetection> currentDetections;
-    private int nullTags;
-    private boolean frontCamIsActive;
+
+    VisionPortal.Builder visionPortalBuilder;
+    int FRONT_CAM_VIEW_ID;
+    int BACK_CAM_VIEW_ID;
+    AprilTagProcessor frontAprilTagProcessor;
+    AprilTagProcessor backAprilTagProcessor;
+    VisionPortal frontVisionPortal;
+    VisionPortal backVisionPortal;
+    ArrayList<AprilTagDetection> frontDetections;
+    ArrayList<AprilTagDetection> backDetections;
 
     /**
-     * Initializes the Robot Vision
+     * Instantiates the Vision Subsystem
      *
-     * @param hwMap the Hardware Map
+     * @param hwMap the hardware map
      */
     public Vision(HardwareMap hwMap) {
-        aprilTagProcessor = new AprilTagProcessor.Builder().build();
+        List<Integer> myPortalsList;
+        myPortalsList = JavaUtil.makeIntegerList(VisionPortal.makeMultiPortalView(2, VisionPortal.MultiPortalLayout.HORIZONTAL));
+        FRONT_CAM_VIEW_ID = (Integer) JavaUtil.inListGet(myPortalsList, JavaUtil.AtMode.FROM_START, 0, false);
+        BACK_CAM_VIEW_ID = (Integer) JavaUtil.inListGet(myPortalsList, JavaUtil.AtMode.FROM_START, 1, false);
 
-        webcam1 = hwMap.get(WebcamName.class, "Webcam 1");
-        webcam2 = hwMap.get(WebcamName.class, "Webcam 2");
+        AprilTagProcessor.Builder myAprilTagProcessorBuilder;
+        myAprilTagProcessorBuilder = new AprilTagProcessor.Builder();
+        frontAprilTagProcessor = myAprilTagProcessorBuilder.build();
+        backAprilTagProcessor = myAprilTagProcessorBuilder.build();
 
-        CameraName switchableCamera = ClassFactory.getInstance()
-                .getCameraManager().nameForSwitchableCamera(webcam1, webcam2);
+        visionPortalBuilder = new VisionPortal.Builder();
+        visionPortalBuilder.setCamera(hwMap.get(WebcamName.class, "Webcam 1"));
+        visionPortalBuilder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
+        visionPortalBuilder.addProcessor(frontAprilTagProcessor);
+        visionPortalBuilder.setLiveViewContainerId(FRONT_CAM_VIEW_ID);
+        frontVisionPortal = visionPortalBuilder.build();
 
-        visionPortal = new VisionPortal.Builder()
-                .setCamera(switchableCamera)
-                .addProcessor(aprilTagProcessor)
-                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
-                .setAutoStopLiveView(true)
-                .build();
-
-        currentDetections = new ArrayList<>();
-        nullTags = 0;
-        frontCamIsActive = true;
+        visionPortalBuilder = new VisionPortal.Builder();
+        visionPortalBuilder.setCamera(hwMap.get(WebcamName.class, "Webcam 2"));
+        visionPortalBuilder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
+        visionPortalBuilder.addProcessor(backAprilTagProcessor);
+        visionPortalBuilder.setLiveViewContainerId(BACK_CAM_VIEW_ID);
+        backVisionPortal = visionPortalBuilder.build();
     }
 
     /**
-     * Localizes the Robot
+     * Updates the Robot Vision, call in each loop
      *
      * @return the robot pose [x, y, theta] in inches and degrees
      */
     public double[] update() {
         updateDetections();
 
-        int size = currentDetections.size();
-
         double[] averagedPose = new double[3];
-        for(int i = 0; i < size; i++) {
-            double[] pose = localize(i);
+
+        int frontSize = frontDetections.size();
+        for(int i = 0; i < frontSize; i++) {
+            double[] pose = localize(i, true);
             averagedPose[0] += pose[0];
             averagedPose[1] += pose[1];
-            averagedPose[2] += pose[2];
+            averagedPose[2] = MathUtilities.addAnglesForAverage(averagedPose[2], pose[2]);
         }
 
-        if(size == 0 || size == nullTags) {
-            switchCameras();
+        int backSize = backDetections.size();
+        for(int i = 0; i < backSize; i++) {
+            double[] pose = localize(i, false);
+            averagedPose[0] += pose[0];
+            averagedPose[1] += pose[1];
+            averagedPose[2] = MathUtilities.addAnglesForAverage(averagedPose[2], pose[2]);
+        }
+
+        if(frontSize + backSize == 0)
             return null;
-        }
 
-        averagedPose[0] /= size - nullTags;
-        averagedPose[1] /= size - nullTags;
-        averagedPose[2] /= size - nullTags;
+        averagedPose[0] /= frontSize + backSize;
+        averagedPose[1] /= frontSize + backSize;
+        averagedPose[2] /= frontSize + backSize;
 
-        switchCameras();
         return averagedPose;
     }
 
     private void updateDetections() {
-        currentDetections = aprilTagProcessor.getDetections();
-        nullTags = 0;
+        frontDetections = frontAprilTagProcessor.getDetections();
+        backDetections = backAprilTagProcessor.getDetections();
     }
 
-    private double[] localize(int i) {
-        AprilTagDetection aprilTagDetection = currentDetections.get(i);
-
-        if (aprilTagDetection.metadata == null) {
-            nullTags++;
-            return new double[]{0.0, 0.0, 0.0};
-        }
+    private double[] localize(int i, boolean isFront) {
+        AprilTagDetection aprilTagDetection = isFront ? frontDetections.get(i) : backDetections.get(i);
 
         int id = aprilTagDetection.id;
         double range = aprilTagDetection.ftcPose.range;
@@ -104,7 +112,7 @@ public class Vision implements Constants {
         double tagX = (id >= 7 && id <= 10) ? APRIL_TAG_INTAKE_X : APRIL_TAG_SCORING_X;
         double tagY = getTagYCoordinate(id);
 
-        double fieldHeading = frontCamIsActive == (id >= 7 && id <= 10) ? -yaw : MathUtilities.addAngles(-yaw, -180.0);
+        double fieldHeading = isFront == (id >= 7 && id <= 10) ? -yaw : MathUtilities.addAngles(-yaw, -180.0);
 
         double cameraDeltaX = range * Math.cos(Math.toRadians(bearing - yaw));
         double cameraDeltaY = range * Math.sin(Math.toRadians(bearing - yaw));
@@ -116,7 +124,7 @@ public class Vision implements Constants {
 
         double localizedX;
         double localizedY;
-        if(frontCamIsActive) {
+        if(isFront) {
             localizedX = cameraX - FRONT_CAM_FORWARD_DIST * Math.cos(fieldHeadingInRadians)
                     + FRONT_CAM_HORIZONTAL_DIST * Math.sin(fieldHeadingInRadians);
             localizedY = cameraY - FRONT_CAM_HORIZONTAL_DIST * Math.cos(fieldHeadingInRadians)
@@ -155,25 +163,12 @@ public class Vision implements Constants {
         }
     }
 
-    private void switchCameras() {
-        if(currentDetections.size() == 0 || currentDetections.size() == nullTags)
-            frontCamIsActive = !frontCamIsActive;
-        visionPortal.setActiveCamera(frontCamIsActive ? webcam1 : webcam2 );
-    }
-
     /**
      * Returns the number of April Tag Detections
      *
      * @return the number of detections
      */
     public int getNumDetections() {
-        return currentDetections.size();
-    }
-
-    /**
-     * Closes the vision portal
-     */
-    public void close() {
-        visionPortal.close();
+        return frontDetections.size() + backDetections.size();
     }
 }
