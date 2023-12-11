@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.robot.Intake;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
+//TODO: access all intake functionalities
+
 /**
  * A teleop for testing Intake functionalities using
  * FTC Dashboard

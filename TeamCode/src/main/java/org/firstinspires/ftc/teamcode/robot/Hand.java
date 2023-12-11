@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
-//TODO: scale turnywrist range again for -60, 60
+//TODO: scale turny-wrist range again for -60, 60
 
 /**
  * The Hand Subsystem

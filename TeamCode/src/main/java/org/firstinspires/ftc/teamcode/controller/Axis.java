@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.utils.Constants;
  */
 public class Axis implements Constants {
     private final double deadBand;
-    private int loopsAtZero;
+    private int numLoopsAtZero;
     private double value;
 
     /**
@@ -27,7 +27,7 @@ public class Axis implements Constants {
     public Axis(double deadBand) {
         this.value = 0.0;
         this.deadBand = deadBand;
-        this.loopsAtZero = 0;
+        this.numLoopsAtZero = 0;
     }
 
     /**
@@ -41,12 +41,12 @@ public class Axis implements Constants {
 
     /**
      * Whether the Axis has been zero for
-     * a specified number of loops of the code
+     * a specified number of teleop loop()
      *
-     * @return true iff the Axis has been zero for enough loops
+     * @return true iff the Axis has been zero for enough code loops
      */
     public boolean wasZeroLongEnough() {
-        return loopsAtZero >= LOOPS_TO_WAIT;
+        return numLoopsAtZero >= LOOPS_TO_WAIT;
     }
 
     /**
@@ -56,10 +56,7 @@ public class Axis implements Constants {
      */
     public void updateStates(double newValue) {
         value = applyDeadBand(newValue);
-        if(value == 0)
-            loopsAtZero++;
-        else
-            loopsAtZero = 0;
+        numLoopsAtZero = value == 0 ? numLoopsAtZero + 1 : 0;
     }
 
     private double applyDeadBand(double value) {

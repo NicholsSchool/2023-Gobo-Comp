@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.controller.GameController;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
 //TODO: test and troubleshoot full blue AND red alliance controls
-//TODO: hand is commented out
+//TODO: automated handoff in the robot
 
 /**
  * The Robot Container
@@ -29,6 +29,7 @@ public class RobotContainer implements Constants{
     private double angle;
     private double turn;
     private boolean fieldOriented;
+    private boolean autoAlign;
     private boolean splineToIntake;
     private boolean splineToScoring;
 
@@ -43,6 +44,8 @@ public class RobotContainer implements Constants{
      */
     public RobotContainer(HardwareMap hwMap, Telemetry telemetry, boolean alliance, double x, double y, double heading, Gamepad g1, Gamepad g2) {
         this.alliance = alliance;
+        this.fieldOriented = true;
+        this.autoAlign = false;
 
         drivetrain = new Drivetrain(hwMap, alliance, x, y, heading);
         intake = new Intake(hwMap);
@@ -71,7 +74,10 @@ public class RobotContainer implements Constants{
         angle = driverOI.leftStickTheta(alliance);
         turn = driverOI.right_stick_x.get();
 
-        if(!driverOI.right_stick_x.wasZeroLongEnough() )
+//        autoAlign = driverOI.right_stick_x.wasZeroLongEnough();
+        autoAlign = false;
+
+        if(!autoAlign)
             drivetrain.setDesiredHeading(drivetrain.getFieldHeading());
         else if(driverOI.y.wasJustPressed())
             drivetrain.setDesiredHeading(alliance ? 90.0 : -90.0);
@@ -82,7 +88,7 @@ public class RobotContainer implements Constants{
         else if(driverOI.x.wasJustPressed())
             drivetrain.setDesiredHeading(alliance ? -180.0 : 0.0);
 
-        fieldOriented = driverOI.back.getToggleState();
+        fieldOriented = !driverOI.back.getToggleState();
 
         if(driverOI.dpad_left.wasJustPressed())
             splineToScoring = true;
@@ -95,11 +101,11 @@ public class RobotContainer implements Constants{
         }
 
         if(splineToIntake)
-            drivetrain.splineToIntake(turn, driverOI.right_stick_x.wasZeroLongEnough());
+            drivetrain.splineToIntake(turn, autoAlign);
         else if(splineToScoring)
-            drivetrain.splineToScoring(turn, driverOI.right_stick_x.wasZeroLongEnough());
+            drivetrain.splineToScoring(turn, autoAlign);
         else
-            drivetrain.drive(power, angle, turn, driverOI.right_stick_x.wasZeroLongEnough(), fieldOriented);
+            drivetrain.drive(power, angle, turn, autoAlign, fieldOriented);
 
         setLightsColor();
         printTelemetry();
@@ -151,10 +157,10 @@ public class RobotContainer implements Constants{
         telemetry.addData("y", xy[1]);
 
         telemetry.addData("heading", drivetrain.getFieldHeading());
-        telemetry.addData("autoAligning", turn == 0.0);
+        telemetry.addData("autoAligning", autoAlign);
         telemetry.addData("field oriented", fieldOriented);
         telemetry.addData("pot", arm.getPot());
-        //telemetry.addData("# of Tags", vision.getNumDetections() );
+        telemetry.addData("April Tag Detections", vision.getNumDetections() );
 
         telemetry.update();
     }

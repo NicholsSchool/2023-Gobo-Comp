@@ -6,8 +6,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.utils.MathUtilities;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
-//TODO: re-tune odometry
-//TODO: re-tune drive motors
+//TODO: re-tune odometry, make a graph of it
+//TODO: re-tune drive motors, try using p and i
+//TODO: check spline
 
 /**
  * The robot drivetrain
@@ -171,7 +172,7 @@ public class Drivetrain implements Constants {
     public void splineToIntake(double turn, boolean autoAlign) {
         double power = MathUtilities.clip(SPLINE_P * Math.sqrt(
                 Math.pow(INTAKE_X - x, 2) + Math.pow(alliance ? BLUE_INTAKE_Y - y : RED_INTAKE_Y - y, 2) )
-                , -1.0, 1.0);
+                , -SPLINE_GOVERNOR, SPLINE_GOVERNOR);
 
         double angle;
         if(x <= LEFT_WAYPOINT_X)
@@ -179,7 +180,7 @@ public class Drivetrain implements Constants {
         else if(x <= RIGHT_WAYPOINT_X)
             angle = angleToVertex(RIGHT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, true);
         else
-            angle = angleToVertex(RIGHT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, true);
+            angle = angleFromVertex(INTAKE_X, alliance ? BLUE_INTAKE_Y : RED_INTAKE_Y, RIGHT_WAYPOINT_X, true);
 
         drive(power, angle, turn, autoAlign, true);
     }
@@ -191,7 +192,7 @@ public class Drivetrain implements Constants {
     public void splineToScoring(double turn, boolean autoAlign) {
         double power = MathUtilities.clip(SPLINE_P * Math.sqrt(
                 Math.pow(SCORING_X - x, 2) + Math.pow(alliance ? BLUE_SCORING_Y - y : RED_SCORING_Y - y, 2) )
-                , -1.0, 1.0);
+                , -SPLINE_GOVERNOR, SPLINE_GOVERNOR);
 
         double angle;
         if(x >= RIGHT_WAYPOINT_X)
@@ -207,7 +208,8 @@ public class Drivetrain implements Constants {
     /**
      * With the robot at (x, y), calculates the drive angle of the robot
      * in order to follow a parabola and arrive at the waypoint (wx, wy)
-     * that is the vertex. The parabola is defined to contain the robot's coordinates.
+     * that is the parabola's vertex.
+     * The parabola is defined to contain the robot's coordinates.
      *
      * @param wx the waypoint x coordinate
      * @param wy the waypoint y coordinate
@@ -218,7 +220,7 @@ public class Drivetrain implements Constants {
     public double angleToVertex(double wx, double wy, boolean toIntake) {
         if(x == wx)
             return toIntake ? 0.0 : -180.0;
-        return MathUtilities.addAngles( Math.toDegrees(Math.atan2(2.0 * (wy - y), wx - x) ), 0.0);
+        return MathUtilities.addAngles(Math.toDegrees(Math.atan2(2.0 * (wy - y), wx - x) ), 0.0);
     }
 
     /**
@@ -244,7 +246,7 @@ public class Drivetrain implements Constants {
             return y > wy ? -90.0 : 90.0;
 
         double k = (wy * robotDiff - y * waypointDiff) / (robotDiff - waypointDiff);
-        return MathUtilities.addAngles( Math.toDegrees(Math.atan2(2.0 * (k - y), h - x) ), 0.0);
+        return MathUtilities.addAngles(Math.toDegrees(Math.atan2(2.0 * (k - y), h - x) ), 0.0);
     }
 
     /**
@@ -302,8 +304,7 @@ public class Drivetrain implements Constants {
      *
      * @return in order: backLeft, backRight, frontLeft, frontRight velocities
      */
-    public double[] getMotorVelocities()
-    {
+    public double[] getMotorVelocities() {
         return new double[]{
                 backLeft.getVelocity(),
                 backRight.getVelocity(),
@@ -318,8 +319,7 @@ public class Drivetrain implements Constants {
      * @return the dead wheel encoder values in the order:
      * left, right, center
      */
-    public double[] getOdometryPositions()
-    {
+    public double[] getOdometryPositions() {
         return new double[]{
                 leftDead.getCurrentPosition(),
                 rightDead.getCurrentPosition(),

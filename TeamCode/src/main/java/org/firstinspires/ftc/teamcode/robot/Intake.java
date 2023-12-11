@@ -15,8 +15,8 @@ public class Intake implements Constants {
     private final Servo leftServo;
     private final Servo rightServo;
 
-    /** Initializes pan servos (linear actuators)
-     *  MUST BE CALLED DURING TELEOP INIT OR ELSE
+    /**
+     * Initializes pan servos (linear actuators)
      */
     public Intake(HardwareMap hwMap) {
         leftServo = hwMap.get(Servo.class, "leftDust");

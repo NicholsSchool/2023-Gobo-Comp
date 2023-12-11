@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.utils;
 
 /**
  * All Robot Constants contained in a convenient interface,
- * Implement in all necessary classes.
+ * A class must implement this to access any constants.
  */
 public interface Constants {
     /** Blue Alliance Tag */
@@ -107,7 +107,10 @@ public interface Constants {
     double HEADING_ODOMETRY_CORRECTION = 0.9099;
 
     /** The Proportional Constant for PID spline */
-    double SPLINE_P = 0.1;
+    double SPLINE_P = 0.05;
+
+    /** The Max Speed for splining */
+    double SPLINE_GOVERNOR = 0.5;
 
     /** The X value of the Scoring Points */
     double SCORING_X = -36.0;
@@ -134,10 +137,10 @@ public interface Constants {
     double INTAKE_X = 48.0;
 
     /** The Y value of the Blue Intake Point */
-    double BLUE_INTAKE_Y = 48.0;
+    double BLUE_INTAKE_Y = 60.0;
 
     /** The Y value of the Red Intake Point */
-    double RED_INTAKE_Y = -48.0;
+    double RED_INTAKE_Y = -60.0;
 
     /** Servo position for intake actuators when up */
     double INTAKE_UP_POSITION = 0.4;
@@ -179,7 +182,7 @@ public interface Constants {
     double APRIL_TAG_9_Y = -36;
 
     /** Y Coordinate of Tag #10 */
-    double APRIL_TAG_10_Y = -48;
+    double APRIL_TAG_10_Y = -42;
 
     /** X Coordinate of Scoring Side April Tags */
     double APRIL_TAG_SCORING_X = -61.5;

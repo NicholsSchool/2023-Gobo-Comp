@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -12,7 +13,8 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-//TODO: heading is still actually fricked
+//TODO: verify that it's working as intended with no logic errors
+//TODO: exposure tuning? (srcpy)
 
 /**
  * The Vision Subsystem of the Robot
@@ -66,16 +68,18 @@ public class Vision implements Constants {
      * @return the robot pose [x, y, theta] in inches and degrees
      */
     public double[] update() {
-        updateDetections();
+        frontDetections = frontAprilTagProcessor.getDetections();
+        backDetections = backAprilTagProcessor.getDetections();
 
-        double[] averagedPose = new double[3];
+        double[] averagedPose = new double[4];
 
         int frontSize = frontDetections.size();
         for(int i = 0; i < frontSize; i++) {
             double[] pose = localize(i, true);
             averagedPose[0] += pose[0];
             averagedPose[1] += pose[1];
-            averagedPose[2] = MathUtilities.addAnglesForAverage(averagedPose[2], pose[2]);
+            averagedPose[2] += pose[3] == 1 ? 5 * Math.cos( Math.toRadians(pose[2]) ) : Math.cos( Math.toRadians(pose[2]) );
+            averagedPose[3] += pose[3] == 1 ? 5 * Math.sin( Math.toRadians(pose[2]) ) : Math.sin( Math.toRadians(pose[2]) );
         }
 
         int backSize = backDetections.size();
@@ -83,7 +87,8 @@ public class Vision implements Constants {
             double[] pose = localize(i, false);
             averagedPose[0] += pose[0];
             averagedPose[1] += pose[1];
-            averagedPose[2] = MathUtilities.addAnglesForAverage(averagedPose[2], pose[2]);
+            averagedPose[2] += pose[3] == 1 ? 5 * Math.cos( Math.toRadians(pose[2]) ) : Math.cos( Math.toRadians(pose[2]) );
+            averagedPose[3] += pose[3] == 1 ? 5 * Math.sin( Math.toRadians(pose[2]) ) : Math.sin( Math.toRadians(pose[2]) );
         }
 
         if(frontSize + backSize == 0)
@@ -91,15 +96,9 @@ public class Vision implements Constants {
 
         averagedPose[0] /= (frontSize + backSize);
         averagedPose[1] /= (frontSize + backSize);
-        averagedPose[2] /= (frontSize + backSize);
 
-        averagedPose[2] = MathUtilities.addAngles(averagedPose[2], 0.0);
-        return averagedPose;
-    }
-
-    private void updateDetections() {
-        frontDetections = frontAprilTagProcessor.getDetections();
-        backDetections = backAprilTagProcessor.getDetections();
+        double heading = MathUtilities.addAngles(Math.toDegrees( Math.atan2(averagedPose[3],averagedPose[2]) ), 0.0);
+        return new double[]{averagedPose[0], averagedPose[1], heading};
     }
 
     private double[] localize(int i, boolean isFrontCam) {
@@ -109,17 +108,18 @@ public class Vision implements Constants {
         double range = aprilTagDetection.ftcPose.range;
         double yaw = aprilTagDetection.ftcPose.yaw;
         double bearing = aprilTagDetection.ftcPose.bearing;
+        boolean isIntakeTag = (id >= 7 && id <= 10);
 
-        double tagX = (id >= 7 && id <= 10) ? APRIL_TAG_INTAKE_X : APRIL_TAG_SCORING_X;
+        double tagX = isIntakeTag ? APRIL_TAG_INTAKE_X : APRIL_TAG_SCORING_X;
         double tagY = getTagYCoordinate(id);
 
-        double fieldHeading = isFrontCam == (id >= 7 && id <= 10) ? -yaw : MathUtilities.addAngles(-yaw, -180.0);
+        double fieldHeading = isFrontCam == isIntakeTag ? -yaw : MathUtilities.addAngles(-yaw, -180.0);
 
         double cameraDeltaX = range * Math.cos(Math.toRadians(bearing - yaw));
         double cameraDeltaY = range * Math.sin(Math.toRadians(bearing - yaw));
 
-        double cameraX = (id >= 7 && id <= 10) ? tagX - cameraDeltaX : tagX + cameraDeltaX;
-        double cameraY = (id >= 7 && id <= 10) ? tagY - cameraDeltaY : tagY + cameraDeltaY;
+        double cameraX = isIntakeTag ? tagX - cameraDeltaX : tagX + cameraDeltaX;
+        double cameraY = isIntakeTag ? tagY - cameraDeltaY : tagY + cameraDeltaY;
 
         double fieldHeadingInRadians = Math.toRadians(fieldHeading);
 
@@ -136,7 +136,7 @@ public class Vision implements Constants {
             localizedY = cameraY + BACK_CAM_DIST * Math.sin(fieldHeadingInRadians);
         }
 
-        return new double[] {localizedX, localizedY, fieldHeading};
+        return new double[] {localizedX, localizedY, fieldHeading, id == 7 || id == 10 ? 1 : 0};
     }
 
     private double getTagYCoordinate(int id) {
@@ -162,6 +162,24 @@ public class Vision implements Constants {
             default:
                 return APRIL_TAG_10_Y;
         }
+    }
+
+    public HashMap< Integer, Double > getHeadings() {
+        HashMap< Integer, Double > headings = new HashMap<>();
+        for( int i = 0; i < frontDetections.size(); i++ ) {
+            int id = frontDetections.get(i).id;
+            double yaw = frontDetections.get(i).ftcPose.yaw;
+            yaw = (id >= 7 && id <= 10) ? -yaw : MathUtilities.addAngles(-yaw, -180.0);
+            headings.put( id, yaw );
+        }
+
+        for( int i = 0; i < backDetections.size(); i++ ) {
+            int id = backDetections.get(i).id;
+            double yaw = backDetections.get(i).ftcPose.yaw;
+            yaw = !(id >= 7 && id <= 10) ? -yaw : MathUtilities.addAngles(-yaw, -180.0);
+            headings.put( id, yaw);
+        }
+        return headings;
     }
 
     /**

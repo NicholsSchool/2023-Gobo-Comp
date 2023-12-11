@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.robot.Arm;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
+//TODO: access all arm functionalities
+
 /**
  * A teleop for testing Arm functionalities using
  * FTC Dashboard

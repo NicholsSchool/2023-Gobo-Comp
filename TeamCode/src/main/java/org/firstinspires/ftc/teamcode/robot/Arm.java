@@ -8,7 +8,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 import org.firstinspires.ftc.teamcode.utils.MathUtilities;
 
-//TODO: do pot conversion, shoulder goToPos, wrist goToPos, 4 actuators
+//TODO: pot conversion
+//TODO: shoulder goToPos
+//TODO: wrist goToPos
+//TODO: climb motor
 
 /**
  * The Arm Subsystem of the robot
@@ -18,10 +21,8 @@ public class Arm implements Constants {
     private final DcMotorEx leftShoulder;
     private final DcMotorEx rightShoulder;
     private final DcMotorEx wristMotor;
-    private final Servo leftExtension1;
-    private final Servo leftExtension2;
-    private final Servo rightExtension1;
-    private final Servo rightExtension2;
+    private final Servo leftExtension;
+    private final Servo rightExtension;
     private final Servo planeLauncher;
 
     /**
@@ -43,10 +44,8 @@ public class Arm implements Constants {
         wristMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         wristMotor.setPositionPIDFCoefficients(WRIST_P);
 
-        leftExtension1 = hwMap.get(Servo.class, "leftExtension1");
-        leftExtension2 = hwMap.get(Servo.class, "leftExtension2");
-        rightExtension1 = hwMap.get(Servo.class, "rightExtension1");
-        rightExtension2 = hwMap.get(Servo.class, "rightExtension2");
+        leftExtension = hwMap.get(Servo.class, "leftExtension");
+        rightExtension = hwMap.get(Servo.class, "rightExtension");
         planeLauncher = hwMap.get(Servo.class, "planeLauncher");
 
         planeLauncher.scaleRange(PLANE_LAUNCHER_COCKED, 1.0);
@@ -88,10 +87,8 @@ public class Arm implements Constants {
      * @param isExtending whether to extend or retract
      */
     public void setExtensionPos(boolean isExtending) {
-        leftExtension1.setPosition(isExtending ? 1.0 : 0.0);
-        leftExtension2.setPosition(isExtending ? 1.0 : 0.0);
-        rightExtension1.setPosition(isExtending ? 1.0 : 0.0);
-        rightExtension2.setPosition(isExtending ? 1.0 : 0.0);
+        leftExtension.setPosition(isExtending ? 1.0 : 0.0);
+        rightExtension.setPosition(isExtending ? 1.0 : 0.0);
     }
 
     /**
@@ -100,10 +97,8 @@ public class Arm implements Constants {
      * @param position the position to extend to [0, 1]
      */
     public void setExtensionManual(double position) {
-        leftExtension1.setPosition(position);
-        leftExtension2.setPosition(position);
-        rightExtension1.setPosition(position);
-        rightExtension2.setPosition(position);
+        leftExtension.setPosition(position);
+        rightExtension.setPosition(position);
     }
 
     /**
@@ -131,7 +126,7 @@ public class Arm implements Constants {
      * @return the arm angle in degrees, with 0 as fully in.
      */
     public double getArmAngle() {
-        return 0.0; //TODO: this
+        return 0.0;
     }
 
     /**
