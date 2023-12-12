@@ -13,7 +13,6 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-//TODO: verify that it's working as intended with no logic errors
 //TODO: exposure tuning? (srcpy)
 
 /**
@@ -42,21 +41,20 @@ public class Vision implements Constants {
         FRONT_CAM_VIEW_ID = (Integer) JavaUtil.inListGet(myPortalsList, JavaUtil.AtMode.FROM_START, 0, false);
         BACK_CAM_VIEW_ID = (Integer) JavaUtil.inListGet(myPortalsList, JavaUtil.AtMode.FROM_START, 1, false);
 
-        AprilTagProcessor.Builder myAprilTagProcessorBuilder;
-        myAprilTagProcessorBuilder = new AprilTagProcessor.Builder();
+        AprilTagProcessor.Builder myAprilTagProcessorBuilder = new AprilTagProcessor.Builder();
         frontAprilTagProcessor = myAprilTagProcessorBuilder.build();
         backAprilTagProcessor = myAprilTagProcessorBuilder.build();
 
         visionPortalBuilder = new VisionPortal.Builder();
         visionPortalBuilder.setCamera(hwMap.get(WebcamName.class, "Webcam 1"));
-        visionPortalBuilder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
+        visionPortalBuilder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
         visionPortalBuilder.addProcessor(frontAprilTagProcessor);
         visionPortalBuilder.setLiveViewContainerId(FRONT_CAM_VIEW_ID);
         frontVisionPortal = visionPortalBuilder.build();
 
         visionPortalBuilder = new VisionPortal.Builder();
         visionPortalBuilder.setCamera(hwMap.get(WebcamName.class, "Webcam 2"));
-        visionPortalBuilder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
+        visionPortalBuilder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
         visionPortalBuilder.addProcessor(backAprilTagProcessor);
         visionPortalBuilder.setLiveViewContainerId(BACK_CAM_VIEW_ID);
         backVisionPortal = visionPortalBuilder.build();
@@ -136,7 +134,7 @@ public class Vision implements Constants {
             localizedY = cameraY + BACK_CAM_DIST * Math.sin(fieldHeadingInRadians);
         }
 
-        return new double[] {localizedX, localizedY, fieldHeading, id == 7 || id == 10 ? 1 : 0};
+        return new double[] {localizedX, localizedY, fieldHeading, id == 7 || id == 10 ? 1.0 : 0.0};
     }
 
     private double getTagYCoordinate(int id) {
@@ -164,20 +162,27 @@ public class Vision implements Constants {
         }
     }
 
-    public HashMap< Integer, Double > getHeadings() {
-        HashMap< Integer, Double > headings = new HashMap<>();
+    /**
+     * Get the Individual April Tag Localization Headings for telemetry
+     * Brady did this with a HashMap (he's addicted)
+     *
+     * @return a hashMap of the tag id's and headings
+     */
+    public HashMap<Integer, Double[]> getPose() {
+        HashMap<Integer, Double[]> headings = new HashMap<>();
+        double[] pose = new double[3];
         for( int i = 0; i < frontDetections.size(); i++ ) {
             int id = frontDetections.get(i).id;
             double yaw = frontDetections.get(i).ftcPose.yaw;
             yaw = (id >= 7 && id <= 10) ? -yaw : MathUtilities.addAngles(-yaw, -180.0);
-            headings.put( id, yaw );
+            headings.put( id, new Double[] { yaw, frontDetections.get(i).ftcPose.y } );
         }
 
         for( int i = 0; i < backDetections.size(); i++ ) {
             int id = backDetections.get(i).id;
             double yaw = backDetections.get(i).ftcPose.yaw;
             yaw = !(id >= 7 && id <= 10) ? -yaw : MathUtilities.addAngles(-yaw, -180.0);
-            headings.put( id, yaw);
+            headings.put( id, new Double[] { yaw, frontDetections.get(i).ftcPose.y } );
         }
         return headings;
     }

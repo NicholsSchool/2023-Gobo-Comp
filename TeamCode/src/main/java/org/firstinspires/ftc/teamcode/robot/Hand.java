@@ -5,8 +5,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
-//TODO: scale turny-wrist range again for -60, 60
-
 /**
  * The Hand Subsystem
  */
@@ -28,7 +26,7 @@ public class Hand implements Constants {
         turnyWrist.scaleRange(0.0, MAX_TURNY_WRIST);
         leftClaw.scaleRange(0.0, LEFT_CLAW_OPEN);
         rightClaw.setDirection(Servo.Direction.REVERSE);
-        rightClaw.scaleRange(0.0, RIGHT_CLAW_OPEN);
+        rightClaw.scaleRange(RIGHT_CLAW_OPEN, 1.0);
 
         turnyWrist.setPosition(0.5);
     }
@@ -48,7 +46,7 @@ public class Hand implements Constants {
      * @param open whether to open or close
      */
     public void setClawPos(boolean open) {
-        leftClaw.setPosition(open ? LEFT_CLAW_OPEN : 0.0);
-        rightClaw.setPosition(open ? LEFT_CLAW_OPEN : 0.0);
+        leftClaw.setPosition(open ? 1.0 : 0.0);
+        rightClaw.setPosition(open ? 1.0 : 0.0);
     }
 }

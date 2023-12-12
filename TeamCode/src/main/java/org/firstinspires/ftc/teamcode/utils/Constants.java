@@ -11,8 +11,15 @@ public interface Constants {
     /** Red Alliance Tag */
     boolean RED_ALLIANCE = false;
 
+
+
     /** The Default Controller Axis DeadBand */
     double DEFAULT_DEADBAND = 0.005;
+
+    /** The number of code loops to wait for axis values */
+    int LOOPS_TO_WAIT = 5;
+
+
 
     /** The Maximum Spin Speed of a drive motor in ticks/second */
     int MAX_SPIN_SPEED = 2800;
@@ -31,9 +38,6 @@ public interface Constants {
 
     /** The +/- allowed error for autoAligning in degrees */
     double TURNING_ERROR = 0.5;
-
-    /** The number of code loops to wait before auto-aligning */
-    int LOOPS_TO_WAIT = 5;
 
     /** The Proportional Coefficient for the Back Left Drive Motor */
     double BACK_LEFT_P = 10.0;
@@ -142,23 +146,35 @@ public interface Constants {
     /** The Y value of the Red Intake Point */
     double RED_INTAKE_Y = -60.0;
 
+
+
     /** Servo position for intake actuators when up */
     double INTAKE_UP_POSITION = 0.4;
 
     /** Servo position for intake actuators when touching floor */
     double INTAKE_DOWN_POSITION = 0.75;
 
+
+
     /** Max power allowed for the shoulder motors */
     double SHOULDER_GOVERNOR = 1.0;
 
-    /**
-     * The p constant for arm goToPos
-     */
-    double SHOULDER_P = 0.01;
+    /** The p constant for arm goToPos */
+    double SHOULDER_P = 0.02;
 
+    /** The f constant for arm goToPos */
+    double SHOULDER_F = 0.003;
+
+    /** Pot Conversion last term */
     double POT_COEFF_A = 5.514E5;
+
+    /** Pot Conversion second-last term */
     double POT_COEFF_B = -7.22E5;
+
+    /** Pot Conversion second term */
     double POT_COEFF_C = 3.154E5;
+
+    /** Pot Conversion first term term */
     double POT_COEFF_D = -4.595E4;
 
     /** The servo position of the plane launcher when cocked */
@@ -170,14 +186,21 @@ public interface Constants {
     /** Wrist Position Proportional Coefficient */
     double WRIST_P = 0.1;
 
+    //** Wrist encoder ticks per full revolution */
+    int WRIST_TICKS_PER_REV = 288;
+
+
+
     /** The Max Useful Servo Range of the Turny Wrist */
     double MAX_TURNY_WRIST = 0.43;
 
     /** The open position for the left claw */
-    double LEFT_CLAW_OPEN = 1.0;
+    double LEFT_CLAW_OPEN = 0.25;
 
     /** The open position for the right claw */
-    double RIGHT_CLAW_OPEN = 1.0;
+    double RIGHT_CLAW_OPEN = 0.75;
+
+
 
     /** X Coordinate of Intake Side April Tags */
     double APRIL_TAG_INTAKE_X = 72;

@@ -9,20 +9,19 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 import org.firstinspires.ftc.teamcode.utils.MathUtilities;
 
-//TODO: pot conversion
-//TODO: shoulder goToPos
+//TODO: re-tune shoulder goToAngle
 //TODO: wrist goToPos
-//TODO: climb motor
 
 /**
  * The Arm Subsystem of the robot
  */
 public class Arm implements Constants {
+    private double prevAngle;
     private final AnalogInput pot;
     private final DcMotorEx leftShoulder;
     private final DcMotorEx rightShoulder;
     private final DcMotorEx winch;
-    private final DcMotorEx wristMotor;
+    public final DcMotorEx wristMotor;
     private final Servo leftExtension;
     private final Servo rightExtension;
     private final Servo planeLauncher;
@@ -55,25 +54,35 @@ public class Arm implements Constants {
         planeLauncher = hwMap.get(Servo.class, "planeLauncher");
 
         planeLauncher.scaleRange(PLANE_LAUNCHER_COCKED, 1.0);
+
+        prevAngle = 10.0;
+
     }
 
     /**
      * Sets the Winch Power to climb the bot
-     *
-     * @param power the power to spin at
      */
-    public void setWinch(double power) {
-        winch.setPower(power);
+    public void winchRobot() {
+        winch.setPower(1.0);
     }
 
     /**
      * Moves the arm with PID
      *
-     * @param angle the arm angle in degrees, 0 is retracted
+     * @param desiredAngle the arm angle in degrees, 0 is retracted
+     * @param p the proportional constant
+     * @param f the scaling factor from vertical
+     * @param d the dampening constant
      */
-    public void armGoToPos(double angle) {
-        double power = SHOULDER_P * (angle - getArmAngle());
-        armManualControl(power);
+    public void armGoToPos(double desiredAngle, double p, double f, double d ) {
+        double angle = getArmAngle();
+        double power = p * (desiredAngle - angle);
+        double scalingFactor = f * ( 180.0 - angle );
+        double deltaTheta = angle - prevAngle;
+        double dampening = d * deltaTheta;
+
+        armManualControl(power + scalingFactor - dampening);
+        prevAngle = this.getArmAngle();
     }
 
     /**

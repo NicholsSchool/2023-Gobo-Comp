@@ -9,6 +9,8 @@ import org.firstinspires.ftc.teamcode.utils.Constants;
 
 import java.util.HashMap;
 
+//TODO: check for errors, something is a little off
+
 /**
  * A teleop for testing robot Vision functionalities
  */
@@ -31,18 +33,16 @@ public class VisionTestingTeleop extends OpMode implements Constants
         telemetry.addData("Y", pose != null ? pose[1] : "null");
         telemetry.addData("Theta", pose != null ? pose[2] : "null");
 
-        HashMap< Integer, Double> headings;
-        headings = vision.getHeadings();
-        telemetry.addData("ID: 1", headings.containsKey(1) ? headings.get(1) : "null");
-        telemetry.addData("ID: 2", headings.containsKey(2) ? headings.get(2) : "null");
-        telemetry.addData("ID: 3", headings.containsKey(3) ? headings.get(3) : "null");
-        telemetry.addData("ID: 4", headings.containsKey(4) ? headings.get(4) : "null");
-        telemetry.addData("ID: 5", headings.containsKey(5) ? headings.get(5) : "null");
-        telemetry.addData("ID: 6", headings.containsKey(6) ? headings.get(6) : "null");
-        telemetry.addData("ID: 7", headings.containsKey(7) ? headings.get(7) : "null");
-        telemetry.addData("ID: 8", headings.containsKey(8) ? headings.get(8) : "null");
-        telemetry.addData("ID: 9", headings.containsKey(9) ? headings.get(9) : "null");
-        telemetry.addData("ID: 10", headings.containsKey(10) ? headings.get(10) : "null");
-        telemetry.update();
+//        telemetry.addData("ID: 1", headings.containsKey(1) ? headings.get(1) : "null");
+//        telemetry.addData("ID: 2", headings.containsKey(2) ? headings.get(2) : "null");
+//        telemetry.addData("ID: 3", headings.containsKey(3) ? headings.get(3) : "null");
+//        telemetry.addData("ID: 4", headings.containsKey(4) ? headings.get(4) : "null");
+//        telemetry.addData("ID: 5", headings.containsKey(5) ? headings.get(5) : "null");
+//        telemetry.addData("ID: 6", headings.containsKey(6) ? headings.get(6) : "null");
+//        telemetry.addData("ID: 7", headings.containsKey(7) ? headings.get(7) : "null");
+//        telemetry.addData("ID: 8", headings.containsKey(8) ? headings.get(8) : "null");
+//        telemetry.addData("ID: 9", headings.containsKey(9) ? headings.get(9) : "null");
+//        telemetry.addData("ID: 10", headings.containsKey(10) ? headings.get(10) : "null");
+//        telemetry.update();
     }
 }
