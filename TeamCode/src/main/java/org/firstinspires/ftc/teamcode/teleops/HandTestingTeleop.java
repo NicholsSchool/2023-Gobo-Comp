@@ -27,6 +27,7 @@ public class HandTestingTeleop extends OpMode implements Constants
     public void init() {
         hand = new Hand(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        turnyWristPos = 0.5;
     }
 
     @Override
@@ -36,6 +37,7 @@ public class HandTestingTeleop extends OpMode implements Constants
         hand.setTurnyWristPos(turnyWristPos);
 
         telemetry.addData("turnyWristPos", turnyWristPos);
+        telemetry.addData("openClaws", openClaws);
         telemetry.addData("openClaws", openClaws);
         telemetry.update();
     }

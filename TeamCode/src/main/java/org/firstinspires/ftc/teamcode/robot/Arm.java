@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -20,6 +21,7 @@ public class Arm implements Constants {
     private final AnalogInput pot;
     private final DcMotorEx leftShoulder;
     private final DcMotorEx rightShoulder;
+    private final DcMotorEx winch;
     private final DcMotorEx wristMotor;
     private final Servo leftExtension;
     private final Servo rightExtension;
@@ -44,11 +46,34 @@ public class Arm implements Constants {
         wristMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         wristMotor.setPositionPIDFCoefficients(WRIST_P);
 
+        winch = hwMap.get(DcMotorEx.class, "centerDead");
+        winch.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        winch.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         leftExtension = hwMap.get(Servo.class, "leftExtension");
         rightExtension = hwMap.get(Servo.class, "rightExtension");
         planeLauncher = hwMap.get(Servo.class, "planeLauncher");
 
         planeLauncher.scaleRange(PLANE_LAUNCHER_COCKED, 1.0);
+    }
+
+    /**
+     * Sets the Winch Power to climb the bot
+     *
+     * @param power the power to spin at
+     */
+    public void setWinch(double power) {
+        winch.setPower(power);
+    }
+
+    /**
+     * Moves the arm with PID
+     *
+     * @param angle the arm angle in degrees, 0 is retracted
+     */
+    public void armGoToPos(double angle) {
+        double power = SHOULDER_P * (angle - getArmAngle());
+        armManualControl(power);
     }
 
     /**
@@ -59,8 +84,9 @@ public class Arm implements Constants {
     public void armManualControl(double power) {
         power = MathUtilities.clip(power, -SHOULDER_GOVERNOR, SHOULDER_GOVERNOR);
         leftShoulder.setPower(-power);
-        rightShoulder.setPower(power);
+        rightShoulder.setPower(-power);
     }
+
 
     /**
      * Moves the wrist manually
@@ -126,7 +152,8 @@ public class Arm implements Constants {
      * @return the arm angle in degrees, with 0 as fully in.
      */
     public double getArmAngle() {
-        return 0.0;
+        double potVal = this.getPot();
+        return POT_COEFF_D * Math.pow( potVal, 3 ) + POT_COEFF_C * Math.pow( potVal, 2) + POT_COEFF_B * potVal + POT_COEFF_A - 60.0;
     }
 
     /**

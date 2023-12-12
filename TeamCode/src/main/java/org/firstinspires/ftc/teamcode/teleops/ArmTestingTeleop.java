@@ -21,8 +21,12 @@ public class ArmTestingTeleop extends OpMode implements Constants
 {
     public Arm arm;
     public static double shoulderPower;
+    public static double winchPower;
     public static double extensionPosition;
     public static boolean launchPlane;
+
+    public static double desiredAngle;
+    public static boolean PID;
 
     @Override
     public void init() {
@@ -33,13 +37,19 @@ public class ArmTestingTeleop extends OpMode implements Constants
     @Override
     public void loop() {
 
+        if(PID)
+            arm.armGoToPos(desiredAngle);
+
+        arm.setWinch(winchPower);
         arm.armManualControl(shoulderPower);
         arm.setExtensionManual(extensionPosition);
         arm.setPlaneLauncher(launchPlane);
-
         telemetry.addData("shoulderPower", shoulderPower);
+        telemetry.addData("winchPower", winchPower);
         telemetry.addData("extensionPosition", extensionPosition);
         telemetry.addData("launchPlane", launchPlane);
+        telemetry.addData("angle", arm.getArmAngle() );
+        telemetry.addData("desired angle", desiredAngle );
         telemetry.addData("pot", arm.getPot());
         telemetry.update();
     }

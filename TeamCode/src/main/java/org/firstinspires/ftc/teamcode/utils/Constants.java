@@ -149,10 +149,20 @@ public interface Constants {
     double INTAKE_DOWN_POSITION = 0.75;
 
     /** Max power allowed for the shoulder motors */
-    double SHOULDER_GOVERNOR = 0.2;
+    double SHOULDER_GOVERNOR = 1.0;
+
+    /**
+     * The p constant for arm goToPos
+     */
+    double SHOULDER_P = 0.01;
+
+    double POT_COEFF_A = 5.514E5;
+    double POT_COEFF_B = -7.22E5;
+    double POT_COEFF_C = 3.154E5;
+    double POT_COEFF_D = -4.595E4;
 
     /** The servo position of the plane launcher when cocked */
-    double PLANE_LAUNCHER_COCKED = 0.3;
+    double PLANE_LAUNCHER_COCKED = 0.15;
 
     /** Max power allowed for the wrist motor */
     double WRIST_GOVERNOR = 1.0;
@@ -161,13 +171,13 @@ public interface Constants {
     double WRIST_P = 0.1;
 
     /** The Max Useful Servo Range of the Turny Wrist */
-    double MAX_TURNY_WRIST = 0.2;
+    double MAX_TURNY_WRIST = 0.43;
 
     /** The open position for the left claw */
-    double LEFT_CLAW_OPEN = 0.25;
+    double LEFT_CLAW_OPEN = 1.0;
 
     /** The open position for the right claw */
-    double RIGHT_CLAW_OPEN = 0.25;
+    double RIGHT_CLAW_OPEN = 1.0;
 
     /** X Coordinate of Intake Side April Tags */
     double APRIL_TAG_INTAKE_X = 72;
