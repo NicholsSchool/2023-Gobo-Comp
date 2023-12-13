@@ -9,9 +9,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 import org.firstinspires.ftc.teamcode.utils.MathUtilities;
 
-//TODO: re-tune shoulder goToAngle
-//TODO: wrist goToPos
-
 /**
  * The Arm Subsystem of the robot
  */
@@ -21,7 +18,7 @@ public class Arm implements Constants {
     private final DcMotorEx leftShoulder;
     private final DcMotorEx rightShoulder;
     private final DcMotorEx winch;
-    public final DcMotorEx wristMotor;
+    private final DcMotorEx wristMotor;
     private final Servo leftExtension;
     private final Servo rightExtension;
     private final Servo planeLauncher;
@@ -42,8 +39,7 @@ public class Arm implements Constants {
         wristMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         wristMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         wristMotor.setTargetPosition(0);
-        wristMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        wristMotor.setPositionPIDFCoefficients(WRIST_P);
+        wristMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         winch = hwMap.get(DcMotorEx.class, "centerDead");
         winch.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -56,7 +52,6 @@ public class Arm implements Constants {
         planeLauncher.scaleRange(PLANE_LAUNCHER_COCKED, 1.0);
 
         prevAngle = 10.0;
-
     }
 
     /**
@@ -67,19 +62,30 @@ public class Arm implements Constants {
     }
 
     /**
+     * Sets the winch power oppositely to untangle the string
+     */
+    public void winchOpposite() {
+        winch.setPower(-1.0);
+    }
+
+    /**
+     * Sets the winch power oppositely to untangle the string
+     */
+    public void stopWinch() {
+        winch.setPower(0.0);
+    }
+
+    /**
      * Moves the arm with PID
      *
      * @param desiredAngle the arm angle in degrees, 0 is retracted
-     * @param p the proportional constant
-     * @param f the scaling factor from vertical
-     * @param d the dampening constant
      */
-    public void armGoToPos(double desiredAngle, double p, double f, double d ) {
+    public void armGoToPos(double desiredAngle) {
         double angle = getArmAngle();
-        double power = p * (desiredAngle - angle);
-        double scalingFactor = f * ( 180.0 - angle );
+        double power = SHOULDER_P * (desiredAngle - angle);
+        double scalingFactor = SHOULDER_F * ( 180.0 - angle );
         double deltaTheta = angle - prevAngle;
-        double dampening = d * deltaTheta;
+        double dampening = SHOULDER_D * deltaTheta;
 
         armManualControl(power + scalingFactor - dampening);
         prevAngle = this.getArmAngle();
@@ -108,12 +114,21 @@ public class Arm implements Constants {
     }
 
     /**
-     * Turns the wrist to the specified encoder position using PID
+     * Turns the wrist to the specified angle using PID control
      *
-     * @param position the encoder target position
+     * @param desiredAngle the angle of the wrist in degrees
      */
-    public void setWristPos(int position) {
-        wristMotor.setTargetPosition(position);
+    public void setWristPos(double desiredAngle) {
+        double error = desiredAngle - (getWristPos() * 360.0 / WRIST_TICKS_PER_REV);
+        wristMotor.setPower(error * WRIST_P);
+    }
+
+    /**
+     * Sets the wrist as a virtual fourbar to be level with the ground
+     */
+    public void fourbar() {
+        double angle = MathUtilities.clip(90.0 - getArmAngle(), -85.0, 85.0);
+        setWristPos(angle);
     }
 
     /**

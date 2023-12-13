@@ -8,8 +8,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.controller.GameController;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
+
+//TODO: add new functionalities to controllers
 //TODO: test and troubleshoot full blue AND red alliance controls
-//TODO: hand is currently commented out
 //TODO: automated handoff in the robot
 
 /**
@@ -20,7 +21,7 @@ public class RobotContainer implements Constants{
     private final Drivetrain drivetrain;
     private final Intake intake;
     private final Arm arm;
-    //private final Hand hand;
+    private final Hand hand;
     private final IndicatorLights lights;
     private final Vision vision;
     private final GameController driverOI;
@@ -51,7 +52,7 @@ public class RobotContainer implements Constants{
         drivetrain = new Drivetrain(hwMap, alliance, x, y, heading);
         intake = new Intake(hwMap);
         arm = new Arm(hwMap);
-        //hand = new Hand(hwMap);
+        hand = new Hand(hwMap);
         lights = new IndicatorLights(hwMap, alliance);
         vision = new Vision(hwMap);
 

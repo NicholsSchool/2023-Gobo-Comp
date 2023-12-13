@@ -160,10 +160,13 @@ public interface Constants {
     double SHOULDER_GOVERNOR = 1.0;
 
     /** The p constant for arm goToPos */
-    double SHOULDER_P = 0.02;
+    double SHOULDER_P = 0.005;
 
     /** The f constant for arm goToPos */
-    double SHOULDER_F = 0.003;
+    double SHOULDER_F = 0.0005;
+
+    /** The d constant for arm goToPos */
+    double SHOULDER_D = 0.0001;
 
     /** Pot Conversion last term */
     double POT_COEFF_A = 5.514E5;
@@ -184,7 +187,7 @@ public interface Constants {
     double WRIST_GOVERNOR = 1.0;
 
     /** Wrist Position Proportional Coefficient */
-    double WRIST_P = 0.1;
+    double WRIST_P = 0.02;
 
     //** Wrist encoder ticks per full revolution */
     int WRIST_TICKS_PER_REV = 288;
