@@ -10,16 +10,16 @@ import org.firstinspires.ftc.teamcode.controller.GameController;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
 //TODO: automated handoff in the robot
-//TODO: lights change with forbar mode since it's toggle
+//TODO: lights change with forbar mode since it's toggle, and all other toggles?
 //TODO: add all controller functionalities
 //TODO: test and troubleshoot full blue AND RED alliance controls
+//TODO: localization/spline demo teleop for judging room
 //TODO: autos
 
 /**
- * The Robot Container
+ * The Robot Container. Contains the robot.
  */
 public class RobotContainer implements Constants {
-    private ElapsedTime timer;
     private final boolean alliance;
     private final Drivetrain drivetrain;
     private final Intake intake;
@@ -37,6 +37,8 @@ public class RobotContainer implements Constants {
     private boolean autoAlign;
     private boolean splineToIntake;
     private boolean splineToScoring;
+    private double splineScoringY;
+    private boolean fourbar;
 
     /**
      * Initialize the RobotContainer object
@@ -48,10 +50,10 @@ public class RobotContainer implements Constants {
      * @param y starting y
      */
     public RobotContainer(HardwareMap hwMap, Telemetry telemetry, boolean alliance, double x, double y, double heading, Gamepad g1, Gamepad g2) {
-        this.timer = new ElapsedTime();
         this.alliance = alliance;
         this.fieldOriented = true;
         this.autoAlign = true;
+        this.fourbar = true;
 
         drivetrain = new Drivetrain(hwMap, alliance, x, y, heading);
         intake = new Intake(hwMap);
@@ -84,14 +86,15 @@ public class RobotContainer implements Constants {
         operatorOI.updateValues();
 
         drivetrain.updateWithOdometry();
+
+        if(!driverOI.start.get() && !operatorOI.start.get())
+            return;
         double[] pose = vision.update();
-        if(pose != null && (driverOI.start.get() || operatorOI.start.get() ) )
+        if(pose != null)
             drivetrain.updateWithAprilTags(pose);
     }
 
     private void driverControls() {
-        //TODO: the 3 different spline destinations (far enough away that intake doesn't hit the board)
-
         intake.setPanPos(!(driverOI.right_trigger.get() > 0) );
 
         if(driverOI.left_bumper.get() )
@@ -100,6 +103,11 @@ public class RobotContainer implements Constants {
         power = driverOI.leftStickRadius();
         angle = driverOI.leftStickTheta(alliance);
         turn = driverOI.right_stick_x.get();
+
+        if(driverOI.left_trigger.get() > 0.0) {
+            power *= VIRTUAL_LOW_GEAR;
+            turn *= VIRTUAL_LOW_GEAR;
+        }
 
         autoAlign = driverOI.right_stick_x.wasZeroLongEnough();
 
@@ -116,10 +124,10 @@ public class RobotContainer implements Constants {
 
         fieldOriented = !driverOI.back.getToggleState();
 
-        if(driverOI.dpad_left.wasJustPressed())
-            splineToScoring = true;
-        else if(driverOI.dpad_right.wasJustPressed())
-            splineToIntake = true;
+        if(alliance)
+            blueSplineControls();
+        else
+            redSplineControls();
 
         if(power != 0.0) {
             splineToScoring = false;
@@ -129,18 +137,100 @@ public class RobotContainer implements Constants {
         if(splineToIntake)
             drivetrain.splineToIntake(turn, autoAlign);
         else if(splineToScoring)
-            drivetrain.splineToScoring(turn, autoAlign);
+            drivetrain.splineToScoring(turn, autoAlign, splineScoringY);
         else
             drivetrain.drive(power, angle, turn, autoAlign, fieldOriented);
     }
 
+    private void blueSplineControls() {
+        if(driverOI.dpad_left.wasJustPressed()) {
+            splineScoringY = BLUE_SCORING_Y_MED;
+            splineToScoring = true;
+        }
+        else if(driverOI.dpad_right.wasJustPressed())
+            splineToIntake = true;
+
+        else if(driverOI.dpad_up.wasJustPressed()) {
+            splineScoringY = BLUE_SCORING_Y_FAR;
+            splineToScoring = true;
+        }
+        else if(driverOI.dpad_down.wasJustPressed()) {
+            splineScoringY = BLUE_SCORING_Y_CLOSE;
+            splineToScoring = true;
+        }
+    }
+
+    private void redSplineControls() {
+        if(driverOI.dpad_left.wasJustPressed())
+            splineToIntake = true;
+
+        else if(driverOI.dpad_right.wasJustPressed()) {
+            splineScoringY = RED_SCORING_Y_MED;
+            splineToScoring = true;
+        }
+        else if(driverOI.dpad_up.wasJustPressed()) {
+            splineScoringY = RED_SCORING_Y_FAR;
+            splineToScoring = true;
+        }
+        else if(driverOI.dpad_down.wasJustPressed()) {
+            splineScoringY = RED_SCORING_Y_CLOSE;
+            splineToScoring = true;
+        }
+    }
+
     private void operatorControls() {
-        //TODO: do
-        arm.armManualControl(operatorOI.left_stick_y.get());
+        if(operatorOI.b.wasJustPressed())
+            fourbar = true;
+
+        if(operatorOI.right_stick_y.get() != 0.0) {
+            fourbar = false;
+            arm.wristManualControl(operatorOI.right_stick_y.get());
+        }
+        else if(fourbar)
+            arm.wristFourbar();
+
+        double armDesiredAngle;
+        if(operatorOI.dpad_up.get())
+            armDesiredAngle = 180.0;
+        else if(operatorOI.dpad_down.get())
+            armDesiredAngle = -15.0;
+        else if(operatorOI.dpad_left.get() && alliance || operatorOI.dpad_right.get() && !alliance)
+            armDesiredAngle = 90.0;
+        else if(operatorOI.dpad_left.get() && !alliance || operatorOI.dpad_right.get() && alliance)
+            armDesiredAngle = LAUNCH_ARM_ANGLE;
+        else
+            armDesiredAngle = arm.getArmAngle();
+
+        if(operatorOI.left_stick_y.get() == 0.0)
+            arm.armGoToPos(armDesiredAngle);
+        else
+            arm.armManualControl(operatorOI.left_stick_y.get());
+
+        if(operatorOI.a.get())
+            hand.setClawPos(1.0);
+        else if(operatorOI.x.get())
+            hand.setClawPos(0.5);
+
+        hand.setTurnyWristPos(0.5); //TODO: this functionality
+
+        if(operatorOI.right_bumper.get())
+            arm.setExtensionPos(0.7);
+        else if(operatorOI.left_bumper.get())
+            arm.setExtensionPos(0.0);
+
+        if(operatorOI.left_trigger.get() > 0.0)
+            arm.winchRobot();
+        else if(operatorOI.right_trigger.get() > 0.0)
+            arm.winchOpposite();
+        else
+            arm.stopWinch();
+
+        if(operatorOI.back.get())
+            arm.setPlaneLauncher(true);
     }
 
     private void handoff() {
-        //TODO: do
+        //TODO: this too
     }
 
     private void setLightsColor() {

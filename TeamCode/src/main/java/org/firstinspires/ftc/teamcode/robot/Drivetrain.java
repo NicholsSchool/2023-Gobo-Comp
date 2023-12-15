@@ -226,9 +226,9 @@ public class Drivetrain implements Constants {
      * Automatically directs the robot to the Coordinates of the Correct Backstage
      * area using parabolas in piecewise.
      */
-    public void splineToScoring(double turn, boolean autoAlign) {
+    public void splineToScoring(double turn, boolean autoAlign, double scoringY) {
         double distance = Math.sqrt(Math.pow(SCORING_X - x, 2) +
-                Math.pow(isBlueAlliance ? BLUE_SCORING_Y - y : RED_SCORING_Y - y, 2) );
+                Math.pow(scoringY - y, 2) );
         double power = distance >= SPLINE_ERROR ? MathUtilities.clip(SPLINE_P * distance
                 , -SPLINE_GOVERNOR, SPLINE_GOVERNOR) : 0.0;
 
@@ -238,7 +238,7 @@ public class Drivetrain implements Constants {
         else if(x > LEFT_WAYPOINT_X)
             angle = angleToVertex(LEFT_WAYPOINT_X, isBlueAlliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, false);
         else
-            angle = angleFromVertex(SCORING_X, isBlueAlliance ? BLUE_SCORING_Y : RED_SCORING_Y, LEFT_WAYPOINT_X, false);
+            angle = angleFromVertex(SCORING_X, scoringY, LEFT_WAYPOINT_X, false);
 
         drive(power, angle, turn, autoAlign, true);
     }

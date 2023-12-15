@@ -20,6 +20,8 @@ public interface Constants {
     int LOOPS_TO_WAIT = 5;
 
 
+    /** The virtual low gear for the robot driving */
+    double VIRTUAL_LOW_GEAR = 0.25;
 
     /** The Maximum Spin Speed of a drive motor in ticks/second */
     int MAX_SPIN_SPEED = 2800;
@@ -120,13 +122,25 @@ public interface Constants {
     double SPLINE_GOVERNOR = 0.5;
 
     /** The X value of the Scoring Points */
-    double SCORING_X = -42.0;
+    double SCORING_X = -44.0;
 
-    /** The Y value of the Blue Scoring Point */
-    double BLUE_SCORING_Y = -36.0;
+    /** The Y value of the Close Blue Scoring Point */
+    double BLUE_SCORING_Y_CLOSE = -42.0;
 
-    /** The Y value of the Red Scoring Point */
-    double RED_SCORING_Y = 36.0;
+    /** The Y value of the Middle Blue Scoring Point */
+    double BLUE_SCORING_Y_MED = -36.0;
+
+    /** The Y value of the Far Blue Scoring Point */
+    double BLUE_SCORING_Y_FAR = -30.0;
+
+    /** The Y value of the Close Red Scoring Point */
+    double RED_SCORING_Y_CLOSE = 42.0;
+
+    /** The Y value of the Middle Red Scoring Point */
+    double RED_SCORING_Y_MED = 36.0;
+
+    /** The Y value of the Far Red Scoring Point */
+    double RED_SCORING_Y_FAR = 30.0;
 
     /** The X value of the Left Waypoint Points */
     double LEFT_WAYPOINT_X = -18.0;
@@ -182,6 +196,9 @@ public interface Constants {
 
     /** Pot Conversion first term term */
     double POT_COEFF_D = -4.595E4;
+
+    /** The arm angle to launch the plane at */
+    double LAUNCH_ARM_ANGLE = 140.0;
 
     /** The servo position of the plane launcher when cocked */
     double PLANE_LAUNCHER_COCKED = 0.15;
@@ -255,7 +272,4 @@ public interface Constants {
 
     /** The horizontal distance in inches from the front cam to the robot's center */
     double FRONT_CAM_HORIZONTAL_DIST = 4.5;
-
-    /** The max average drive motor speed to check cameras */
-    int SPEED_LIMIT = 280;
 }

@@ -38,7 +38,7 @@ public class ArmTestingTeleop extends OpMode implements Constants
     public void loop() {
 
         if(fourbar)
-            arm.fourbar();
+            arm.wristFourbar();
         else
             arm.setWristPos(desiredWristAngle);
 

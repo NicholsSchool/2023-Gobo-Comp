@@ -127,7 +127,7 @@ public class Arm implements Constants {
      * Sets the wrist as a virtual fourbar to hold an angle
      * 10 degrees below the horizontal
      */
-    public void fourbar() {
+    public void wristFourbar() {
         double angle = MathUtilities.clip(85.0 - getArmAngle(), -100.0, 100.0);
         setWristPos(angle);
     }
