@@ -34,7 +34,7 @@ public interface Constants {
     double AUTO_TURNING_GOVERNOR = 0.3;
 
     /** The Proportional Constant for PID turning to an angle */
-    double TURNING_P = 0.019;
+    double TURNING_P = 0.015;
 
     /** The +/- allowed error for autoAligning in degrees */
     double TURNING_ERROR = 0.5;
@@ -46,7 +46,7 @@ public interface Constants {
     double BACK_LEFT_I = 0.0;
 
     /** The Dampening Coefficient for the Back Left Drive Motor */
-    double BACK_LEFT_D = 1.0;
+    double BACK_LEFT_D = 0.0;
 
     /** The Feedforward Coefficient for the Back Left Drive Motor */
     double BACK_LEFT_F = 14.0;
@@ -58,7 +58,7 @@ public interface Constants {
     double BACK_RIGHT_I = 0.0;
 
     /** The Dampening Coefficient for the Back Right Drive Motor */
-    double BACK_RIGHT_D = 1.0;
+    double BACK_RIGHT_D = 0.0;
 
     /** The Feedforward Coefficient for the Back Right Drive Motor */
     double BACK_RIGHT_F = 14.0;
@@ -70,7 +70,7 @@ public interface Constants {
     double FRONT_LEFT_I = 0.0;
 
     /** The Dampening Coefficient for the Front Left Drive Motor */
-    double FRONT_LEFT_D = 1.0;
+    double FRONT_LEFT_D = 0.0;
 
     /** The Feedforward Coefficient for the Front Left Drive Motor */
     double FRONT_LEFT_F = 14.0;;
@@ -82,7 +82,7 @@ public interface Constants {
     double FRONT_RIGHT_I = 0.0;
 
     /** The Dampening Coefficient for the Front Right Drive Motor */
-    double FRONT_RIGHT_D = 1.0;
+    double FRONT_RIGHT_D = 0.0;
 
     /** The Feedforward Coefficient for the Front Right Drive Motor */
     double FRONT_RIGHT_F = 14.0;
@@ -102,22 +102,25 @@ public interface Constants {
     double DEGREES_PER_TICK = DEAD_DIAMETER * .5 * 360.0 / (TICKS_PER_REV * ROBOT_TRACKWIDTH);
 
     /** The Multiplier for forward distance tracking */
-    double FORWARD_ODOMETRY_CORRECTION = 0.964;
+    double FORWARD_ODOMETRY_CORRECTION = 0.96486;
 
     /** The Multiplier for strafe distance tracking */
-    double STRAFE_ODOMETRY_CORRECTION = 0.964;
+    double STRAFE_ODOMETRY_CORRECTION = 0.964378;
 
-    /** THe Multiplier for heading tracking */
-    double HEADING_ODOMETRY_CORRECTION = 0.9099;
+    /** The Multiplier for heading tracking */
+    double HEADING_ODOMETRY_CORRECTION = 0.9032;
 
     /** The Proportional Constant for PID spline */
     double SPLINE_P = 0.05;
+
+    /** The allowed error for autonomous pathing in inches */
+    double SPLINE_ERROR = 2.0;
 
     /** The Max Speed for splining */
     double SPLINE_GOVERNOR = 0.5;
 
     /** The X value of the Scoring Points */
-    double SCORING_X = -36.0;
+    double SCORING_X = -42.0;
 
     /** The Y value of the Blue Scoring Point */
     double BLUE_SCORING_Y = -36.0;
@@ -126,10 +129,10 @@ public interface Constants {
     double RED_SCORING_Y = 36.0;
 
     /** The X value of the Left Waypoint Points */
-    double LEFT_WAYPOINT_X = -12.0;
+    double LEFT_WAYPOINT_X = -18.0;
 
     /** The X value of the Right Waypoint Points */
-    double RIGHT_WAYPOINT_X = 36.0;
+    double RIGHT_WAYPOINT_X = 42.0;
 
     /** The Y value of the Blue Waypoint Points */
     double BLUE_WAYPOINT_Y = 36.0;
@@ -138,7 +141,7 @@ public interface Constants {
     double RED_WAYPOINT_Y = -36.0;
 
     /** The X value of the Intake Points */
-    double INTAKE_X = 48.0;
+    double INTAKE_X = 54.0;
 
     /** The Y value of the Blue Intake Point */
     double BLUE_INTAKE_Y = 60.0;
@@ -249,4 +252,7 @@ public interface Constants {
 
     /** The horizontal distance in inches from the front cam to the robot's center */
     double FRONT_CAM_HORIZONTAL_DIST = 4.5;
+
+    /** The max average drive motor speed to check cameras */
+    int SPEED_LIMIT = 280;
 }

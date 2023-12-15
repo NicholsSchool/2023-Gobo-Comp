@@ -29,6 +29,8 @@ public class Hand implements Constants {
         rightClaw.scaleRange(RIGHT_CLAW_OPEN, 1.0);
 
         turnyWrist.setPosition(0.5);
+        leftClaw.setPosition(0.0);
+        rightClaw.setPosition(0.0);
     }
 
     /**
@@ -43,10 +45,10 @@ public class Hand implements Constants {
     /**
      * Moves the wrist manually
      *
-     * @param open whether to open or close
+     * @param position the position [0, 1] with 1 being fully open
      */
-    public void setClawPos(boolean open) {
-        leftClaw.setPosition(open ? 1.0 : 0.0);
-        rightClaw.setPosition(open ? 1.0 : 0.0);
+    public void setClawPos(double position) {
+        leftClaw.setPosition(position);
+        rightClaw.setPosition(position);
     }
 }

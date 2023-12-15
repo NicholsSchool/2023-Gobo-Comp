@@ -21,7 +21,7 @@ public class HandTestingTeleop extends OpMode implements Constants
 {
     public Hand hand;
     public static double turnyWristPos;
-    public static boolean openClaws;
+    public static double clawPos;
 
     @Override
     public void init() {
@@ -32,13 +32,11 @@ public class HandTestingTeleop extends OpMode implements Constants
 
     @Override
     public void loop() {
-
-        hand.setClawPos(openClaws);
+        hand.setClawPos(clawPos);
         hand.setTurnyWristPos(turnyWristPos);
 
         telemetry.addData("turnyWristPos", turnyWristPos);
-        telemetry.addData("openClaws", openClaws);
-        telemetry.addData("openClaws", openClaws);
+        telemetry.addData("clawPos", clawPos);
         telemetry.update();
     }
 }

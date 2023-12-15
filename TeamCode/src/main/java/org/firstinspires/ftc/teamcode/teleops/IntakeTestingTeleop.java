@@ -30,7 +30,6 @@ public class IntakeTestingTeleop extends OpMode implements Constants
 
     @Override
     public void loop() {
-
         intake.setPanPos(isRaising);
 
         telemetry.addData("isRaising", isRaising);

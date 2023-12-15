@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.controller.GameController;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
 
-//TODO: add new functionalities to controllers
+//TODO: add the new functionalities to controllers
 //TODO: test and troubleshoot full blue AND red alliance controls
 //TODO: automated handoff in the robot
 
@@ -47,7 +47,7 @@ public class RobotContainer implements Constants{
     public RobotContainer(HardwareMap hwMap, Telemetry telemetry, boolean alliance, double x, double y, double heading, Gamepad g1, Gamepad g2) {
         this.alliance = alliance;
         this.fieldOriented = true;
-        this.autoAlign = false;
+        this.autoAlign = true;
 
         drivetrain = new Drivetrain(hwMap, alliance, x, y, heading);
         intake = new Intake(hwMap);
@@ -70,14 +70,13 @@ public class RobotContainer implements Constants{
 
         arm.armManualControl(operatorOI.left_stick_y.get());
 
-        intake.setPanPos(driverOI.left_trigger.get() > 0);
+        intake.setPanPos(!(driverOI.left_trigger.get() > 0) );
 
         power = driverOI.leftStickRadius();
         angle = driverOI.leftStickTheta(alliance);
         turn = driverOI.right_stick_x.get();
 
-//        autoAlign = driverOI.right_stick_x.wasZeroLongEnough();
-        autoAlign = false;
+        autoAlign = driverOI.right_stick_x.wasZeroLongEnough();
 
         if(!autoAlign)
             drivetrain.setDesiredHeading(drivetrain.getFieldHeading());
@@ -114,13 +113,16 @@ public class RobotContainer implements Constants{
     }
 
     /**
-     * Updates GameControllers and Necessary Subsystems
+     * Updates GameControllers and Robot Pose
      */
     public void updateInstances() {
         driverOI.updateValues();
         operatorOI.updateValues();
 
-        drivetrain.updatePose(vision.update());
+        drivetrain.updateWithOdometry();
+        double[] pose = vision.update();
+        if(pose != null && driverOI.start.get() )
+            drivetrain.updateWithAprilTags(pose);
     }
 
     /**

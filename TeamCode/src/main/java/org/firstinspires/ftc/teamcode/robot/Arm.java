@@ -40,6 +40,7 @@ public class Arm implements Constants {
         wristMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         wristMotor.setTargetPosition(0);
         wristMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        //TODO: get the wrist motor to be able to start at other angles
 
         winch = hwMap.get(DcMotorEx.class, "centerDead");
         winch.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -125,20 +126,23 @@ public class Arm implements Constants {
 
     /**
      * Sets the wrist as a virtual fourbar to be level with the ground
+     * //TODO: make this hold it 20 degrees below horizontal
      */
     public void fourbar() {
-        double angle = MathUtilities.clip(90.0 - getArmAngle(), -85.0, 85.0);
+        double angle = MathUtilities.clip(70.0 - getArmAngle(), -85.0, 85.0);
         setWristPos(angle);
     }
 
     /**
-     * Fully Extend or Retract Linear Actuators on the Arm
+     * Fully Extend or Retract Linear Actuators on the Arm.
+     * 0 is fully retracted, 0.7 is extended during teleop, 1
+     * is extended for climbing.
      *
-     * @param isExtending whether to extend or retract
+     * @param position the position [0, 1]
      */
-    public void setExtensionPos(boolean isExtending) {
-        leftExtension.setPosition(isExtending ? 1.0 : 0.0);
-        rightExtension.setPosition(isExtending ? 1.0 : 0.0);
+    public void setExtensionPos(double position) {
+        leftExtension.setPosition(position);
+        rightExtension.setPosition(position);
     }
 
     /**

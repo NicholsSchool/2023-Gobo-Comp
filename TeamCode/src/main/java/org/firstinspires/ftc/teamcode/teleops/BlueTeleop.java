@@ -18,7 +18,7 @@ public class BlueTeleop extends OpMode implements Constants {
      */
     @Override
     public void init() {
-        robotContainer = new RobotContainer(hardwareMap, telemetry, BLUE_ALLIANCE, 48.0, -48.0, 90.0, gamepad1, gamepad2);
+        robotContainer = new RobotContainer(hardwareMap, telemetry, BLUE_ALLIANCE, 0.0, 0.0, 90.0, gamepad1, gamepad2);
     }
 
     /*

@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 import org.firstinspires.ftc.teamcode.utils.MathUtilities;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -42,8 +44,8 @@ public class Vision implements Constants {
         BACK_CAM_VIEW_ID = (Integer) JavaUtil.inListGet(myPortalsList, JavaUtil.AtMode.FROM_START, 1, false);
 
         AprilTagProcessor.Builder myAprilTagProcessorBuilder = new AprilTagProcessor.Builder();
-        frontAprilTagProcessor = myAprilTagProcessorBuilder.build();
-        backAprilTagProcessor = myAprilTagProcessorBuilder.build();
+        frontAprilTagProcessor = myAprilTagProcessorBuilder.setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES).build();
+        backAprilTagProcessor = myAprilTagProcessorBuilder.setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES).build();
 
         visionPortalBuilder = new VisionPortal.Builder();
         visionPortalBuilder.setCamera(hwMap.get(WebcamName.class, "Webcam 1"));
@@ -168,9 +170,8 @@ public class Vision implements Constants {
      *
      * @return a hashMap of the tag id's and headings
      */
-    public HashMap<Integer, Double[]> getPose() {
+    public HashMap<Integer, Double[]> getHeadings() {
         HashMap<Integer, Double[]> headings = new HashMap<>();
-        double[] pose = new double[3];
         for( int i = 0; i < frontDetections.size(); i++ ) {
             int id = frontDetections.get(i).id;
             double yaw = frontDetections.get(i).ftcPose.yaw;
@@ -182,7 +183,7 @@ public class Vision implements Constants {
             int id = backDetections.get(i).id;
             double yaw = backDetections.get(i).ftcPose.yaw;
             yaw = !(id >= 7 && id <= 10) ? -yaw : MathUtilities.addAngles(-yaw, -180.0);
-            headings.put( id, new Double[] { yaw, frontDetections.get(i).ftcPose.y } );
+            headings.put( id, new Double[] { yaw, backDetections.get(i).ftcPose.y } );
         }
         return headings;
     }
@@ -194,5 +195,23 @@ public class Vision implements Constants {
      */
     public int getNumDetections() {
         return frontDetections.size() + backDetections.size();
+    }
+
+    /**
+     * Returns the number of April Tag Detections fom the Front Camera
+     *
+     * @return the number of detections
+     */
+    public int getNumFrontDetections() {
+        return frontDetections.size();
+    }
+
+    /**
+     * Returns the number of April Tag Detections from the Back Camera
+     *
+     * @return the number of detections
+     */
+    public int getNumBackDetections() {
+        return backDetections.size();
     }
 }

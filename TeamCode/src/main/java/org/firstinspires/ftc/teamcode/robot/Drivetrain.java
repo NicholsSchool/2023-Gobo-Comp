@@ -6,9 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.utils.MathUtilities;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
-//TODO: re-tune odometry, make a graph of it
-//TODO: re-tune drive motors, try using p and i
-//TODO: check spline
+//TODO: check splining
 
 /**
  * The robot drivetrain
@@ -17,20 +15,20 @@ public class Drivetrain implements Constants {
     public DcMotorEx frontLeft, frontRight, backLeft, backRight, leftDead, rightDead, centerDead;
     private int previousLeft, previousRight, previousCenter;
     private double x, y, heading, desiredHeading;
-    private final boolean alliance;
+    private final boolean isBlueAlliance;
 
     /**
      * Initializes the Drivetrain object
      *
      * @param hwMap the hardwareMap
-     * @param alliance true for blue, false for red
+     * @param isBlueAlliance true for blue, false for red
      * @param x the starting x coordinate
      * @param y the starting y coordinate
      */
-    public Drivetrain(HardwareMap hwMap, boolean alliance, double x, double y, double heading)
+    public Drivetrain(HardwareMap hwMap, boolean isBlueAlliance, double x, double y, double heading)
     {
         // Initialize Variables
-        this.alliance = alliance;
+        this.isBlueAlliance = isBlueAlliance;
         this.x = x;
         this.y = y;
         this.heading = heading;
@@ -59,15 +57,10 @@ public class Drivetrain implements Constants {
         backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-/*
-        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-*/
-        leftDead.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        rightDead.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        centerDead.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+//        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+//        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+//        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+//        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
 
         // Stop and Reset Encoders
         backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -99,8 +92,7 @@ public class Drivetrain implements Constants {
      *
      * @param power the power proportion to spin motors  [-1, 1]
      */
-    public void driveTest(double power)
-    {
+    public void driveTest(double power) {
         power = MathUtilities.clip( power, -1.0, 1.0);
         backLeft.setVelocity(power * MAX_SPIN_SPEED);
         backRight.setVelocity(power * MAX_SPIN_SPEED);
@@ -117,8 +109,7 @@ public class Drivetrain implements Constants {
      * @param autoAlign whether to autoAlign
      * @param fieldOriented whether to drive field oriented
      */
-    public void drive(double power, double angle, double turn, boolean autoAlign, boolean fieldOriented)
-    {
+    public void drive(double power, double angle, double turn, boolean autoAlign, boolean fieldOriented) {
         if(autoAlign && fieldOriented)
             turn = turnToAngle();
         else
@@ -166,46 +157,6 @@ public class Drivetrain implements Constants {
     }
 
     /**
-     * Automatically directs the robot to the Coordinates of the Correct Intake
-     * area using parabolas in piecewise.
-     */
-    public void splineToIntake(double turn, boolean autoAlign) {
-        double power = MathUtilities.clip(SPLINE_P * Math.sqrt(
-                Math.pow(INTAKE_X - x, 2) + Math.pow(alliance ? BLUE_INTAKE_Y - y : RED_INTAKE_Y - y, 2) )
-                , -SPLINE_GOVERNOR, SPLINE_GOVERNOR);
-
-        double angle;
-        if(x <= LEFT_WAYPOINT_X)
-            angle = angleToVertex(LEFT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, true);
-        else if(x <= RIGHT_WAYPOINT_X)
-            angle = angleToVertex(RIGHT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, true);
-        else
-            angle = angleFromVertex(INTAKE_X, alliance ? BLUE_INTAKE_Y : RED_INTAKE_Y, RIGHT_WAYPOINT_X, true);
-
-        drive(power, angle, turn, autoAlign, true);
-    }
-
-    /**
-     * Automatically directs the robot to the Coordinates of the Correct Backstage
-     * area using parabolas in piecewise.
-     */
-    public void splineToScoring(double turn, boolean autoAlign) {
-        double power = MathUtilities.clip(SPLINE_P * Math.sqrt(
-                Math.pow(SCORING_X - x, 2) + Math.pow(alliance ? BLUE_SCORING_Y - y : RED_SCORING_Y - y, 2) )
-                , -SPLINE_GOVERNOR, SPLINE_GOVERNOR);
-
-        double angle;
-        if(x >= RIGHT_WAYPOINT_X)
-            angle = angleToVertex(RIGHT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, false);
-        else if(x >= LEFT_WAYPOINT_X)
-            angle = angleToVertex(LEFT_WAYPOINT_X, alliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, false);
-        else
-            angle = angleFromVertex(SCORING_X, alliance ? BLUE_SCORING_Y : RED_SCORING_Y, LEFT_WAYPOINT_X, false);
-
-        drive(power, angle, turn, autoAlign, true);
-    }
-
-    /**
      * With the robot at (x, y), calculates the drive angle of the robot
      * in order to follow a parabola and arrive at the waypoint (wx, wy)
      * that is the parabola's vertex.
@@ -220,7 +171,8 @@ public class Drivetrain implements Constants {
     public double angleToVertex(double wx, double wy, boolean toIntake) {
         if(x == wx)
             return toIntake ? 0.0 : -180.0;
-        return MathUtilities.addAngles(Math.toDegrees(Math.atan2(2.0 * (wy - y), wx - x) ), 0.0);
+        double offset = x > wx ? -180.0 : 0.0;
+        return MathUtilities.addAngles(Math.toDegrees(Math.atan(2.0 * (y - wy) / (x - wx) ) ), offset);
     }
 
     /**
@@ -237,28 +189,60 @@ public class Drivetrain implements Constants {
      * @return the drive angle in degrees [-180, 180)
      */
     public double angleFromVertex(double wx, double wy, double h, boolean toIntake) {
+        if(x == h)
+            return toIntake ? 0.0 : -180.0;
+
         double robotDiff = Math.pow(x - h, 2);
         double waypointDiff = Math.pow(wx - h, 2);
 
-        if(x == h)
-            return toIntake ? 0.0 : -180.0;
-        else if(robotDiff == waypointDiff)
+        if(robotDiff == waypointDiff)
             return y > wy ? -90.0 : 90.0;
 
         double k = (wy * robotDiff - y * waypointDiff) / (robotDiff - waypointDiff);
-        return MathUtilities.addAngles(Math.toDegrees(Math.atan2(2.0 * (k - y), h - x) ), 0.0);
+        double offset = x > wx ? -180.0 : 0.0;
+        return MathUtilities.addAngles(Math.toDegrees(Math.atan(2.0 * (y - k) / (x - h) ) ), offset);
     }
 
     /**
-     * Update the robot's pose using odometry and April Tags.
-     * Call at the start of each loop() cycle
-     *
-     * @param pose the robot's pose [x, y, theta]
+     * Automatically directs the robot to the Coordinates of the Correct Intake
+     * area using parabolas in piecewise.
      */
-    public void updatePose(double[] pose) {
-        updateWithOdometry();
-        if(pose != null)
-            updateWithAprilTags(pose);
+    public void splineToIntake(double turn, boolean autoAlign) {
+        double distance = Math.sqrt(Math.pow(INTAKE_X - x, 2) +
+                Math.pow(isBlueAlliance ? BLUE_INTAKE_Y - y : RED_INTAKE_Y - y, 2) );
+        double power = distance >= SPLINE_ERROR ? MathUtilities.clip(SPLINE_P * distance
+                , -SPLINE_GOVERNOR, SPLINE_GOVERNOR) : 0.0;
+
+        double angle;
+        if(x < LEFT_WAYPOINT_X)
+            angle = angleToVertex(LEFT_WAYPOINT_X, isBlueAlliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, true);
+        else if(x < RIGHT_WAYPOINT_X)
+            angle = angleToVertex(RIGHT_WAYPOINT_X, isBlueAlliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, true);
+        else
+            angle = angleFromVertex(INTAKE_X, isBlueAlliance ? BLUE_INTAKE_Y : RED_INTAKE_Y, RIGHT_WAYPOINT_X, true);
+
+        drive(power, angle, turn, autoAlign, true);
+    }
+
+    /**
+     * Automatically directs the robot to the Coordinates of the Correct Backstage
+     * area using parabolas in piecewise.
+     */
+    public void splineToScoring(double turn, boolean autoAlign) {
+        double distance = Math.sqrt(Math.pow(SCORING_X - x, 2) +
+                Math.pow(isBlueAlliance ? BLUE_SCORING_Y - y : RED_SCORING_Y - y, 2) );
+        double power = distance >= SPLINE_ERROR ? MathUtilities.clip(SPLINE_P * distance
+                , -SPLINE_GOVERNOR, SPLINE_GOVERNOR) : 0.0;
+
+        double angle;
+        if(x > RIGHT_WAYPOINT_X)
+            angle = angleToVertex(RIGHT_WAYPOINT_X, isBlueAlliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, false);
+        else if(x > LEFT_WAYPOINT_X)
+            angle = angleToVertex(LEFT_WAYPOINT_X, isBlueAlliance ? BLUE_WAYPOINT_Y : RED_WAYPOINT_Y, false);
+        else
+            angle = angleFromVertex(SCORING_X, isBlueAlliance ? BLUE_SCORING_Y : RED_SCORING_Y, LEFT_WAYPOINT_X, false);
+
+        drive(power, angle, turn, autoAlign, true);
     }
 
     /**
@@ -293,7 +277,7 @@ public class Drivetrain implements Constants {
      *
      * @param pose the pose [x, y, theta]
      */
-    private void updateWithAprilTags(double[] pose) {
+    public void updateWithAprilTags(double[] pose) {
         this.x = pose[0];
         this.y = pose[1];
         this.heading = pose[2];
