@@ -5,8 +5,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
-//TODO: scale range for ideal hand grabbing
-
 /**
  * The Intake Subsystem of the Robot
  */

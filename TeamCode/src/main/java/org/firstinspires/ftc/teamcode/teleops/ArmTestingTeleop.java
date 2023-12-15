@@ -62,7 +62,7 @@ public class ArmTestingTeleop extends OpMode implements Constants
         telemetry.addData("angle", arm.getArmAngle() );
         telemetry.addData("desired angle", desiredAngle );
         telemetry.addData("pot", arm.getPot());
-        telemetry.addData("wrist pos", arm.getWristPos());
+        telemetry.addData("wrist pos", arm.getWristAngle());
         telemetry.update();
     }
 }

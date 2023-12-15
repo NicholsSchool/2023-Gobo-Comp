@@ -108,7 +108,7 @@ public interface Constants {
     double STRAFE_ODOMETRY_CORRECTION = 0.964378;
 
     /** The Multiplier for heading tracking */
-    double HEADING_ODOMETRY_CORRECTION = 0.9032;
+    double HEADING_ODOMETRY_CORRECTION = 0.90643294416;
 
     /** The Proportional Constant for PID spline */
     double SPLINE_P = 0.05;
@@ -152,7 +152,7 @@ public interface Constants {
 
 
     /** Servo position for intake actuators when up */
-    double INTAKE_UP_POSITION = 0.4;
+    double INTAKE_UP_POSITION = 0.43;
 
     /** Servo position for intake actuators when touching floor */
     double INTAKE_DOWN_POSITION = 0.75;
@@ -163,7 +163,7 @@ public interface Constants {
     double SHOULDER_GOVERNOR = 1.0;
 
     /** The p constant for arm goToPos */
-    double SHOULDER_P = 0.005;
+    double SHOULDER_P = 0.007;
 
     /** The f constant for arm goToPos */
     double SHOULDER_F = 0.0005;
@@ -192,8 +192,11 @@ public interface Constants {
     /** Wrist Position Proportional Coefficient */
     double WRIST_P = 0.02;
 
-    //** Wrist encoder ticks per full revolution */
+    /** Wrist encoder ticks per full revolution */
     int WRIST_TICKS_PER_REV = 288;
+
+    /** The Wrist Angle Offset at the start of the game */
+    double WRIST_OFFSET = 90.0;
 
 
 

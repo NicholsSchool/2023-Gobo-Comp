@@ -3,20 +3,23 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.controller.GameController;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
-
-//TODO: add the new functionalities to controllers
-//TODO: test and troubleshoot full blue AND red alliance controls
 //TODO: automated handoff in the robot
+//TODO: lights change with forbar mode since it's toggle
+//TODO: add all controller functionalities
+//TODO: test and troubleshoot full blue AND RED alliance controls
+//TODO: autos
 
 /**
  * The Robot Container
  */
-public class RobotContainer implements Constants{
+public class RobotContainer implements Constants {
+    private ElapsedTime timer;
     private final boolean alliance;
     private final Drivetrain drivetrain;
     private final Intake intake;
@@ -45,6 +48,7 @@ public class RobotContainer implements Constants{
      * @param y starting y
      */
     public RobotContainer(HardwareMap hwMap, Telemetry telemetry, boolean alliance, double x, double y, double heading, Gamepad g1, Gamepad g2) {
+        this.timer = new ElapsedTime();
         this.alliance = alliance;
         this.fieldOriented = true;
         this.autoAlign = true;
@@ -68,9 +72,30 @@ public class RobotContainer implements Constants{
     public void robot() {
         updateInstances();
 
-        arm.armManualControl(operatorOI.left_stick_y.get());
+        driverControls();
+        operatorControls();
 
-        intake.setPanPos(!(driverOI.left_trigger.get() > 0) );
+        setLightsColor();
+        printTelemetry();
+    }
+
+    private void updateInstances() {
+        driverOI.updateValues();
+        operatorOI.updateValues();
+
+        drivetrain.updateWithOdometry();
+        double[] pose = vision.update();
+        if(pose != null && (driverOI.start.get() || operatorOI.start.get() ) )
+            drivetrain.updateWithAprilTags(pose);
+    }
+
+    private void driverControls() {
+        //TODO: the 3 different spline destinations (far enough away that intake doesn't hit the board)
+
+        intake.setPanPos(!(driverOI.right_trigger.get() > 0) );
+
+        if(driverOI.left_bumper.get() )
+            arm.setExtensionPos(1.0);
 
         power = driverOI.leftStickRadius();
         angle = driverOI.leftStickTheta(alliance);
@@ -107,28 +132,18 @@ public class RobotContainer implements Constants{
             drivetrain.splineToScoring(turn, autoAlign);
         else
             drivetrain.drive(power, angle, turn, autoAlign, fieldOriented);
-
-        setLightsColor();
-        printTelemetry();
     }
 
-    /**
-     * Updates GameControllers and Robot Pose
-     */
-    public void updateInstances() {
-        driverOI.updateValues();
-        operatorOI.updateValues();
-
-        drivetrain.updateWithOdometry();
-        double[] pose = vision.update();
-        if(pose != null && driverOI.start.get() )
-            drivetrain.updateWithAprilTags(pose);
+    private void operatorControls() {
+        //TODO: do
+        arm.armManualControl(operatorOI.left_stick_y.get());
     }
 
-    /**
-     * Sets the light patterns for the robot
-     */
-    public void setLightsColor() {
+    private void handoff() {
+        //TODO: do
+    }
+
+    private void setLightsColor() {
         if(!fieldOriented)
             lights.setColour(RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY);
         else if(splineToScoring || splineToIntake)
@@ -137,10 +152,7 @@ public class RobotContainer implements Constants{
             lights.setDefaultColor();
     }
 
-    /**
-     * Prints Telemetry to the Driver Station
-     */
-    public void printTelemetry() {
+    private void printTelemetry() {
         telemetry.addData("Drive Power", power);
         telemetry.addData("angle", angle);
         telemetry.addData("turn power", turn);

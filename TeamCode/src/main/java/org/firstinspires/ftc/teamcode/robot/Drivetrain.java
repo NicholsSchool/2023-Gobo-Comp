@@ -6,8 +6,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.utils.MathUtilities;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
-//TODO: check splining
-
 /**
  * The robot drivetrain
  */

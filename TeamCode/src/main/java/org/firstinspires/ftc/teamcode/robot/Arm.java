@@ -40,7 +40,6 @@ public class Arm implements Constants {
         wristMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         wristMotor.setTargetPosition(0);
         wristMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        //TODO: get the wrist motor to be able to start at other angles
 
         winch = hwMap.get(DcMotorEx.class, "centerDead");
         winch.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -120,16 +119,16 @@ public class Arm implements Constants {
      * @param desiredAngle the angle of the wrist in degrees
      */
     public void setWristPos(double desiredAngle) {
-        double error = desiredAngle - (getWristPos() * 360.0 / WRIST_TICKS_PER_REV);
+        double error = desiredAngle - getWristAngle();
         wristMotor.setPower(error * WRIST_P);
     }
 
     /**
-     * Sets the wrist as a virtual fourbar to be level with the ground
-     * //TODO: make this hold it 20 degrees below horizontal
+     * Sets the wrist as a virtual fourbar to hold an angle
+     * 10 degrees below the horizontal
      */
     public void fourbar() {
-        double angle = MathUtilities.clip(70.0 - getArmAngle(), -85.0, 85.0);
+        double angle = MathUtilities.clip(85.0 - getArmAngle(), -100.0, 100.0);
         setWristPos(angle);
     }
 
@@ -187,9 +186,9 @@ public class Arm implements Constants {
     /**
      * Return the Wrist Position
      *
-     * @return the motor's encoder position
+     * @return the motor's angle
      */
-    public int getWristPos() {
-        return wristMotor.getCurrentPosition();
+    public double getWristAngle() {
+        return wristMotor.getCurrentPosition() * 360.0 / WRIST_TICKS_PER_REV + WRIST_OFFSET;
     }
 }

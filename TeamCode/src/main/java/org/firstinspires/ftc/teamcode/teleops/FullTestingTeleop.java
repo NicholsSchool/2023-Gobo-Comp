@@ -25,15 +25,15 @@ public class FullTestingTeleop extends OpMode implements Constants
     public static boolean unClimb;
     public static double extensionPosition;
     public static boolean launchPlane;
-    public static double desiredArmAngle;
+    public static double desiredArmAngle = 180.0;
     public static boolean ARM_PID;
-    public static int desiredWristAngle;
-    public static boolean fourbar;
+    public static double desiredWristAngle;
+    public static boolean fourbar = true;
     public Intake intake;
     public static boolean isRaising;
     public Hand hand;
-    public static double turnyWristPos;
-    public static double clawPos;
+    public static double turnyWristPos = 0.5;
+    public static double clawPos = 1.0;
 
     @Override
     public void init() {
@@ -75,7 +75,7 @@ public class FullTestingTeleop extends OpMode implements Constants
         telemetry.addData("angle", arm.getArmAngle() );
         telemetry.addData("desired angle", desiredArmAngle);
         telemetry.addData("pot", arm.getPot());
-        telemetry.addData("wrist pos", arm.getWristPos());
+        telemetry.addData("wrist pos", arm.getWristAngle());
         telemetry.addData("isRaising", isRaising);
         telemetry.update();
     }
