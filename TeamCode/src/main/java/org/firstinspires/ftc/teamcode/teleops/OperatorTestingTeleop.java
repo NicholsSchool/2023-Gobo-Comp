@@ -12,12 +12,12 @@ import org.firstinspires.ftc.teamcode.robot.Intake;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
 /**
- * A teleop for testing Arm functionalities using
+ * A teleop for testing all Operator functionalities using
  * FTC Dashboard
  */
 @Config
 @TeleOp(name="[DASHBOARD] Full Operator Testing")
-public class FullTestingTeleop extends OpMode implements Constants
+public class OperatorTestingTeleop extends OpMode implements Constants
 {
     public Arm arm;
     public static double shoulderPower;
@@ -33,12 +33,12 @@ public class FullTestingTeleop extends OpMode implements Constants
     public static boolean isRaising;
     public Hand hand;
     public static double turnyWristPos = 0.5;
-    public static double clawPos = 1.0;
+    public static double clawPos = 0.5;
 
     @Override
     public void init() {
         arm = new Arm(hardwareMap);
-        hand = new Hand(hardwareMap);
+        hand = new Hand(hardwareMap, clawPos);
         intake = new Intake(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
@@ -49,17 +49,20 @@ public class FullTestingTeleop extends OpMode implements Constants
             arm.wristFourbar();
         else
             arm.setWristPos(desiredWristAngle);
+
         if(ARM_PID)
             arm.armGoToPos(desiredArmAngle);
         else
             arm.armManualControl(shoulderPower);
+
         if(climb)
             arm.winchRobot();
         else if(unClimb)
             arm.winchOpposite();
         else
             arm.stopWinch();
-        arm.setExtensionManual(extensionPosition);
+
+        arm.setExtensionPos(extensionPosition);
         arm.setPlaneLauncher(launchPlane);
 
         intake.setPanPos(isRaising);
@@ -67,16 +70,11 @@ public class FullTestingTeleop extends OpMode implements Constants
         hand.setClawPos(clawPos);
         hand.setTurnyWristPos(turnyWristPos);
 
-        telemetry.addData("turnyWristPos", turnyWristPos);
-        telemetry.addData("clawPos", clawPos);
-        telemetry.addData("shoulderPower", shoulderPower);
-        telemetry.addData("extensionPosition", extensionPosition);
-        telemetry.addData("launchPlane", launchPlane);
-        telemetry.addData("angle", arm.getArmAngle() );
-        telemetry.addData("desired angle", desiredArmAngle);
+        telemetry.addData("arm angle", arm.getArmAngle() );
+        telemetry.addData("desired arm angle", desiredArmAngle);
         telemetry.addData("pot", arm.getPot());
         telemetry.addData("wrist pos", arm.getWristAngle());
-        telemetry.addData("isRaising", isRaising);
+        telemetry.addData("desired wrist pos", desiredWristAngle);
         telemetry.update();
     }
 }

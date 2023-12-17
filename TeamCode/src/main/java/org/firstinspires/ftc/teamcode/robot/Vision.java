@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -60,6 +61,9 @@ public class Vision implements Constants {
         visionPortalBuilder.addProcessor(backAprilTagProcessor);
         visionPortalBuilder.setLiveViewContainerId(BACK_CAM_VIEW_ID);
         backVisionPortal = visionPortalBuilder.build();
+
+        frontDetections = new ArrayList<>();
+        backDetections = new ArrayList<>();
     }
 
     /**
@@ -87,8 +91,8 @@ public class Vision implements Constants {
             double[] pose = localize(i, false);
             averagedPose[0] += pose[0];
             averagedPose[1] += pose[1];
-            averagedPose[2] += pose[3] == 1 ? 5 * Math.cos( Math.toRadians(pose[2]) ) : Math.cos( Math.toRadians(pose[2]) );
-            averagedPose[3] += pose[3] == 1 ? 5 * Math.sin( Math.toRadians(pose[2]) ) : Math.sin( Math.toRadians(pose[2]) );
+            averagedPose[2] += pose[3] == 1.0 ? 5 * Math.cos( Math.toRadians(pose[2]) ) : Math.cos( Math.toRadians(pose[2]) );
+            averagedPose[3] += pose[3] == 1.0 ? 5 * Math.sin( Math.toRadians(pose[2]) ) : Math.sin( Math.toRadians(pose[2]) );
         }
 
         if(frontSize + backSize == 0)
@@ -189,7 +193,7 @@ public class Vision implements Constants {
     }
 
     /**
-     * Returns the number of April Tag Detections
+     * Returns the number of Total April Tag Detections
      *
      * @return the number of detections
      */

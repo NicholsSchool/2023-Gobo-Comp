@@ -18,7 +18,7 @@ public class Hand implements Constants {
      *
      * @param hwMap the hardwareMap
      */
-    public Hand(HardwareMap hwMap) {
+    public Hand(HardwareMap hwMap, double clawStartingPos) {
         turnyWrist = hwMap.get(Servo.class, "turnyWrist");
         leftClaw = hwMap.get(Servo.class, "leftClaw");
         rightClaw = hwMap.get(Servo.class, "rightClaw");
@@ -29,12 +29,12 @@ public class Hand implements Constants {
         rightClaw.scaleRange(RIGHT_CLAW_OPEN, 1.0);
 
         turnyWrist.setPosition(0.5);
-        leftClaw.setPosition(0.0);
-        rightClaw.setPosition(0.0);
+        leftClaw.setPosition(clawStartingPos);
+        rightClaw.setPosition(clawStartingPos);
     }
 
     /**
-     * Moves the wrist manually
+     * Moves the wrist manually. 0 is left, 0.5 is center, 1 is right.
      *
      * @param position the position to go to [min, max]
      */

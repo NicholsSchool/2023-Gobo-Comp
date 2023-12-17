@@ -119,7 +119,7 @@ public interface Constants {
     double SPLINE_ERROR = 2.0;
 
     /** The Max Speed for splining */
-    double SPLINE_GOVERNOR = 0.5;
+    double SPLINE_GOVERNOR = 0.6;
 
     /** The X value of the Scoring Points */
     double SCORING_X = -44.0;
@@ -143,10 +143,10 @@ public interface Constants {
     double RED_SCORING_Y_FAR = 30.0;
 
     /** The X value of the Left Waypoint Points */
-    double LEFT_WAYPOINT_X = -18.0;
+    double LEFT_WAYPOINT_X = -16.0;
 
     /** The X value of the Right Waypoint Points */
-    double RIGHT_WAYPOINT_X = 42.0;
+    double RIGHT_WAYPOINT_X = 40.0;
 
     /** The Y value of the Blue Waypoint Points */
     double BLUE_WAYPOINT_Y = 36.0;
@@ -155,7 +155,7 @@ public interface Constants {
     double RED_WAYPOINT_Y = -36.0;
 
     /** The X value of the Intake Points */
-    double INTAKE_X = 54.0;
+    double INTAKE_X = 60.0;
 
     /** The Y value of the Blue Intake Point */
     double BLUE_INTAKE_Y = 60.0;
@@ -175,6 +175,9 @@ public interface Constants {
 
     /** Max power allowed for the shoulder motors */
     double SHOULDER_GOVERNOR = 1.0;
+
+    /** The multiplier for arm manual control */
+    double ARM_MANUAL_SCALING = 0.5;
 
     /** The p constant for arm goToPos */
     double SHOULDER_P = 0.007;
@@ -207,7 +210,7 @@ public interface Constants {
     double WRIST_GOVERNOR = 1.0;
 
     /** Wrist Position Proportional Coefficient */
-    double WRIST_P = 0.02;
+    double WRIST_P = 0.025;
 
     /** Wrist encoder ticks per full revolution */
     int WRIST_TICKS_PER_REV = 288;

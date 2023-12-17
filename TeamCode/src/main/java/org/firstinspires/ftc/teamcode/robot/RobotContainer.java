@@ -3,18 +3,15 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.controller.GameController;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
-//TODO: automated handoff in the robot
-//TODO: lights change with forbar mode since it's toggle, and all other toggles?
-//TODO: add all controller functionalities
 //TODO: test and troubleshoot full blue AND RED alliance controls
 //TODO: localization/spline demo teleop for judging room
 //TODO: autos
+//TODO: automated handoff
 
 /**
  * The Robot Container. Contains the robot.
@@ -49,7 +46,7 @@ public class RobotContainer implements Constants {
      * @param x starting x
      * @param y starting y
      */
-    public RobotContainer(HardwareMap hwMap, Telemetry telemetry, boolean alliance, double x, double y, double heading, Gamepad g1, Gamepad g2) {
+    public RobotContainer(HardwareMap hwMap, Telemetry telemetry, boolean alliance, double x, double y, double heading, Gamepad g1, Gamepad g2, double clawStartingPos) {
         this.alliance = alliance;
         this.fieldOriented = true;
         this.autoAlign = true;
@@ -58,7 +55,8 @@ public class RobotContainer implements Constants {
         drivetrain = new Drivetrain(hwMap, alliance, x, y, heading);
         intake = new Intake(hwMap);
         arm = new Arm(hwMap);
-        hand = new Hand(hwMap);
+        hand = new Hand(hwMap, clawStartingPos);
+        hand.setClawPos(0.5);
         lights = new IndicatorLights(hwMap, alliance);
         vision = new Vision(hwMap);
 
@@ -85,6 +83,7 @@ public class RobotContainer implements Constants {
         driverOI.updateValues();
         operatorOI.updateValues();
 
+        arm.update();
         drivetrain.updateWithOdometry();
 
         if(!driverOI.start.get() && !operatorOI.start.get())
@@ -95,10 +94,12 @@ public class RobotContainer implements Constants {
     }
 
     private void driverControls() {
-        intake.setPanPos(!(driverOI.right_trigger.get() > 0) );
+        intake.setPanPos(driverOI.right_trigger.get() == 0 );
 
         if(driverOI.left_bumper.get() )
             arm.setExtensionPos(1.0);
+        else if(driverOI.right_bumper.get() )
+            arm.setExtensionPos(0.0);
 
         power = driverOI.leftStickRadius();
         angle = driverOI.leftStickTheta(alliance);
@@ -129,7 +130,7 @@ public class RobotContainer implements Constants {
         else
             redSplineControls();
 
-        if(power != 0.0) {
+        if(power != 0.0 || driverOI.left_stick_button.get()) {
             splineToScoring = false;
             splineToIntake = false;
         }
@@ -179,16 +180,6 @@ public class RobotContainer implements Constants {
     }
 
     private void operatorControls() {
-        if(operatorOI.b.wasJustPressed())
-            fourbar = true;
-
-        if(operatorOI.right_stick_y.get() != 0.0) {
-            fourbar = false;
-            arm.wristManualControl(operatorOI.right_stick_y.get());
-        }
-        else if(fourbar)
-            arm.wristFourbar();
-
         double armDesiredAngle;
         if(operatorOI.dpad_up.get())
             armDesiredAngle = 180.0;
@@ -201,12 +192,25 @@ public class RobotContainer implements Constants {
         else
             armDesiredAngle = arm.getArmAngle();
 
-        if(operatorOI.left_stick_y.get() == 0.0)
+        if(intake.getPosition() <= 0.59 && arm.getArmAngle() <= 20.0 &&
+                (operatorOI.left_stick_y.get() >= 0.0 || armDesiredAngle > 20.0) )
+            arm.armManualControl(0.0);
+        else if(operatorOI.left_stick_y.get() == 0.0)
             arm.armGoToPos(armDesiredAngle);
         else
             arm.armManualControl(operatorOI.left_stick_y.get());
 
-        if(operatorOI.a.get())
+        if(operatorOI.a.wasJustPressed())
+            fourbar = true;
+
+        if(operatorOI.right_stick_y.get() != 0.0) {
+            fourbar = false;
+            arm.wristManualControl(operatorOI.right_stick_y.get() * ARM_MANUAL_SCALING);
+        }
+        else if(fourbar)
+            arm.wristFourbar();
+
+        if(operatorOI.b.get())
             hand.setClawPos(1.0);
         else if(operatorOI.x.get())
             hand.setClawPos(0.5);
@@ -229,17 +233,18 @@ public class RobotContainer implements Constants {
             arm.setPlaneLauncher(true);
     }
 
-    private void handoff() {
-        //TODO: this too
-    }
-
     private void setLightsColor() {
         if(!fieldOriented)
-            lights.setColour(RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY);
+            lights.setLeftColour(RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY);
         else if(splineToScoring || splineToIntake)
-            lights.setColour(RevBlinkinLedDriver.BlinkinPattern.CONFETTI);
+            lights.setLeftColour(RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD);
         else
-            lights.setDefaultColor();
+            lights.setLeftColour(RevBlinkinLedDriver.BlinkinPattern.LAWN_GREEN);
+
+        if(fourbar)
+            lights.setLeftColour(RevBlinkinLedDriver.BlinkinPattern.WHITE);
+        else
+            lights.setLeftColour(RevBlinkinLedDriver.BlinkinPattern.ORANGE);
     }
 
     private void printTelemetry() {

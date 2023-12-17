@@ -38,7 +38,6 @@ public class Arm implements Constants {
         wristMotor.setDirection(DcMotorEx.Direction.FORWARD);
         wristMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         wristMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        wristMotor.setTargetPosition(0);
         wristMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         winch = hwMap.get(DcMotorEx.class, "centerDead");
@@ -52,6 +51,13 @@ public class Arm implements Constants {
         planeLauncher.scaleRange(PLANE_LAUNCHER_COCKED, 1.0);
 
         prevAngle = 10.0;
+    }
+
+    /**
+     * Updates the Pot Derivative/dampening controller
+     */
+    public void update() {
+        prevAngle = this.getArmAngle();
     }
 
     /**
@@ -69,7 +75,7 @@ public class Arm implements Constants {
     }
 
     /**
-     * Sets the winch power oppositely to untangle the string
+     * Stops the winch
      */
     public void stopWinch() {
         winch.setPower(0.0);
@@ -83,12 +89,11 @@ public class Arm implements Constants {
     public void armGoToPos(double desiredAngle) {
         double angle = getArmAngle();
         double power = SHOULDER_P * (desiredAngle - angle);
-        double scalingFactor = SHOULDER_F * ( 180.0 - angle );
+        double scalingFactor = SHOULDER_F * (180.0 - angle);
         double deltaTheta = angle - prevAngle;
         double dampening = SHOULDER_D * deltaTheta;
 
         armManualControl(power + scalingFactor - dampening);
-        prevAngle = this.getArmAngle();
     }
 
     /**
@@ -99,7 +104,7 @@ public class Arm implements Constants {
     public void armManualControl(double power) {
         power = MathUtilities.clip(power, -SHOULDER_GOVERNOR, SHOULDER_GOVERNOR);
         leftShoulder.setPower(-power);
-        rightShoulder.setPower(-power);
+        rightShoulder.setPower(power);
     }
 
 
@@ -128,7 +133,7 @@ public class Arm implements Constants {
      * 10 degrees below the horizontal
      */
     public void wristFourbar() {
-        double angle = MathUtilities.clip(85.0 - getArmAngle(), -100.0, 100.0);
+        double angle = MathUtilities.clip(85.0 - getArmAngle(), -110.0, 110.0);
         setWristPos(angle);
     }
 
@@ -140,16 +145,6 @@ public class Arm implements Constants {
      * @param position the position [0, 1]
      */
     public void setExtensionPos(double position) {
-        leftExtension.setPosition(position);
-        rightExtension.setPosition(position);
-    }
-
-    /**
-     * Move Linear Actuators on the Arm Manually
-     *
-     * @param position the position to extend to [0, 1]
-     */
-    public void setExtensionManual(double position) {
         leftExtension.setPosition(position);
         rightExtension.setPosition(position);
     }

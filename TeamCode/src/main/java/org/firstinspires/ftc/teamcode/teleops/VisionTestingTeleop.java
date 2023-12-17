@@ -10,9 +10,8 @@ import org.firstinspires.ftc.teamcode.utils.Constants;
 import java.util.HashMap;
 
 /**
- * A teleop for testing robot Vision functionalities
+ * A teleop for testing robot Vision functionalities and accuracy
  */
-@Config
 @TeleOp(name="Vision Testing")
 public class VisionTestingTeleop extends OpMode implements Constants
 {

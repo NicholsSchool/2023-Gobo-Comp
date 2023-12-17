@@ -41,7 +41,7 @@ public class Axis implements Constants {
 
     /**
      * Whether the Axis has been zero for
-     * a specified number of teleop loop()
+     * a specified number of teleop loop() iterations
      *
      * @return true iff the Axis has been zero for enough code loops
      */

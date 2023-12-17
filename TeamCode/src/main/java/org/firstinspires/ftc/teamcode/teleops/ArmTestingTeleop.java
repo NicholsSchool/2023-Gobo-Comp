@@ -23,7 +23,7 @@ public class ArmTestingTeleop extends OpMode implements Constants
     public static boolean unClimb;
     public static double extensionPosition;
     public static boolean launchPlane;
-    public static double desiredAngle;
+    public static double desiredArmAngle;
     public static boolean ARM_PID;
     public static int desiredWristAngle;
     public static boolean fourbar;
@@ -43,7 +43,7 @@ public class ArmTestingTeleop extends OpMode implements Constants
             arm.setWristPos(desiredWristAngle);
 
         if(ARM_PID)
-            arm.armGoToPos(desiredAngle);
+            arm.armGoToPos(desiredArmAngle);
         else
             arm.armManualControl(shoulderPower);
 
@@ -54,15 +54,14 @@ public class ArmTestingTeleop extends OpMode implements Constants
         else
             arm.stopWinch();
 
-        arm.setExtensionManual(extensionPosition);
+        arm.setExtensionPos(extensionPosition);
         arm.setPlaneLauncher(launchPlane);
-        telemetry.addData("shoulderPower", shoulderPower);
-        telemetry.addData("extensionPosition", extensionPosition);
-        telemetry.addData("launchPlane", launchPlane);
-        telemetry.addData("angle", arm.getArmAngle() );
-        telemetry.addData("desired angle", desiredAngle );
+
+        telemetry.addData("arm angle", arm.getArmAngle() );
+        telemetry.addData("desired arm angle", desiredArmAngle);
         telemetry.addData("pot", arm.getPot());
         telemetry.addData("wrist pos", arm.getWristAngle());
+        telemetry.addData("desired wrist pos", desiredWristAngle);
         telemetry.update();
     }
 }
