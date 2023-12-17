@@ -25,8 +25,7 @@ public class Hand implements Constants {
 
         turnyWrist.scaleRange(0.0, MAX_TURNY_WRIST);
         leftClaw.scaleRange(0.0, LEFT_CLAW_OPEN);
-        rightClaw.setDirection(Servo.Direction.REVERSE);
-        rightClaw.scaleRange(RIGHT_CLAW_OPEN, 1.0);
+        rightClaw.scaleRange(0.0, RIGHT_CLAW_OPEN);
 
         turnyWrist.setPosition(0.5);
         leftClaw.setPosition(clawStartingPos);

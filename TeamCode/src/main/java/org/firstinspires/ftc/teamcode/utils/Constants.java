@@ -227,7 +227,7 @@ public interface Constants {
     double LEFT_CLAW_OPEN = 0.25;
 
     /** The open position for the right claw */
-    double RIGHT_CLAW_OPEN = 0.75;
+    double RIGHT_CLAW_OPEN = 0.223;
 
 
 

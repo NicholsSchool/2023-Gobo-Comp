@@ -8,10 +8,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.controller.GameController;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
-//TODO: test and troubleshoot full blue AND RED alliance controls
-//TODO: localization/spline demo teleop for judging room
+//TODO: test and troubleshoot full blue AND RED alliance controls, including drone launch
 //TODO: autos
-//TODO: automated handoff
+//TODO: automated handoff and climb
 
 /**
  * The Robot Container. Contains the robot.
