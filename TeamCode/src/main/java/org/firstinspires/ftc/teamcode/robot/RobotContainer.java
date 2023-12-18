@@ -10,7 +10,8 @@ import org.firstinspires.ftc.teamcode.utils.Constants;
 
 //TODO: test and troubleshoot full blue AND RED alliance controls, including drone launch
 //TODO: autos
-//TODO: automated handoff and climb
+//TODO: drive practice
+//TODO: add back pot functionalities eventually
 
 /**
  * The Robot Container. Contains the robot.
@@ -55,7 +56,7 @@ public class RobotContainer implements Constants {
         intake = new Intake(hwMap);
         arm = new Arm(hwMap);
         hand = new Hand(hwMap, clawStartingPos);
-        hand.setClawPos(0.5);
+        hand.setClawPos(1.0);
         lights = new IndicatorLights(hwMap, alliance);
         vision = new Vision(hwMap);
 
@@ -82,11 +83,11 @@ public class RobotContainer implements Constants {
         driverOI.updateValues();
         operatorOI.updateValues();
 
-        arm.update();
+        //arm.update();
         drivetrain.updateWithOdometry();
 
-        if(!driverOI.start.get() && !operatorOI.start.get())
-            return;
+//        if(!driverOI.start.get() && !operatorOI.start.get())
+//            return;
         double[] pose = vision.update();
         if(pose != null)
             drivetrain.updateWithAprilTags(pose);
@@ -95,10 +96,10 @@ public class RobotContainer implements Constants {
     private void driverControls() {
         intake.setPanPos(driverOI.right_trigger.get() == 0 );
 
-        if(driverOI.left_bumper.get() )
-            arm.setExtensionPos(1.0);
-        else if(driverOI.right_bumper.get() )
-            arm.setExtensionPos(0.0);
+//        if(driverOI.left_bumper.get() )
+//            arm.setExtensionPos(1.0);
+//        else if(driverOI.right_bumper.get() )
+//            arm.setExtensionPos(0.0);
 
         power = driverOI.leftStickRadius();
         angle = driverOI.leftStickTheta(alliance);
@@ -179,47 +180,58 @@ public class RobotContainer implements Constants {
     }
 
     private void operatorControls() {
-        double armDesiredAngle;
-        if(operatorOI.dpad_up.get())
-            armDesiredAngle = 180.0;
-        else if(operatorOI.dpad_down.get())
-            armDesiredAngle = -15.0;
-        else if(operatorOI.dpad_left.get() && alliance || operatorOI.dpad_right.get() && !alliance)
-            armDesiredAngle = 90.0;
-        else if(operatorOI.dpad_left.get() && !alliance || operatorOI.dpad_right.get() && alliance)
-            armDesiredAngle = LAUNCH_ARM_ANGLE;
-        else
-            armDesiredAngle = arm.getArmAngle();
+//        double armDesiredAngle;
+//        if(operatorOI.dpad_up.get())
+//            armDesiredAngle = 180.0;
+//        else if(operatorOI.dpad_down.get())
+//            armDesiredAngle = 30.0;
+//        else if(operatorOI.dpad_left.get() && alliance || operatorOI.dpad_right.get() && !alliance)
+//            armDesiredAngle = 90.0;
+//        else if(operatorOI.dpad_left.get() && !alliance || operatorOI.dpad_right.get() && alliance)
+//            armDesiredAngle = LAUNCH_ARM_ANGLE;
+//        else
+//            armDesiredAngle = arm.getArmAngle();
+//
+//        if(intake.getPosition() <= 0.59 && arm.getArmAngle() <= 40.0 &&
+//                (operatorOI.left_stick_y.get() >= 0.0 || armDesiredAngle > arm.getArmAngle()) )
+//            arm.armManualControl(0.0);
+//        else if(operatorOI.left_stick_y.get() == 0.0)
+//            arm.armGoToPos(armDesiredAngle);
+//        else
+            arm.armManualControl(operatorOI.left_stick_y.get() * ARM_MANUAL_SCALING);
 
-        if(intake.getPosition() <= 0.59 && arm.getArmAngle() <= 20.0 &&
-                (operatorOI.left_stick_y.get() >= 0.0 || armDesiredAngle > 20.0) )
-            arm.armManualControl(0.0);
-        else if(operatorOI.left_stick_y.get() == 0.0)
-            arm.armGoToPos(armDesiredAngle);
-        else
-            arm.armManualControl(operatorOI.left_stick_y.get());
+            if(operatorOI.a.wasJustPressed())
+                fourbar = true;
 
-        if(operatorOI.a.wasJustPressed())
-            fourbar = true;
+            if(operatorOI.right_stick_y.get() != 0.0)
+                fourbar = false;
 
-        if(operatorOI.right_stick_y.get() != 0.0) {
-            fourbar = false;
-            arm.wristManualControl(operatorOI.right_stick_y.get() * ARM_MANUAL_SCALING);
-        }
-        else if(fourbar)
-            arm.wristFourbar();
+            if(fourbar)
+                arm.setWristPos(85.0);
+            else
+                arm.wristManualControl(operatorOI.right_stick_y.get() * WRIST_COEFF);
 
+//        if(operatorOI.a.wasJustPressed())
+//            fourbar = true;
+//
+//        if(operatorOI.right_stick_y.get() != 0.0) {
+//            fourbar = false;
+//            arm.wristManualControl(operatorOI.right_stick_y.get() * ARM_MANUAL_SCALING);
+//        }
+//        else if(fourbar)
+//            arm.wristFourbar();
+//
         if(operatorOI.b.get())
             hand.setClawPos(1.0);
         else if(operatorOI.x.get())
             hand.setClawPos(0.5);
 
-        hand.setTurnyWristPos(0.5); //TODO: this functionality
+//        hand.setTurnyWristPos(0.5); //TODO: this functionality
 
-        if(operatorOI.right_bumper.get())
-            arm.setExtensionPos(0.7);
-        else if(operatorOI.left_bumper.get())
-            arm.setExtensionPos(0.0);
+//        if(operatorOI.right_bumper.get())
+//            arm.setExtensionPos(0.7);
+//        else if(operatorOI.left_bumper.get())
+//            arm.setExtensionPos(0.0);
 
         if(operatorOI.left_trigger.get() > 0.0)
             arm.winchRobot();
@@ -228,8 +240,7 @@ public class RobotContainer implements Constants {
         else
             arm.stopWinch();
 
-        if(operatorOI.back.get())
-            arm.setPlaneLauncher(true);
+        arm.setPlaneLauncher(operatorOI.back.get());
     }
 
     private void setLightsColor() {
@@ -251,17 +262,6 @@ public class RobotContainer implements Constants {
         telemetry.addData("angle", angle);
         telemetry.addData("turn power", turn);
 
-        double[] motorVel = drivetrain.getMotorVelocities();
-        telemetry.addData("back left drive vel", motorVel[0]);
-        telemetry.addData("back right drive vel", motorVel[1]);
-        telemetry.addData("front left drive vel", motorVel[2]);
-        telemetry.addData("front right drive vel", motorVel[3]);
-
-        double[] deadPos = drivetrain.getOdometryPositions();
-        telemetry.addData("left dead pos", deadPos[0]);
-        telemetry.addData("right dead pos", deadPos[1]);
-        telemetry.addData("center dead pos", deadPos[2]);
-
         double[] xy = drivetrain.getXY();
         telemetry.addData("x", xy[0]);
         telemetry.addData("y", xy[1]);
@@ -269,7 +269,9 @@ public class RobotContainer implements Constants {
         telemetry.addData("heading", drivetrain.getFieldHeading());
         telemetry.addData("autoAligning", autoAlign);
         telemetry.addData("field oriented", fieldOriented);
-        telemetry.addData("pot", arm.getPot());
+//        telemetry.addData("arm angle", arm.getArmAngle());
+//        telemetry.addData("wrist angle", arm.getWristAngle());
+        telemetry.addData("fourbar???", fourbar);
         telemetry.addData("April Tag Detections", vision.getNumDetections() );
 
         telemetry.update();

@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 
+//TODO: doesn't work
+
 /**
  * The class defining the Indicator Lights on the robot.
  * A full list of REV blink codes can be found

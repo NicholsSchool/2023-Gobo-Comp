@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.robot.Arm;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
+//TODO: add back pot functions
+
 /**
  * A teleop for testing Arm functionalities using
  * FTC Dashboard
@@ -37,14 +39,14 @@ public class ArmTestingTeleop extends OpMode implements Constants
     @Override
     public void loop() {
 
-        if(fourbar)
-            arm.wristFourbar();
-        else
+//        if(fourbar)
+//            arm.wristFourbar();
+//        else
             arm.setWristPos(desiredWristAngle);
 
-        if(ARM_PID)
-            arm.armGoToPos(desiredArmAngle);
-        else
+//        if(ARM_PID)
+//            arm.armGoToPos(desiredArmAngle);
+//        else
             arm.armManualControl(shoulderPower);
 
         if(climb)
@@ -54,12 +56,12 @@ public class ArmTestingTeleop extends OpMode implements Constants
         else
             arm.stopWinch();
 
-        arm.setExtensionPos(extensionPosition);
+//        arm.setExtensionPos(extensionPosition);
         arm.setPlaneLauncher(launchPlane);
 
-        telemetry.addData("arm angle", arm.getArmAngle() );
+//        telemetry.addData("arm angle", arm.getArmAngle() );
         telemetry.addData("desired arm angle", desiredArmAngle);
-        telemetry.addData("pot", arm.getPot());
+//        telemetry.addData("pot", arm.getPot());
         telemetry.addData("wrist pos", arm.getWristAngle());
         telemetry.addData("desired wrist pos", desiredWristAngle);
         telemetry.update();

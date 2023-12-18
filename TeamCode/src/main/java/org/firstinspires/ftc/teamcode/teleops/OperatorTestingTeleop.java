@@ -11,6 +11,8 @@ import org.firstinspires.ftc.teamcode.robot.Hand;
 import org.firstinspires.ftc.teamcode.robot.Intake;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 
+//TODO: add back pot functions
+
 /**
  * A teleop for testing all Operator functionalities using
  * FTC Dashboard
@@ -45,14 +47,14 @@ public class OperatorTestingTeleop extends OpMode implements Constants
 
     @Override
     public void loop() {
-        if(fourbar)
-            arm.wristFourbar();
-        else
+//        if(fourbar)
+//            arm.wristFourbar();
+//        else
             arm.setWristPos(desiredWristAngle);
 
-        if(ARM_PID)
-            arm.armGoToPos(desiredArmAngle);
-        else
+//        if(ARM_PID)
+//            arm.armGoToPos(desiredArmAngle);
+//        else
             arm.armManualControl(shoulderPower);
 
         if(climb)
@@ -62,7 +64,7 @@ public class OperatorTestingTeleop extends OpMode implements Constants
         else
             arm.stopWinch();
 
-        arm.setExtensionPos(extensionPosition);
+//        arm.setExtensionPos(extensionPosition);
         arm.setPlaneLauncher(launchPlane);
 
         intake.setPanPos(isRaising);
@@ -70,9 +72,9 @@ public class OperatorTestingTeleop extends OpMode implements Constants
         hand.setClawPos(clawPos);
         hand.setTurnyWristPos(turnyWristPos);
 
-        telemetry.addData("arm angle", arm.getArmAngle() );
+//        telemetry.addData("arm angle", arm.getArmAngle() );
         telemetry.addData("desired arm angle", desiredArmAngle);
-        telemetry.addData("pot", arm.getPot());
+//        telemetry.addData("pot", arm.getPot());
         telemetry.addData("wrist pos", arm.getWristAngle());
         telemetry.addData("desired wrist pos", desiredWristAngle);
         telemetry.update();

@@ -21,7 +21,7 @@ public interface Constants {
 
 
     /** The virtual low gear for the robot driving */
-    double VIRTUAL_LOW_GEAR = 0.25;
+    double VIRTUAL_LOW_GEAR = 0.5;
 
     /** The Maximum Spin Speed of a drive motor in ticks/second */
     int MAX_SPIN_SPEED = 2800;
@@ -177,7 +177,7 @@ public interface Constants {
     double SHOULDER_GOVERNOR = 1.0;
 
     /** The multiplier for arm manual control */
-    double ARM_MANUAL_SCALING = 0.5;
+    double ARM_MANUAL_SCALING = 0.9;
 
     /** The p constant for arm goToPos */
     double SHOULDER_P = 0.007;
@@ -210,13 +210,16 @@ public interface Constants {
     double WRIST_GOVERNOR = 1.0;
 
     /** Wrist Position Proportional Coefficient */
-    double WRIST_P = 0.025;
+    double WRIST_P = 0.023;
 
     /** Wrist encoder ticks per full revolution */
     int WRIST_TICKS_PER_REV = 288;
 
     /** The Wrist Angle Offset at the start of the game */
     double WRIST_OFFSET = 90.0;
+
+    /** THe Wrist Manual Control Multiplier */
+    double WRIST_COEFF = 0.5;
 
 
 
